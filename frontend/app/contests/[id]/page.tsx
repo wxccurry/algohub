@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,7 @@ interface RankingEntry {
 
 export default function ContestDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const { user } = useAuthStore();
   const [contest, setContest] = useState<ContestDetail | null>(null);
   const [ranking, setRanking] = useState<RankingEntry[]>([]);
@@ -227,7 +228,8 @@ export default function ContestDetailPage() {
                 {contest.problems.map((p) => (
                   <div
                     key={p.display_id}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-muted/50 transition-colors"
+                    onClick={() => router.push(`/problems/${p.problem_id}`)}
+                    className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2.5">
                       <Badge variant="secondary" className="font-mono text-xs w-7 h-6 flex items-center justify-center">

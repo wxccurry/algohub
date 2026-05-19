@@ -36,6 +36,7 @@ interface ProblemData {
   time_limit: number; memory_limit: number;
   source: string | null; tags: string[];
   sample_count: number; hidden_count: number;
+  accept_count: number; submit_count: number;
 }
 
 interface SubResult {
@@ -61,6 +62,8 @@ export default function ProblemPage() {
   const [sseEnabled, setSseEnabled] = useState(false);
   const [currentSubmissionId, setCurrentSubmissionId] = useState<number | null>(null);
   const [waCount, setWaCount] = useState(0);
+  const [solutions, setSolutions] = useState<{ id: number; author: string; language: string; content: string }[]>([]);
+  const [solutionsLoading, setSolutionsLoading] = useState(false);
 
   // Polling fallback ref to allow cancellation
   const pollAbortRef = useRef(false);
@@ -87,6 +90,15 @@ export default function ProblemPage() {
   }, [id]);
 
   useEffect(() => { fetchProblem(); }, [fetchProblem]);
+
+  // Fetch solutions
+  useEffect(() => {
+    setSolutionsLoading(true);
+    api.get(`/problems/${id}/solutions`)
+      .then((resp) => setSolutions(resp.data.data.solutions || resp.data.data || []))
+      .catch(() => { /* silently handle */ })
+      .finally(() => setSolutionsLoading(false));
+  }, [id]);
 
   // Submit handler — POST then background-poll for result
   const handleSubmit = useCallback(async () => {
@@ -326,6 +338,8 @@ export default function ProblemPage() {
           timeLimit={problem.time_limit}
           memoryLimit={problem.memory_limit}
           tags={problem.tags}
+          acceptCount={problem.accept_count}
+          submitCount={problem.submit_count}
         />
 
         {/* Split-pane layout */}
@@ -399,7 +413,27 @@ export default function ProblemPage() {
                     </TabsContent>
 
                     <TabsContent value="solutions" className="mt-0">
-                      <p className="text-muted-foreground text-sm">暂无题解</p>
+                      {solutionsLoading ? (
+                        <div className="space-y-4">
+                          {Array.from({ length: 3 }).map((_, i) => (
+                            <Skeleton key={i} className="h-24 w-full" />
+                          ))}
+                        </div>
+                      ) : solutions.length > 0 ? (
+                        <div className="space-y-4">
+                          {solutions.map((sol) => (
+                            <div key={sol.id} className="border rounded-lg p-4">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="font-medium text-sm">{sol.author}</span>
+                                <Badge variant="secondary" className="text-xs">{sol.language}</Badge>
+                              </div>
+                              <MarkdownRenderer content={sol.content} />
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-muted-foreground text-sm">暂无题解</p>
+                      )}
                     </TabsContent>
 
                     <TabsContent value="submissions" className="mt-0">

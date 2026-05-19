@@ -47,10 +47,12 @@ export default function ProblemsPageContent() {
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [difficulty, setDifficulty] = useState(searchParams.get("difficulty") || "all");
   const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "all");
+  const [selectedTag, setSelectedTag] = useState(searchParams.get("tag") || "");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [initialScrollRestored, setInitialScrollRestored] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
   const observerRef = useRef<HTMLDivElement>(null);
 
   // Restore saved filters from sessionStorage on mount (for back-navigation)
@@ -88,8 +90,9 @@ export default function ProblemsPageContent() {
         }
         setTotalCount(data.total);
         setHasMore(data.items.length === 30);
+        setFetchError(false);
       } catch {
-        // silently handle
+        setFetchError(true);
       } finally {
         setLoading(false);
       }
@@ -221,6 +224,15 @@ export default function ProblemsPageContent() {
           <RotateCcw className="h-4 w-4" />
         </Button>
       </div>
+
+      {fetchError && problems.length === 0 && (
+        <div className="text-center py-12 space-y-4">
+          <p className="text-muted-foreground">加载失败，请刷新重试</p>
+          <Button variant="outline" onClick={() => fetchProblems(1, false)}>
+            重试
+          </Button>
+        </div>
+      )}
 
       <div className="text-sm text-muted-foreground mb-2">
         共 {totalCount} 题

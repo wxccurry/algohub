@@ -20,9 +20,11 @@ interface Props {
   timeLimit: number;
   memoryLimit: number;
   tags: string[];
+  acceptCount?: number;
+  submitCount?: number;
 }
 
-export default function ProblemHeader({ title, difficulty, difficultyScore, timeLimit, memoryLimit, tags }: Props) {
+export default function ProblemHeader({ title, difficulty, difficultyScore, timeLimit, memoryLimit, tags, acceptCount, submitCount }: Props) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3 flex-wrap">
@@ -36,6 +38,11 @@ export default function ProblemHeader({ title, difficulty, difficultyScore, time
         <span>⏱ 时限: {timeLimit}ms</span>
         <span>📦 内存: {memoryLimit}MB</span>
         <span>🎯 难度分: {difficultyScore}</span>
+        {acceptCount != null && submitCount != null && submitCount > 0 && (
+          <span>
+            📊 通过率: {((acceptCount / submitCount) * 100).toFixed(1)}%
+          </span>
+        )}
       </div>
       <Separator />
     </div>

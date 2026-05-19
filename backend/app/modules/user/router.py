@@ -9,6 +9,17 @@ from app.shared.database import get_db
 router = APIRouter(prefix="/api/users", tags=["users"])
 
 
+@router.get("/id/{user_id}")
+async def get_user_by_id(user_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        select(User).options(selectinload(User.profile)).where(User.id == user_id)
+    )
+    user = result.scalar_one_or_none()
+    if not user:
+        return {"code": 404, "message": "用户不存在", "data": None}
+    return {"code": 200, "message": "ok", "data": {"id": user.id, "username": user.username}}
+
+
 @router.get("/{username}")
 async def get_user_profile(username: str, db: AsyncSession = Depends(get_db)):
     result = await db.execute(

@@ -28,6 +28,7 @@ export default function PostDetailPage() {
   const [post, setPost] = useState<PostData | null>(null);
   const [comments, setComments] = useState<CommentData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [usernameMap, setUsernameMap] = useState<Record<number, string>>({});
   const [starred, setStarred] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [replyTo, setReplyTo] = useState<number | null>(null);
@@ -47,6 +48,34 @@ export default function PostDetailPage() {
   }, [id]);
 
   useEffect(() => { fetchPost(); }, [fetchPost]);
+
+  // Resolve usernames for comments
+  useEffect(() => {
+    const collectIds = (items: CommentData[]): number[] => {
+      const ids = new Set<number>();
+      for (const c of items) {
+        ids.add(c.user_id);
+        if (c.replies) collectIds(c.replies).forEach(id => ids.add(id));
+      }
+      return [...ids];
+    };
+    const ids = collectIds(comments).filter(id => !usernameMap[id]);
+    if (!ids.length) return;
+    Promise.all(
+      ids.map(async (uid) => {
+        try {
+          const r = await api.get(`/users/id/${uid}`);
+          return { id: uid, name: r.data?.data?.username || `用户 #${uid}` };
+        } catch { return { id: uid, name: `用户 #${uid}` }; }
+      })
+    ).then(results => {
+      setUsernameMap(prev => {
+        const next = { ...prev };
+        results.forEach(r => { next[r.id] = r.name; });
+        return next;
+      });
+    }).catch(() => {});
+  }, [comments]);
 
   const handleStar = async () => {
     if (!user) { toast.error("请先登录"); return; }
@@ -96,7 +125,7 @@ export default function PostDetailPage() {
       {items.map((c) => (
         <div key={c.id} className="border-l-2 pl-3 py-2">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm font-medium">用户 #{c.user_id}</span>
+            <span className="text-sm font-medium">{usernameMap[c.user_id] || `用户 #${c.user_id}`}</span>
             <span className="text-xs text-muted-foreground">
               {new Date(c.created_at).toLocaleString("zh-CN")}
             </span>
