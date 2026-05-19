@@ -24,7 +24,8 @@ class ContestService:
     async def create_contest(self, data, author_id: int):
         contest = Contest(**data.model_dump(), author_id=author_id)
         self.db.add(contest)
-        await self.db.flush()
+        await self.db.commit()
+        await self.db.refresh(contest)
         return contest
 
     async def register(self, contest_id: int, user_id: int):
