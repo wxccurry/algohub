@@ -10,6 +10,7 @@ from app.api import problems, submissions, judge, posts, admin
 from app.modules.auth.router import router as auth_router
 from app.modules.user.router import router as user_router
 from app.modules.contest.router import router as contest_router
+from app.modules.ai.router import router as ai_router
 from app.database import init_db
 from app.middleware.rate_limit import limiter, rate_limit_exceeded_handler
 from app.middleware.request_id import RequestIDMiddleware
@@ -64,6 +65,7 @@ app.include_router(posts.router, prefix="/api/posts", tags=["社区"])
 app.include_router(admin.router, prefix="/api/admin", tags=["管理"])
 app.include_router(user_router)
 app.include_router(contest_router)
+app.include_router(ai_router)
 
 
 @app.exception_handler(Exception)
@@ -76,4 +78,19 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 @app.get("/api/health")
 async def health_check():
-    return {"code": 200, "message": "ok", "data": None}
+    checks = {"database": "ok", "redis": "unavailable"}
+    try:
+        from app.shared.cache import get_cache
+        cache = await get_cache()
+        await cache.ping()
+        checks["redis"] = "ok"
+    except Exception:
+        pass
+    return {"code": 200, "message": "ok", "data": {"status": "ok", "version": "2.0.0", "checks": checks}}
+
+
+# Prometheus metrics endpoint (uncomment to enable)
+# import prometheus_client
+# @app.get("/metrics")
+# async def metrics():
+#     return Response(prometheus_client.generate_latest(), media_type="text/plain")

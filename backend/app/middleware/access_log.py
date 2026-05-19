@@ -19,6 +19,8 @@ class AccessLogMiddleware(BaseHTTPMiddleware):
                 "status": response.status_code,
                 "duration_ms": round(duration_ms, 2),
                 "trace_id": getattr(request.state, "trace_id", None),
+                "user_agent": request.headers.get("user-agent", ""),
+                "content_length": request.headers.get("content-length", 0),
             },
         )
         return response
