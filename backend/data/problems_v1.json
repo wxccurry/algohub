@@ -1,0 +1,3711 @@
+{
+  "problems": [
+    {
+      "slug": "two-sum",
+      "title": "两数之和",
+      "difficulty": "easy",
+      "difficulty_score": 1200,
+      "description_md": "# 两数之和\n\n给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出和为目标值的那两个整数，并返回它们的数组下标。\n\n你可以假设每种输入只会对应一个答案，并且你不能使用两次相同的元素。\n\n你可以按任意顺序返回答案。\n\n## 示例\n\n**示例 1：**\n输入：nums = [2,7,11,15], target = 9\n输出：[0,1]\n\n**示例 2：**\n输入：nums = [3,2,4], target = 6\n输出：[1,2]\n\n## 约束\n\n- 2 <= nums.length <= 10^4\n- -10^9 <= nums[i] <= 10^9\n- -10^9 <= target <= 10^9\n- 只会存在一个有效答案",
+      "input_format": "第一行包含两个整数 n 和 target，分别表示数组长度和目标值。\n第二行包含 n 个整数，表示数组元素。",
+      "output_format": "输出两个整数，表示满足条件的两个元素的下标（从 0 开始），中间用空格分隔。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Hash Table"
+      ],
+      "source": "LeetCode 1",
+      "sample_cases": [
+        {
+          "input": "4 9\n2 7 11 15",
+          "output": "0 1"
+        },
+        {
+          "input": "3 6\n3 2 4",
+          "output": "1 2"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "2 6\n3 3",
+          "output": "0 1"
+        },
+        {
+          "input": "5 10\n1 5 5 8 2",
+          "output": "1 2"
+        },
+        {
+          "input": "6 -8\n-1 -3 -5 -7 -9 -11",
+          "output": "1 2"
+        },
+        {
+          "input": "8 100\n50 50 25 75 30 70 10 90",
+          "output": "0 1"
+        }
+      ],
+      "hints": [
+        "暴力解法：枚举所有两数组合，检查其和是否等于 target。时间复杂度 O(n^2)。",
+        "哈希表优化：遍历数组，对于每个元素 nums[i]，计算 target - nums[i]，检查是否已在哈希表中。",
+        "只需一次遍历：边遍历边存储，时间 O(n)，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：哈希表法\n\n### 思路\n\n暴力法 O(n^2) 会超时。使用哈希表以空间换时间。遍历数组时，对每个元素计算需要的配对值 complement = target - num。若 complement 已在哈希表中，说明找到答案；否则将当前元素和索引存入哈希表。\n\n```python\ndef two_sum(nums, target):\n    seen = {}\n    for i, num in enumerate(nums):\n        c = target - num\n        if c in seen:\n            return [seen[c], i]\n        seen[num] = i\n    return []\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "best-time-to-buy-and-sell-stock",
+      "title": "买卖股票的最佳时机",
+      "difficulty": "easy",
+      "difficulty_score": 1300,
+      "description_md": "# 买卖股票的最佳时机\n\n给定一个数组 prices，它的第 i 个元素 prices[i] 表示一支给定股票第 i 天的价格。\n\n你只能选择某一天买入这只股票，并选择在未来的某一个不同的日子卖出该股票。设计一个算法来计算你所能获取的最大利润。\n\n返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 0。\n\n## 示例\n\n**示例 1：**\n输入：[7,1,5,3,6,4]\n输出：5\n解释：在第 2 天（价格=1）买入，第 5 天（价格=6）卖出，利润=5。\n\n**示例 2：**\n输入：[7,6,4,3,1]\n输出：0\n\n## 约束\n\n- 1 <= prices.length <= 10^5\n- 0 <= prices[i] <= 10^4",
+      "input_format": "第一行包含一个整数 n，表示数组长度。\n第二行包含 n 个整数，表示每天的股票价格。",
+      "output_format": "输出一个整数，表示最大利润。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Dynamic Programming"
+      ],
+      "source": "LeetCode 121",
+      "sample_cases": [
+        {
+          "input": "6\n7 1 5 3 6 4",
+          "output": "5"
+        },
+        {
+          "input": "5\n7 6 4 3 1",
+          "output": "0"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "2\n1 4",
+          "output": "3"
+        },
+        {
+          "input": "5\n2 4 1 7 11",
+          "output": "10"
+        },
+        {
+          "input": "3\n3 3 3",
+          "output": "0"
+        },
+        {
+          "input": "7\n2 1 2 1 0 1 2",
+          "output": "2"
+        }
+      ],
+      "hints": [
+        "暴力法：枚举所有买入日和卖出日组合，O(n^2) 超时。",
+        "一次遍历：维护到当前位置的最低买入价格 min_price。",
+        "对于每一天，计算如果当天卖出的利润 = 当天价格 - min_price，取所有利润的最大值。时间 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：一次遍历法\n\n### 思路\n\n遍历价格数组时，维护到当前为止的最低价格 min_price 和最大利润 max_profit。对于每一天的价格，更新最大利润（当前价格减去历史最低价格的收益）和最低价格。\n\n```python\ndef max_profit(prices):\n    min_p = float('inf')\n    ans = 0\n    for p in prices:\n        if p < min_p:\n            min_p = p\n        elif p - min_p > ans:\n            ans = p - min_p\n    return ans\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "美团"
+      ]
+    },
+    {
+      "slug": "product-of-array-except-self",
+      "title": "除自身以外数组的乘积",
+      "difficulty": "medium",
+      "difficulty_score": 1500,
+      "description_md": "# 除自身以外数组的乘积\n\n给你一个整数数组 nums，返回数组 answer，其中 answer[i] 等于 nums 中除 nums[i] 之外其余各元素的乘积。\n\n**请不要使用除法**，且在 O(n) 时间复杂度内完成。\n\n## 示例\n\n**示例 1：**\n输入：[1,2,3,4]\n输出：[24,12,8,6]\n\n**示例 2：**\n输入：[-1,1,0,-3,3]\n输出：[0,0,9,0,0]\n\n## 约束\n\n- 2 <= nums.length <= 10^5\n- -30 <= nums[i] <= 30",
+      "input_format": "第一行包含一个整数 n，表示数组长度。\n第二行包含 n 个整数，表示数组元素。",
+      "output_format": "输出 n 个整数，表示除自身以外的乘积数组，用空格分隔。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Prefix Sum"
+      ],
+      "source": "LeetCode 238",
+      "sample_cases": [
+        {
+          "input": "4\n1 2 3 4",
+          "output": "24 12 8 6"
+        },
+        {
+          "input": "5\n-1 1 0 -3 3",
+          "output": "0 0 9 0 0"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "2\n2 3",
+          "output": "3 2"
+        },
+        {
+          "input": "3\n5 2 3",
+          "output": "6 15 10"
+        },
+        {
+          "input": "6\n1 2 3 4 5 6",
+          "output": "720 360 240 180 144 120"
+        },
+        {
+          "input": "4\n-1 -2 -3 -4",
+          "output": "-24 -12 -8 -6"
+        }
+      ],
+      "hints": [
+        "如果可以使用除法：先计算全乘积再除以每个元素。但题目禁止除法。",
+        "使用左右乘积数组：left[i] 表示 i 左边所有元素的乘积，right[i] 表示 i 右边所有元素的乘积。answer[i] = left[i] * right[i]。",
+        "优化空间：用 answer 数组先存左乘积，再用一个变量从右往左累积右乘积并更新 answer。空间 O(1)（不计输出数组）。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：左右乘积法\n\n### 思路\n\n对每个位置 i，answer[i] = (i 左边所有元素的乘积) * (i 右边所有元素的乘积)。两次遍历：第一次从左到右存左乘积，第二次从右到左乘上右乘积。\n\n```python\ndef product_except_self(nums):\n    n = len(nums)\n    ans = [1] * n\n    for i in range(1, n):\n        ans[i] = ans[i-1] * nums[i-1]\n    R = 1\n    for i in range(n-1, -1, -1):\n        ans[i] *= R\n        R *= nums[i]\n    return ans\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)（不计输出数组）",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "百度"
+      ]
+    },
+    {
+      "slug": "maximum-subarray",
+      "title": "最大子数组和",
+      "difficulty": "medium",
+      "difficulty_score": 1500,
+      "description_md": "# 最大子数组和\n\n给你一个整数数组 nums，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。\n\n**子数组**是数组中的一个连续部分。\n\n## 示例\n\n**示例 1：**\n输入：[-2,1,-3,4,-1,2,1,-5,4]\n输出：6\n解释：连续子数组 [4,-1,2,1] 的和最大，为 6。\n\n**示例 2：**\n输入：[1]\n输出：1\n\n**示例 3：**\n输入：[5,4,-1,7,8]\n输出：23\n\n## 约束\n\n- 1 <= nums.length <= 10^5\n- -10^4 <= nums[i] <= 10^4",
+      "input_format": "第一行包含一个整数 n，表示数组长度。\n第二行包含 n 个整数，表示数组元素。",
+      "output_format": "输出一个整数，表示最大子数组和。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Divide and Conquer",
+        "Dynamic Programming"
+      ],
+      "source": "LeetCode 53",
+      "sample_cases": [
+        {
+          "input": "9\n-2 1 -3 4 -1 2 1 -5 4",
+          "output": "6"
+        },
+        {
+          "input": "1\n1",
+          "output": "1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "5\n5 4 -1 7 8",
+          "output": "23"
+        },
+        {
+          "input": "2\n-1 -2",
+          "output": "-1"
+        },
+        {
+          "input": "6\n-2 -1 -3 -4 -1 -2",
+          "output": "-1"
+        },
+        {
+          "input": "7\n3 -2 5 -1 6 -3 2",
+          "output": "11"
+        }
+      ],
+      "hints": [
+        "暴力法：枚举所有子数组并计算和，O(n^2) 超时。",
+        "动态规划思想：dp[i] 表示以 nums[i] 结尾的最大子数组和，dp[i] = max(nums[i], dp[i-1] + nums[i])。",
+        "Kadane 算法：用 cur 代替 dp[i]，cur = max(num, cur + num)，同时维护全局最大值 ans。时间 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：Kadane 算法\n\n### 思路\n\nKadane 算法是解决最大子数组和问题的经典算法。遍历数组，cur 表示以当前元素结尾的子数组的最大和。对于每个元素，选择要么从当前元素重新开始，要么加入前面的子数组。\n\n```python\ndef max_subarray(nums):\n    cur = ans = nums[0]\n    for num in nums[1:]:\n        cur = max(num, cur + num)\n        ans = max(ans, cur)\n    return ans\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "华为",
+        "阿里巴巴"
+      ]
+    },
+    {
+      "slug": "merge-intervals",
+      "title": "合并区间",
+      "difficulty": "medium",
+      "difficulty_score": 1600,
+      "description_md": "# 合并区间\n\n以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [start_i, end_i]。请你合并所有重叠的区间，并返回一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间。\n\n## 示例\n\n**示例 1：**\n输入：[[1,3],[2,6],[8,10],[15,18]]\n输出：[[1,6],[8,10],[15,18]]\n解释：区间 [1,3] 和 [2,6] 重叠，将它们合并为 [1,6]。\n\n**示例 2：**\n输入：[[1,4],[4,5]]\n输出：[[1,5]]\n解释：区间 [1,4] 和 [4,5] 可被视为重叠区间。\n\n## 约束\n\n- 1 <= intervals.length <= 10^4\n- intervals[i].length == 2\n- 0 <= start_i <= end_i <= 10^4",
+      "input_format": "第一行包含一个整数 n，表示区间数量。\n接下来 n 行，每行两个整数 start 和 end，表示一个区间。",
+      "output_format": "第一行输出合并后的区间数量 m。\n接下来 m 行，每行输出一个区间的 start 和 end。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Sorting"
+      ],
+      "source": "LeetCode 56",
+      "sample_cases": [
+        {
+          "input": "4\n1 3\n2 6\n8 10\n15 18",
+          "output": "3\n1 6\n8 10\n15 18"
+        },
+        {
+          "input": "2\n1 4\n4 5",
+          "output": "1\n1 5"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "2\n1 4\n2 3",
+          "output": "1\n1 4"
+        },
+        {
+          "input": "5\n1 2\n3 5\n6 7\n8 10\n12 16",
+          "output": "4\n1 2\n3 5\n6 7\n8 10\n12 16"
+        },
+        {
+          "input": "3\n1 10\n2 6\n8 10",
+          "output": "1\n1 10"
+        },
+        {
+          "input": "1\n1 4",
+          "output": "1\n1 4"
+        }
+      ],
+      "hints": [
+        "先按区间的起始位置升序排序，使重叠的区间相邻。",
+        "遍历排序后的区间。若当前区间与结果集最后一个区间重叠（当前start <= 上一个end），则合并。",
+        "合并时更新上一个区间的 end = max(prev_end, current_end)。不重叠则直接加入结果集。时间 O(n log n)，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：排序 + 合并\n\n### 思路\n\n首先按每个区间的起始值排序。然后遍历排序后的区间，每次检查当前区间是否与结果中的最后一个区间重叠。如果重叠就合并（更新 end 为较大值），如果不重叠就加入新区间。\n\n```python\ndef merge(intervals):\n    intervals.sort(key=lambda x: x[0])\n    res = []\n    for s, e in intervals:\n        if not res or res[-1][1] < s:\n            res.append([s, e])\n        else:\n            res[-1][1] = max(res[-1][1], e)\n    return res\n```\n\n### 复杂度\n- 时间: O(n log n)\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "阿里巴巴",
+        "字节跳动",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "next-permutation",
+      "title": "下一个排列",
+      "difficulty": "hard",
+      "difficulty_score": 2200,
+      "description_md": "# 下一个排列\n\n整数数组的一个**排列**就是将其所有成员以序列或线性顺序排列。\n\n整数数组的**下一个排列**是指其整数的下一个字典序更大的排列。如果不存在下一个更大的排列，则必须重排为字典序最小的排列（即升序排列）。\n\n必须**原地**修改，只允许使用额外常数空间。\n\n## 示例\n\n**示例 1：**\n输入：[1,2,3]\n输出：[1,3,2]\n\n**示例 2：**\n输入：[3,2,1]\n输出：[1,2,3]\n\n## 约束\n\n- 1 <= nums.length <= 100\n- 0 <= nums[i] <= 100",
+      "input_format": "第一行包含一个整数 n，表示数组长度。\n第二行包含 n 个整数，表示当前排列。",
+      "output_format": "输出 n 个整数，表示下一个排列，用空格分隔。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Two Pointers"
+      ],
+      "source": "LeetCode 31",
+      "sample_cases": [
+        {
+          "input": "3\n1 2 3",
+          "output": "1 3 2"
+        },
+        {
+          "input": "3\n3 2 1",
+          "output": "1 2 3"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "4\n1 1 5 1",
+          "output": "1 5 1 1"
+        },
+        {
+          "input": "6\n1 2 3 4 5 6",
+          "output": "1 2 3 4 6 5"
+        },
+        {
+          "input": "2\n1 1",
+          "output": "1 1"
+        },
+        {
+          "input": "5\n2 3 1 4 5",
+          "output": "2 3 1 5 4"
+        }
+      ],
+      "hints": [
+        "从右向左找到第一个升序对 (i, i+1)，使得 nums[i] < nums[i+1]。i 即为交换位置。",
+        "在 i 右侧从右向左找到第一个大于 nums[i] 的数 nums[j]，交换两者。",
+        "反转 i 之后的所有元素使其变为升序（最小排列）。整个过程 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：两遍扫描\n\n### 思路\n\n算法分三步：(1) 从右向左找到第一个索引 i 满足 nums[i] < nums[i+1]；(2) 再从右向左找到第一个索引 j 满足 nums[j] > nums[i]，交换两者；(3) 反转 i+1 之后的部分。\n\n```python\ndef next_permutation(nums):\n    n = len(nums)\n    i = n - 2\n    while i >= 0 and nums[i] >= nums[i+1]:\n        i -= 1\n    if i >= 0:\n        j = n - 1\n        while j >= 0 and nums[j] <= nums[i]:\n            j -= 1\n        nums[i], nums[j] = nums[j], nums[i]\n    l, r = i + 1, n - 1\n    while l < r:\n        nums[l], nums[r] = nums[r], nums[l]\n        l += 1; r -= 1\n    return nums\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "华为",
+        "阿里巴巴"
+      ]
+    },
+    {
+      "slug": "find-all-duplicates-in-array",
+      "title": "数组中重复的数据",
+      "difficulty": "medium",
+      "difficulty_score": 1500,
+      "description_md": "# 数组中重复的数据\n\n给你一个长度为 n 的整数数组 nums，其中 nums 的所有整数都在范围 [1, n] 内，且每个整数出现一次或两次。请你找出所有出现两次的整数，并以数组形式返回。\n\n你必须设计并实现一个时间复杂度为 O(n) 且仅使用常量额外空间的算法解决此问题。\n\n## 示例\n\n**示例 1：**\n输入：[4,3,2,7,8,2,3,1]\n输出：[2,3]\n\n**示例 2：**\n输入：[1,1,2]\n输出：[1]\n\n## 约束\n\n- n == nums.length\n- 1 <= n <= 10^5\n- 1 <= nums[i] <= n",
+      "input_format": "第一行包含一个整数 n，表示数组长度。\n第二行包含 n 个整数，每个整数在 1 到 n 之间。",
+      "output_format": "第一行输出一个整数 k，表示重复元素的数量。\n第二行输出 k 个整数，表示所有重复出现的元素。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Hash Table"
+      ],
+      "source": "LeetCode 442",
+      "sample_cases": [
+        {
+          "input": "8\n4 3 2 7 8 2 3 1",
+          "output": "2 3"
+        },
+        {
+          "input": "3\n1 1 2",
+          "output": "1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "5\n4 3 2 2 1",
+          "output": "2"
+        },
+        {
+          "input": "4\n1 2 2 1",
+          "output": "1 2"
+        },
+        {
+          "input": "6\n1 2 3 3 4 5",
+          "output": "3"
+        },
+        {
+          "input": "7\n5 4 3 2 1 1 2",
+          "output": "1 2"
+        }
+      ],
+      "hints": [
+        "元素范围在 [1, n] 之间，可以利用数组本身作为哈希表。将值映射到索引（值-1），访问对应位置。",
+        "遍历数组，将 nums[abs(nums[i])-1] 位置的值取反。如果该位置已经是负数，说明当前数字是重复的。",
+        "注意始终使用绝对值来索引。时间 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：原地标记法\n\n### 思路\n\n因为每个数都在 [1, n] 范围内，可以将 (abs(num) - 1) 作为索引。将对应索引位置的值取反作为标记。如果处理某个数时发现对应索引的值已经是负数，说明这个数已经出现过，是重复的。\n\n```python\ndef find_duplicates(nums):\n    res = []\n    for num in nums:\n        idx = abs(num) - 1\n        if nums[idx] < 0:\n            res.append(abs(num))\n        else:\n            nums[idx] = -nums[idx]\n    return res\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)（不计输出数组）",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "腾讯",
+        "字节跳动",
+        "美团"
+      ]
+    },
+    {
+      "slug": "trapping-rain-water",
+      "title": "接雨水",
+      "difficulty": "hard",
+      "difficulty_score": 2400,
+      "description_md": "# 接雨水\n\n给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。\n\n## 示例\n\n**示例 1：**\n输入：[0,1,0,2,1,0,1,3,2,1,2,1]\n输出：6\n\n**示例 2：**\n输入：[4,2,0,3,2,5]\n输出：9\n\n## 约束\n\n- n == height.length\n- 1 <= n <= 2 * 10^4\n- 0 <= height[i] <= 10^5",
+      "input_format": "第一行包含一个整数 n，表示柱子数量。\n第二行包含 n 个非负整数，表示每个柱子的高度。",
+      "output_format": "输出一个整数，表示能接的雨水总量。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Two Pointers",
+        "Dynamic Programming",
+        "Stack"
+      ],
+      "source": "LeetCode 42",
+      "sample_cases": [
+        {
+          "input": "12\n0 1 0 2 1 0 1 3 2 1 2 1",
+          "output": "6"
+        },
+        {
+          "input": "6\n4 2 0 3 2 5",
+          "output": "9"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "3\n1 0 2",
+          "output": "1"
+        },
+        {
+          "input": "4\n2 0 0 2",
+          "output": "4"
+        },
+        {
+          "input": "5\n3 0 2 0 4",
+          "output": "7"
+        },
+        {
+          "input": "2\n1 2",
+          "output": "0"
+        }
+      ],
+      "hints": [
+        "对于每个位置 i，能接的雨水量 = min(左边最高柱子, 右边最高柱子) - height[i]。如果为负则为 0。",
+        "方法一：预处理左右最大值数组 left_max[i] 和 right_max[i]，然后遍历累加。时间 O(n)，空间 O(n)。",
+        "方法二：双指针优化。left 和 right 从两端向中间移动，维护 left_max 和 right_max。哪边矮移动哪边，累加雨水。时间 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：双指针法\n\n### 思路\n\n使用双指针 left 和 right 分别从两端开始。维护 left_max 和 right_max。当 left_max < right_max 时，处理左侧位置（因为右侧有足够高的柱子确保水位不会溢出）；否则处理右侧。\n\n```python\ndef trap(height):\n    l, r = 0, len(height) - 1\n    l_max = r_max = ans = 0\n    while l < r:\n        if height[l] < height[r]:\n            if height[l] >= l_max:\n                l_max = height[l]\n            else:\n                ans += l_max - height[l]\n            l += 1\n        else:\n            if height[r] >= r_max:\n                r_max = height[r]\n            else:\n                ans += r_max - height[r]\n            r -= 1\n    return ans\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "百度",
+        "华为"
+      ]
+    },
+    {
+      "slug": "valid-anagram",
+      "title": "有效的字母异位词",
+      "difficulty": "easy",
+      "difficulty_score": 1200,
+      "description_md": "# 有效的字母异位词\n\n给定两个字符串 s 和 t，编写一个函数来判断 t 是否是 s 的字母异位词。\n\n**字母异位词**是通过重新排列不同单词或短语的字母而形成的单词或短语，通常要求所有原字母恰好使用一次。\n\n若 s 和 t 中每个字符出现的次数都相同，则称 s 和 t 互为字母异位词。\n\n## 示例\n\n**示例 1：**\n输入: s = \"anagram\", t = \"nagaram\"\n输出: true\n\n**示例 2：**\n输入: s = \"rat\", t = \"car\"\n输出: false\n\n## 约束\n\n- 1 <= s.length, t.length <= 5 * 10^4\n- s 和 t 仅包含小写字母",
+      "input_format": "第一行包含字符串 s。\n第二行包含字符串 t。",
+      "output_format": "输出 true 或 false，表示 t 是否是 s 的字母异位词。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "String",
+        "Hash Table",
+        "Sorting"
+      ],
+      "source": "LeetCode 242",
+      "sample_cases": [
+        {
+          "input": "anagram\nnagaram",
+          "output": "true"
+        },
+        {
+          "input": "rat\ncar",
+          "output": "false"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "a\nb",
+          "output": "false"
+        },
+        {
+          "input": "ab\nba",
+          "output": "true"
+        },
+        {
+          "input": "aacc\nccac",
+          "output": "false"
+        },
+        {
+          "input": "listen\nsilent",
+          "output": "true"
+        }
+      ],
+      "hints": [
+        "如果长度不同，直接返回 false。",
+        "方法一：对两个字符串排序后比较，时间 O(n log n)，空间 O(1)。",
+        "方法二：统计字符频次（26 个字母的计数数组）。遍历 s 时加 1，遍历 t 时减 1，检查是否全为 0。时间 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：字符计数法\n\n### 思路\n\n因为只有 26 个小写字母，可以用长度为 26 的数组 cnt 统计频次。遍历 s 时 +1，遍历 t 时 -1，最后检查 cnt 是否全为 0。\n\n```python\ndef is_anagram(s, t):\n    if len(s) != len(t):\n        return False\n    cnt = [0] * 26\n    for c in s:\n        cnt[ord(c) - 97] += 1\n    for c in t:\n        cnt[ord(c) - 97] -= 1\n    return all(x == 0 for x in cnt)\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "网易"
+      ]
+    },
+    {
+      "slug": "longest-palindromic-substring",
+      "title": "最长回文子串",
+      "difficulty": "medium",
+      "difficulty_score": 1600,
+      "description_md": "# 最长回文子串\n\n给你一个字符串 s，找到 s 中最长的回文子串。\n\n如果字符串的反序与原始字符串相同，则该字符串称为**回文字符串**。\n\n## 示例\n\n**示例 1：**\n输入：s = \"babad\"\n输出：\"bab\"\n解释：\"aba\" 同样是符合题意的答案。\n\n**示例 2：**\n输入：s = \"cbbd\"\n输出：\"bb\"\n\n## 约束\n\n- 1 <= s.length <= 1000\n- s 仅由数字和英文字母组成",
+      "input_format": "一行，包含一个字符串 s。",
+      "output_format": "一行，输出最长回文子串。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "String",
+        "Dynamic Programming"
+      ],
+      "source": "LeetCode 5",
+      "sample_cases": [
+        {
+          "input": "babad",
+          "output": "bab"
+        },
+        {
+          "input": "cbbd",
+          "output": "bb"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "a",
+          "output": "a"
+        },
+        {
+          "input": "ac",
+          "output": "a"
+        },
+        {
+          "input": "aaaa",
+          "output": "aaaa"
+        },
+        {
+          "input": "abcba",
+          "output": "abcba"
+        }
+      ],
+      "hints": [
+        "暴力法：枚举所有子串，检查是否回文。O(n^3) 超时。",
+        "中心扩展法：以每个字符（或字符间隙）为中心向两边扩展，检查回文。奇数长度和偶数长度分开处理。",
+        "共有 2n-1 个中心（n 个字符中心 + n-1 个间隙中心）。时间 O(n^2)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：中心扩展法\n\n### 思路\n\n以每个位置为中心向两边扩展检查回文。需要同时处理奇数长度（中心是单个字符）和偶数长度（中心是两个字符的间隙）两种情况。记录最长回文子串的起始位置和长度。\n\n```python\ndef longest_palindrome(s):\n    n = len(s)\n    start, max_len = 0, 0\n    for i in range(n):\n        # 奇数长度\n        l = r = i\n        while l >= 0 and r < n and s[l] == s[r]:\n            if r - l + 1 > max_len:\n                start, max_len = l, r - l + 1\n            l -= 1; r += 1\n        # 偶数长度\n        l, r = i, i + 1\n        while l >= 0 and r < n and s[l] == s[r]:\n            if r - l + 1 > max_len:\n                start, max_len = l, r - l + 1\n            l -= 1; r += 1\n    return s[start:start+max_len]\n```\n\n### 复杂度\n- 时间: O(n^2)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "阿里巴巴",
+        "腾讯",
+        "字节跳动"
+      ]
+    },
+    {
+      "slug": "group-anagrams",
+      "title": "字母异位词分组",
+      "difficulty": "medium",
+      "difficulty_score": 1500,
+      "description_md": "# 字母异位词分组\n\n给你一个字符串数组 strs，请你将**字母异位词**组合在一起。可以按任意顺序返回结果列表。\n\n**字母异位词**是由重新排列源单词的字母得到的一个新单词。\n\n## 示例\n\n**示例 1：**\n输入: [\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]\n输出: [[\"bat\"],[\"nat\",\"tan\"],[\"ate\",\"eat\",\"tea\"]]\n\n**示例 2：**\n输入: [\"\"]\n输出: [[\"\"]]\n\n**示例 3：**\n输入: [\"a\"]\n输出: [[\"a\"]]\n\n## 约束\n\n- 1 <= strs.length <= 10^4\n- 0 <= strs[i].length <= 100\n- strs[i] 仅包含小写字母",
+      "input_format": "第一行包含一个整数 n，表示字符串数量。\n接下来 n 行，每行一个字符串。",
+      "output_format": "输出每组异位词，组内字符串用空格分隔，每组占一行。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "String",
+        "Hash Table",
+        "Sorting"
+      ],
+      "source": "LeetCode 49",
+      "sample_cases": [
+        {
+          "input": "6\neat\ntea\ntan\nate\nnat\nbat",
+          "output": "eat tea ate\ntan nat\nbat"
+        },
+        {
+          "input": "1\n\n",
+          "output": ""
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "3\na\nb\nc",
+          "output": "a\nb\nc"
+        },
+        {
+          "input": "2\nabc\ncba",
+          "output": "abc cba"
+        },
+        {
+          "input": "4\nddg\ndgd\ngdd\nabc",
+          "output": "ddg dgd gdd\nabc"
+        },
+        {
+          "input": "5\nhello\nworld\nhello\nworld\nolleh",
+          "output": "hello hello olleh\nworld world"
+        }
+      ],
+      "hints": [
+        "判断两个字符串是否互为异位词：排序后比较或统计字符频次。",
+        "将每个字符串排序后作为键，原始字符串作为值，存入哈希表。相同键的字符串即同一组。",
+        "字母仅包含小写，也可用 26 位频次编码作为键。时间 O(nk log k)，n 为单词数，k 为最长单词长度。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：排序键分组\n\n### 思路\n\n使用哈希表，以排序后的字符串作为键，将原字符串归入对应列表。相同键的字符串互为异位词。\n\n```python\nfrom collections import defaultdict\ndef group_anagrams(strs):\n    groups = defaultdict(list)\n    for s in strs:\n        key = ''.join(sorted(s))\n        groups[key].append(s)\n    return list(groups.values())\n```\n\n### 复杂度\n- 时间: O(n k log k)，n 为单词数，k 为最长单词长度\n- 空间: O(n k)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "longest-substring-without-repeating-characters",
+      "title": "无重复字符的最长子串",
+      "difficulty": "medium",
+      "difficulty_score": 1600,
+      "description_md": "# 无重复字符的最长子串\n\n给定一个字符串 s，请你找出其中不含有重复字符的**最长子串**的长度。\n\n## 示例\n\n**示例 1：**\n输入: s = \"abcabcbb\"\n输出: 3\n解释: 因为无重复字符的最长子串是 \"abc\"，长度为 3。\n\n**示例 2：**\n输入: s = \"bbbbb\"\n输出: 1\n\n**示例 3：**\n输入: s = \"pwwkew\"\n输出: 3\n解释: 无重复字符的最长子串是 \"wke\"，长度为 3。\n\n## 约束\n\n- 0 <= s.length <= 5 * 10^4\n- s 由英文字母、数字、符号和空格组成",
+      "input_format": "一行，包含一个字符串 s。",
+      "output_format": "输出一个整数，表示最长无重复字符子串的长度。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "String",
+        "Hash Table",
+        "Sliding Window"
+      ],
+      "source": "LeetCode 3",
+      "sample_cases": [
+        {
+          "input": "abcabcbb",
+          "output": "3"
+        },
+        {
+          "input": "bbbbb",
+          "output": "1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "pwwkew",
+          "output": "3"
+        },
+        {
+          "input": "",
+          "output": "0"
+        },
+        {
+          "input": "au",
+          "output": "2"
+        },
+        {
+          "input": "dvdf",
+          "output": "3"
+        }
+      ],
+      "hints": [
+        "暴力法：枚举所有子串，检查是否有重复字符。O(n^3) 超时。",
+        "滑动窗口：用左右指针维护一个不含重复字符的窗口。用哈希集合存储窗口内字符。",
+        "优化：用哈希表记录每个字符最近出现的位置。遇到重复字符时，左指针直接跳到重复字符的下一个位置。时间 O(n)，空间 O(min(n,128))。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：滑动窗口\n\n### 思路\n\n使用滑动窗口双指针。left 和 right 维护一个无重复子串的范围。用哈希表 last 记录每个字符上次出现的位置。当遇到重复字符时，将 left 移动到重复字符的下一个位置。每次更新最大窗口长度。\n\n```python\ndef length_of_longest_substring(s):\n    last = {}\n    left = ans = 0\n    for right, ch in enumerate(s):\n        if ch in last and last[ch] >= left:\n            left = last[ch] + 1\n        last[ch] = right\n        ans = max(ans, right - left + 1)\n    return ans\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(min(n, 128))",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "阿里巴巴"
+      ]
+    },
+    {
+      "slug": "minimum-window-substring",
+      "title": "最小覆盖子串",
+      "difficulty": "hard",
+      "difficulty_score": 2400,
+      "description_md": "# 最小覆盖子串\n\n给你一个字符串 s、一个字符串 t。返回 s 中涵盖 t 所有字符的最小子串。如果 s 中不存在涵盖 t 所有字符的子串，则返回空字符串。\n\n**注意：** 对于 t 中重复字符，子窗口中该字符数量必须不少于 t 中该字符数量。如果 s 中存在这样的子串，我们保证它是唯一的答案。\n\n## 示例\n\n**示例 1：**\n输入：s = \"ADOBECODEBANC\", t = \"ABC\"\n输出：\"BANC\"\n\n**示例 2：**\n输入：s = \"a\", t = \"a\"\n输出：\"a\"\n\n**示例 3：**\n输入: s = \"a\", t = \"aa\"\n输出: \"\"\n\n## 约束\n\n- 1 <= s.length, t.length <= 10^5\n- s 和 t 由英文字母组成",
+      "input_format": "第一行包含字符串 s。\n第二行包含字符串 t。",
+      "output_format": "输出 s 中覆盖 t 的最小子串。如果不存在，输出空行。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "String",
+        "Hash Table",
+        "Sliding Window"
+      ],
+      "source": "LeetCode 76",
+      "sample_cases": [
+        {
+          "input": "ADOBECODEBANC\nABC",
+          "output": "BANC"
+        },
+        {
+          "input": "a\na",
+          "output": "a"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "a\nb",
+          "output": ""
+        },
+        {
+          "input": "aa\naa",
+          "output": "aa"
+        },
+        {
+          "input": "cabwefgewcwaefgcf\ncae",
+          "output": "cwae"
+        },
+        {
+          "input": "ab\nA",
+          "output": ""
+        }
+      ],
+      "hints": [
+        "滑动窗口：右指针扩展直到窗口包含 t 的所有字符，然后左指针收缩找最小窗口。",
+        "使用两个哈希表（或 Counter）记录 t 的频次和当前窗口的频次。维护 have 变量追踪已满足条件的字符种类数。",
+        "当 have == need_cnt 时收缩左指针。注意收缩后要更新 have 计数。时间 O(|s|+|t|)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：滑动窗口 + 频次统计\n\n### 思路\n\n使用滑动窗口。need 记录 t 中每种字符的需求量，window 记录当前窗口的字符频次。右指针扩展直到窗口满足条件，然后左指针收缩寻找最小窗口。用 have 和 need_cnt 追踪满足条件的字符种类数。\n\n```python\nfrom collections import Counter\ndef min_window(s, t):\n    need = Counter(t)\n    need_cnt = len(need)\n    have = 0\n    window = {}\n    l = 0\n    ans = ''\n    ans_len = float('inf')\n    for r, ch in enumerate(s):\n        window[ch] = window.get(ch, 0) + 1\n        if ch in need and window[ch] == need[ch]:\n            have += 1\n        while have == need_cnt:\n            if r - l + 1 < ans_len:\n                ans_len = r - l + 1\n                ans = s[l:r+1]\n            left_ch = s[l]\n            window[left_ch] -= 1\n            if left_ch in need and window[left_ch] < need[left_ch]:\n                have -= 1\n            l += 1\n    return ans\n```\n\n### 复杂度\n- 时间: O(|s| + |t|)\n- 空间: O(|s| + |t|)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "美团"
+      ]
+    },
+    {
+      "slug": "string-to-integer-atoi",
+      "title": "字符串转换整数",
+      "difficulty": "medium",
+      "difficulty_score": 1500,
+      "description_md": "# 字符串转换整数 (atoi)\n\n请你来实现一个 myAtoi(string s) 函数，使其能将字符串转换成一个 32 位有符号整数。\n\n算法步骤：\n1. 读入字符串并丢弃无用的前导空格\n2. 检查正负号\n3. 读取数字直到非数字字符\n4. 转换为整数（没有数字则为 0）\n5. 超过 32 位范围则截断 [-2^31, 2^31-1]\n\n## 示例\n\n**示例 1：**\n输入：s = \"42\"\n输出：42\n\n**示例 2：**\n输入：s = \"   -42\"\n输出：-42\n\n**示例 3：**\n输入：s = \"4193 with words\"\n输出：4193\n\n**示例 4：**\n输入：s = \"-91283472332\"\n输出：-2147483648\n\n## 约束\n\n- 0 <= s.length <= 200\n- s 由英文字母、数字、空格、'+'、'-' 和 '.' 组成",
+      "input_format": "一行，包含字符串 s。",
+      "output_format": "输出一个整数，表示转换后的结果。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "String"
+      ],
+      "source": "LeetCode 8",
+      "sample_cases": [
+        {
+          "input": "42",
+          "output": "42"
+        },
+        {
+          "input": "   -42",
+          "output": "-42"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "4193 with words",
+          "output": "4193"
+        },
+        {
+          "input": "-91283472332",
+          "output": "-2147483648"
+        },
+        {
+          "input": "+1",
+          "output": "1"
+        },
+        {
+          "input": "words and 987",
+          "output": "0"
+        }
+      ],
+      "hints": [
+        "按题目描述逐步实现：跳过前导空格、处理符号、读取数字。",
+        "读取数字时，每次加入新数字前检查是否会溢出。",
+        "溢出检查：若 result > INT_MAX // 10，或 result == INT_MAX // 10 且下一位 > 7，则溢出。时间 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：模拟\n\n### 思路\n\n按题目算法描述逐步实现。关键是溢出判断：在将新数字加入结果前，检查 result 是否已经大于 INT_MAX // 10，或等于 INT_MAX // 10 且新数字大于 7（正数）或大于 8（负数）。\n\n```python\ndef my_atoi(s):\n    s = s.strip()\n    if not s:\n        return 0\n    sign, i = 1, 0\n    if s[0] == '-':\n        sign, i = -1, 1\n    elif s[0] == '+':\n        i = 1\n    ans = 0\n    MAX = 2**31 - 1\n    MIN = -2**31\n    while i < len(s) and s[i].isdigit():\n        d = int(s[i])\n        if ans > MAX // 10 or (ans == MAX // 10 and d > 7):\n            return MAX if sign == 1 else MIN\n        ans = ans * 10 + d\n        i += 1\n    return sign * ans\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "微软"
+      ]
+    },
+    {
+      "slug": "compare-version-numbers",
+      "title": "比较版本号",
+      "difficulty": "medium",
+      "difficulty_score": 1400,
+      "description_md": "# 比较版本号\n\n给你两个版本号 version1 和 version2，请你比较它们。\n\n版本号由一个或多个修订号组成，各修订号由 '.' 连接。每个修订号可能包含前导零。\n\n比较规则：从左到右依次比较修订号，忽略前导零。如果版本号没有指定某个下标处的修订号，则该修订号视为 0。\n\n返回值：\n- 如果 version1 > version2 返回 1\n- 如果 version1 < version2 返回 -1\n- 相等返回 0\n\n## 示例\n\n**示例 1：**\n输入：version1 = \"1.01\", version2 = \"1.001\"\n输出：0\n\n**示例 2：**\n输入：version1 = \"1.0\", version2 = \"1.0.0\"\n输出：0\n\n**示例 3：**\n输入：version1 = \"0.1\", version2 = \"1.1\"\n输出：-1\n\n## 约束\n\n- 1 <= version1.length, version2.length <= 500\n- 版本号仅包含数字和 '.'\n- '.' 不会作为首字符或尾字符",
+      "input_format": "第一行包含 version1。\n第二行包含 version2。",
+      "output_format": "输出 1（v1 > v2）、-1（v1 < v2）或 0（相等）。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "String",
+        "Two Pointers"
+      ],
+      "source": "LeetCode 165",
+      "sample_cases": [
+        {
+          "input": "1.01\n1.001",
+          "output": "0"
+        },
+        {
+          "input": "1.0\n1.0.0",
+          "output": "0"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "0.1\n1.1",
+          "output": "-1"
+        },
+        {
+          "input": "1.0.1\n1",
+          "output": "1"
+        },
+        {
+          "input": "7.5.2.4\n7.5.3",
+          "output": "-1"
+        },
+        {
+          "input": "1.2\n1.10",
+          "output": "-1"
+        }
+      ],
+      "hints": [
+        "按 '.' 分割两个版本号，得到修订号数组。",
+        "从左到右逐个比较修订号的整数值（转整数可忽略前导零）。",
+        "长度不足的用 0 补充。时间 O(n+m)，空间 O(n+m)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：分割比较\n\n### 思路\n\n按 '.' 分割版本号，然后逐个比较各修订号的整数值。不够长的部分用 0 补充。\n\n```python\ndef compare_version(v1, v2):\n    nums1 = list(map(int, v1.split('.')))\n    nums2 = list(map(int, v2.split('.')))\n    n = max(len(nums1), len(nums2))\n    for i in range(n):\n        a = nums1[i] if i < len(nums1) else 0\n        b = nums2[i] if i < len(nums2) else 0\n        if a > b: return 1\n        if a < b: return -1\n    return 0\n```\n\n### 复杂度\n- 时间: O(n + m)\n- 空间: O(n + m)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "腾讯",
+        "美团",
+        "字节跳动"
+      ]
+    },
+    {
+      "slug": "contains-duplicate",
+      "title": "存在重复元素",
+      "difficulty": "easy",
+      "difficulty_score": 1200,
+      "description_md": "# 存在重复元素\n\n给你一个整数数组 nums。如果任一值在数组中出现至少两次，返回 true；如果数组中每个元素互不相同，返回 false。\n\n## 示例\n\n**示例 1：**\n输入：[1,2,3,1]\n输出：true\n\n**示例 2：**\n输入：[1,2,3,4]\n输出：false\n\n**示例 3：**\n输入：[1,1,1,3,3,4,3,2,4,2]\n输出：true\n\n## 约束\n\n- 1 <= nums.length <= 10^5\n- -10^9 <= nums[i] <= 10^9",
+      "input_format": "第一行包含一个整数 n，表示数组长度。\n第二行包含 n 个整数。",
+      "output_format": "输出 true 或 false。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Hash Table",
+        "Sorting"
+      ],
+      "source": "LeetCode 217",
+      "sample_cases": [
+        {
+          "input": "4\n1 2 3 1",
+          "output": "true"
+        },
+        {
+          "input": "4\n1 2 3 4",
+          "output": "false"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "10\n1 1 1 3 3 4 3 2 4 2",
+          "output": "true"
+        },
+        {
+          "input": "3\n1 2 3",
+          "output": "false"
+        },
+        {
+          "input": "2\n1 1",
+          "output": "true"
+        },
+        {
+          "input": "5\n-1 -2 -3 -4 -5",
+          "output": "false"
+        }
+      ],
+      "hints": [
+        "方法一：排序后检查相邻元素是否相等。时间 O(n log n)，空间 O(1)。",
+        "方法二：使用哈希集合，遍历时将元素加入集合。若加入时发现已存在，说明有重复。",
+        "集合法时间 O(n)，空间 O(n)。当 n 较大时是最优选择。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：哈希集\n\n### 思路\n\n使用集合存储已见过的元素。遍历数组时，如果当前元素已在集合中，返回 true；否则将其加入集合。\n\n```python\ndef contains_duplicate(nums):\n    seen = set()\n    for num in nums:\n        if num in seen:\n            return True\n        seen.add(num)\n    return False\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "intersection-of-two-arrays",
+      "title": "两个数组的交集",
+      "difficulty": "easy",
+      "difficulty_score": 1200,
+      "description_md": "# 两个数组的交集\n\n给定两个数组 nums1 和 nums2，返回它们的交集。输出结果中的每个元素一定是唯一的。可以不考虑输出结果的顺序。\n\n## 示例\n\n**示例 1：**\n输入：nums1 = [1,2,2,1], nums2 = [2,2]\n输出：[2]\n\n**示例 2：**\n输入：nums1 = [4,9,5], nums2 = [9,4,9,8,4]\n输出：[9,4]\n解释：[4,9] 也是可通过的。\n\n## 约束\n\n- 1 <= nums1.length, nums2.length <= 1000\n- 0 <= nums1[i], nums2[i] <= 1000",
+      "input_format": "第一行包含两个整数 n1 n2，表示两个数组的长度。\n第二行包含 n1 个整数。\n第三行包含 n2 个整数。",
+      "output_format": "第一行输出交集的大小 k。\n第二行输出 k 个整数，表示交集中的元素。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Hash Table",
+        "Two Pointers"
+      ],
+      "source": "LeetCode 349",
+      "sample_cases": [
+        {
+          "input": "4 2\n1 2 2 1\n2 2",
+          "output": "1\n2"
+        },
+        {
+          "input": "3 5\n4 9 5\n9 4 9 8 4",
+          "output": "2\n4 9"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "2 2\n1 2\n2 3",
+          "output": "1\n2"
+        },
+        {
+          "input": "3 3\n1 2 3\n4 5 6",
+          "output": "0"
+        },
+        {
+          "input": "1 1\n99\n99",
+          "output": "1\n99"
+        },
+        {
+          "input": "5 5\n1 2 3 4 5\n3 4 5 6 7",
+          "output": "3\n3 4 5"
+        }
+      ],
+      "hints": [
+        "将其中一个数组转为哈希集合。遍历另一个数组，检查元素是否在集合中。",
+        "为去重：用另一个集合存储已添加到结果中的元素。",
+        "也可以排序后使用双指针法。时间 O(n+m)，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：哈希集\n\n### 思路\n\n将 nums1 转为集合 set1。遍历 nums2，若元素在 set1 中且未添加过，加入结果。\n\n```python\ndef intersection(nums1, nums2):\n    set1 = set(nums1)\n    res = set()\n    for num in nums2:\n        if num in set1:\n            res.add(num)\n    return list(res)\n```\n\n### 复杂度\n- 时间: O(n + m)\n- 空间: O(n + m)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "美团",
+        "阿里巴巴"
+      ]
+    },
+    {
+      "slug": "subarray-sum-equals-k",
+      "title": "和为K的子数组",
+      "difficulty": "hard",
+      "difficulty_score": 2100,
+      "description_md": "# 和为 K 的子数组\n\n给你一个整数数组 nums 和一个整数 k，请你统计并返回该数组中和为 k 的连续子数组的个数。\n\n## 示例\n\n**示例 1：**\n输入：nums = [1,1,1], k = 2\n输出：2\n\n**示例 2：**\n输入：nums = [1,2,3], k = 3\n输出：2\n\n## 约束\n\n- 1 <= nums.length <= 2 * 10^4\n- -1000 <= nums[i] <= 1000\n- -10^7 <= k <= 10^7",
+      "input_format": "第一行包含两个整数 n 和 k。\n第二行包含 n 个整数，表示数组元素。",
+      "output_format": "输出一个整数，表示和为 k 的子数组个数。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Hash Table",
+        "Prefix Sum"
+      ],
+      "source": "LeetCode 560",
+      "sample_cases": [
+        {
+          "input": "3 2\n1 1 1",
+          "output": "2"
+        },
+        {
+          "input": "3 3\n1 2 3",
+          "output": "2"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "4 0\n1 -1 0 1",
+          "output": "4"
+        },
+        {
+          "input": "5 5\n1 2 3 4 5",
+          "output": "2"
+        },
+        {
+          "input": "2 0\n0 0",
+          "output": "3"
+        },
+        {
+          "input": "6 7\n3 4 7 2 -3 1",
+          "output": "4"
+        }
+      ],
+      "hints": [
+        "暴力法：枚举所有子数组计算和，O(n^2) 对于 2*10^4 的数据量会超时。",
+        "前缀和：prefix[i] = sum(nums[0..i])。子数组 [i,j] 的和 = prefix[j] - prefix[i-1]。",
+        "使用哈希表记录前缀和的出现次数。遍历时检查 prefix[j] - k 是否在哈希表中，在则累加计数。时间 O(n)，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：前缀和 + 哈希表\n\n### 思路\n\n维护前缀和 pre_sum。子数组 [i, j] 的和为 pre_sum[j] - pre_sum[i-1]。要找和为 k，即 pre_sum[i-1] = pre_sum[j] - k。用哈希表 count 记录前缀和出现次数。\n\n```python\ndef subarray_sum(nums, k):\n    count = {0: 1}\n    pre_sum = ans = 0\n    for num in nums:\n        pre_sum += num\n        ans += count.get(pre_sum - k, 0)\n        count[pre_sum] = count.get(pre_sum, 0) + 1\n    return ans\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "longest-consecutive-sequence",
+      "title": "最长连续序列",
+      "difficulty": "medium",
+      "difficulty_score": 1600,
+      "description_md": "# 最长连续序列\n\n给定一个未排序的整数数组 nums，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。\n\n请你设计并实现时间复杂度为 O(n) 的算法解决此问题。\n\n## 示例\n\n**示例 1：**\n输入：nums = [100,4,200,1,3,2]\n输出：4\n解释：最长数字连续序列是 [1, 2, 3, 4]。它的长度为 4。\n\n**示例 2：**\n输入：nums = [0,3,7,2,5,8,4,6,0,1]\n输出：9\n\n## 约束\n\n- 0 <= nums.length <= 10^5\n- -10^9 <= nums[i] <= 10^9",
+      "input_format": "第一行包含一个整数 n，表示数组长度。\n第二行包含 n 个整数。",
+      "output_format": "输出一个整数，表示最长连续序列的长度。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Hash Table",
+        "Union Find"
+      ],
+      "source": "LeetCode 128",
+      "sample_cases": [
+        {
+          "input": "6\n100 4 200 1 3 2",
+          "output": "4"
+        },
+        {
+          "input": "9\n0 3 7 2 5 8 4 6 0 1",
+          "output": "9"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "0\n",
+          "output": "0"
+        },
+        {
+          "input": "3\n1 2 3",
+          "output": "3"
+        },
+        {
+          "input": "5\n5 4 3 2 1",
+          "output": "5"
+        },
+        {
+          "input": "4\n1 3 5 7",
+          "output": "1"
+        }
+      ],
+      "hints": [
+        "排序后扫描连续递增的子序列，时间 O(n log n)。但题目要求 O(n)。",
+        "将所有数字放入哈希集合。对于每个数，检查是否存在比它小 1 的数。如果不存在（即它是序列起点），则向后扩展计数。",
+        "每个数字只会被访问常数次，所以总时间 O(n)，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：哈希集 + 序列起点检测\n\n### 思路\n\n将所有数放入 set。遍历集合，对于每个数 num，如果 num-1 不在 set 中（说明 num 是某个连续序列的起点），则从 num 开始向后扩展计数 num+1, num+2, ... 直到不在 set 中。更新最大长度。\n\n```python\ndef longest_consecutive(nums):\n    s = set(nums)\n    ans = 0\n    for num in s:\n        if num - 1 not in s:\n            cur = num\n            streak = 1\n            while cur + 1 in s:\n                cur += 1\n                streak += 1\n            ans = max(ans, streak)\n    return ans\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "谷歌",
+        "阿里巴巴"
+      ]
+    },
+    {
+      "slug": "four-sum-ii",
+      "title": "四数相加II",
+      "difficulty": "medium",
+      "difficulty_score": 1500,
+      "description_md": "# 四数相加 II\n\n给你四个整数数组 nums1、nums2、nums3 和 nums4，数组长度都是 n，请你计算有多少个元组 (i, j, k, l) 能满足：\n\n- 0 <= i, j, k, l < n\n- nums1[i] + nums2[j] + nums3[k] + nums4[l] == 0\n\n## 示例\n\n**示例 1：**\n输入：nums1 = [1,2], nums2 = [-2,-1], nums3 = [-1,2], nums4 = [0,2]\n输出：2\n解释：两个元组 (0,0,0,1) -> 1+(-2)+(-1)+2=0 和 (1,1,0,0) -> 2+(-1)+(-1)+0=0。\n\n**示例 2：**\n输入：nums1 = [0], nums2 = [0], nums3 = [0], nums4 = [0]\n输出：1\n\n## 约束\n\n- n == nums1.length == nums2.length == nums3.length == nums4.length\n- 1 <= n <= 200\n- -2^28 <= nums1[i], nums2[i], nums3[i], nums4[i] <= 2^28",
+      "input_format": "输入包含五行。\n第一行是一个整数 n，表示每个数组的长度。\n接下来四行分别包含 nums1, nums2, nums3, nums4 的 n 个整数。",
+      "output_format": "输出一个整数，表示四数之和为 0 的元组个数。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Hash Table"
+      ],
+      "source": "LeetCode 454",
+      "sample_cases": [
+        {
+          "input": "2\n1 2\n-2 -1\n-1 2\n0 2",
+          "output": "2"
+        },
+        {
+          "input": "1\n0\n0\n0\n0",
+          "output": "1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "3\n1 2 3\n-1 -2 -3\n1 2 3\n-1 -2 -3",
+          "output": "7"
+        },
+        {
+          "input": "2\n1 1\n1 1\n-1 -1\n-1 -1",
+          "output": "16"
+        },
+        {
+          "input": "1\n1\n2\n-3\n0",
+          "output": "1"
+        },
+        {
+          "input": "2\n0 0\n0 0\n0 0\n0 0",
+          "output": "16"
+        }
+      ],
+      "hints": [
+        "暴力法四重循环 O(n^4) 超时，n=200 时 n^4 = 1.6 * 10^9。",
+        "分组：a+b+c+d=0 等价于 a+b = -(c+d)。先计算 nums1 和 nums2 所有两数之和并存入哈希表。",
+        "哈希表存储 a+b 的出现次数。然后遍历 nums3 和 nums4 的所有组合，查 -(c+d) 在哈希表中的次数并累加。时间 O(n^2)，空间 O(n^2)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：分组 + 哈希表\n\n### 思路\n\n将四个数组分成两组。先计算 nums1 和 nums2 的所有两数之和，用哈希表存储每种和的出现次数。然后遍历 nums3 和 nums4 的所有组合，在哈希表中查找 -(c+d) 的计数并累加。\n\n```python\nfrom collections import Counter\ndef four_sum_count(nums1, nums2, nums3, nums4):\n    cnt = Counter(a + b for a in nums1 for b in nums2)\n    ans = 0\n    for c in nums3:\n        for d in nums4:\n            ans += cnt.get(-(c + d), 0)\n    return ans\n```\n\n### 复杂度\n- 时间: O(n^2)\n- 空间: O(n^2)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "美团",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "insert-delete-getrandom-o1",
+      "title": "O(1)时间插入删除随机获取",
+      "difficulty": "medium",
+      "difficulty_score": 1600,
+      "description_md": "# O(1) 时间插入、删除和获取随机元素\n\n实现 RandomizedSet 类：\n- RandomizedSet() 初始化对象\n- bool insert(int val) 当元素 val 不存在时，插入并返回 true；否则返回 false\n- bool remove(int val) 当元素 val 存在时，移除并返回 true；否则返回 false\n- int getRandom() 随机返回现有集合中的一项。每个元素应有相同的概率被返回\n\n你必须实现类的所有函数，并满足每个函数的平均时间复杂度为 O(1)。\n\n## 示例\n\n输入：\n[\"RandomizedSet\",\"insert\",\"remove\",\"insert\",\"getRandom\",\"remove\",\"insert\",\"getRandom\"]\n[[],[1],[2],[2],[],[1],[2],[]]\n输出：[null,true,false,true,2,true,false,2]\n\n## 约束\n\n- -2^31 <= val <= 2^31 - 1\n- 最多调用 2 * 10^5 次 insert、remove 和 getRandom\n- 调用 getRandom 时数据结构中至少存在一个元素",
+      "input_format": "第一行包含一个整数 q，表示操作次数。\n接下来 q 行，每行描述一个操作：\n- 0 val: 插入 val\n- 1 val: 删除 val\n- 2: 获取随机元素\n对于插入/删除操作，输出 true/false。对于获取随机操作，输出随机值。",
+      "output_format": "每行输出对应操作的结果。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Hash Table",
+        "Array",
+        "Design"
+      ],
+      "source": "LeetCode 380",
+      "sample_cases": [
+        {
+          "input": "8\n0 1\n1 2\n0 2\n2\n1 1\n0 2\n2",
+          "output": "true\nfalse\ntrue\n1\nfalse\ntrue\n2"
+        },
+        {
+          "input": "3\n0 1\n0 1\n2",
+          "output": "true\nfalse\n1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "4\n0 5\n0 10\n2\n1 5",
+          "output": "true\ntrue\n5\ntrue"
+        },
+        {
+          "input": "2\n0 1\n2",
+          "output": "true\n1"
+        },
+        {
+          "input": "5\n0 1\n0 2\n0 3\n1 2\n2",
+          "output": "true\ntrue\ntrue\ntrue\n1"
+        },
+        {
+          "input": "3\n0 100\n1 200\n2",
+          "output": "true\nfalse\n100"
+        }
+      ],
+      "hints": [
+        "getRandom 需要 O(1) 随机访问 --> 需要数组存储元素。insert 和 remove 需要 O(1) 查找 --> 需要哈希表。",
+        "使用可变数组 + 哈希表（值到索引的映射）。insert 时追加到数组末尾。",
+        "remove 时，将待删除元素与数组最后一个元素交换位置，然后 pop 末尾。更新哈希表中交换元素的索引。这样 remove 也是 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：哈希表 + 动态数组\n\n### 思路\n\n使用列表存储元素（支持 O(1) 随机访问），用哈希表 val_to_idx 记录每个值在列表中的索引。insert 时追加到末尾；remove 时将目标元素与末尾元素交换位置再 pop。\n\n```python\nimport random\nclass RandomizedSet:\n    def __init__(self):\n        self.vals = []\n        self.idx = {}\n    def insert(self, val):\n        if val in self.idx:\n            return False\n        self.idx[val] = len(self.vals)\n        self.vals.append(val)\n        return True\n    def remove(self, val):\n        if val not in self.idx:\n            return False\n        last = self.vals[-1]\n        i = self.idx[val]\n        self.vals[i] = last\n        self.idx[last] = i\n        self.vals.pop()\n        del self.idx[val]\n        return True\n    def getRandom(self):\n        return random.choice(self.vals)\n```\n\n### 复杂度\n- 所有操作: O(1) 平均\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "谷歌",
+        "亚马逊"
+      ]
+    },
+    {
+      "slug": "design-hashmap",
+      "title": "设计哈希映射",
+      "difficulty": "easy",
+      "difficulty_score": 1300,
+      "description_md": "# 设计哈希映射\n\n不使用任何内建的哈希表库设计一个哈希映射（HashMap）。\n\n实现 MyHashMap 类：\n- MyHashMap() 用空映射初始化对象\n- void put(int key, int value) 向映射插入一个键值对 (key, value)。如果 key 已存在，更新 value。\n- int get(int key) 返回 key 所映射的 value；如果不存在，返回 -1。\n- void remove(int key) 如果存在，移除 key 及其 value。\n\n## 约束\n\n- 0 <= key, value <= 10^6\n- 最多调用 10^4 次 put、get 和 remove",
+      "input_format": "第一行包含一个整数 q，表示操作次数。\n接下来 q 行，每行描述一个操作：\n- 0 key value: put\n- 1 key: get\n- 2 key: remove",
+      "output_format": "对于 get 操作，输出对应的 value（不存在则输出 -1）。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Hash Table",
+        "Array",
+        "Design"
+      ],
+      "source": "LeetCode 706",
+      "sample_cases": [
+        {
+          "input": "8\n0 1 1\n0 2 2\n1 1\n1 3\n0 2 1\n1 2\n2 2\n1 2",
+          "output": "1\n-1\n1\n-1"
+        },
+        {
+          "input": "3\n0 1 10\n1 1\n2 1",
+          "output": "10"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "4\n0 5 100\n0 5 200\n1 5\n2 5",
+          "output": "200"
+        },
+        {
+          "input": "5\n0 1 1\n0 2 2\n0 3 3\n1 4\n2 2",
+          "output": "-1"
+        },
+        {
+          "input": "3\n0 1000000 999\n1 1000000\n1 0",
+          "output": "999\n-1"
+        },
+        {
+          "input": "2\n1 10\n0 10 20",
+          "output": "-1"
+        }
+      ],
+      "hints": [
+        "使用一个大数组模拟哈希表，索引即为 key。但这在 key 范围大时会浪费空间。",
+        "更通用的方法：使用链表法（链地址法）。创建一个固定大小的桶数组，每个桶是一个链表。",
+        "哈希函数将 key 映射到桶索引(key % SIZE)。在每个桶的链表上执行查找、插入、删除。负载因子适当时 O(1) 平均时间。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：链地址法\n\n### 思路\n\n使用固定大小的桶数组（如 769 个桶），每个桶是一个链表（Python 列表）。通过 key % SIZE 确定桶，在桶的链表上操作。\n\n```python\nclass Node:\n    def __init__(self, k, v):\n        self.k = k\n        self.v = v\n        self.next = None\n\nclass MyHashMap:\n    def __init__(self):\n        self.size = 769\n        self.buckets = [None] * self.size\n\n    def _hash(self, key):\n        return key % self.size\n\n    def put(self, key, value):\n        h = self._hash(key)\n        if not self.buckets[h]:\n            self.buckets[h] = Node(key, value)\n            return\n        cur = self.buckets[h]\n        while cur:\n            if cur.k == key:\n                cur.v = value\n                return\n            if not cur.next:\n                cur.next = Node(key, value)\n                return\n            cur = cur.next\n\n    def get(self, key):\n        h = self._hash(key)\n        cur = self.buckets[h]\n        while cur:\n            if cur.k == key:\n                return cur.v\n            cur = cur.next\n        return -1\n\n    def remove(self, key):\n        h = self._hash(key)\n        cur = self.buckets[h]\n        if not cur:\n            return\n        if cur.k == key:\n            self.buckets[h] = cur.next\n            return\n        while cur.next:\n            if cur.next.k == key:\n                cur.next = cur.next.next\n                return\n            cur = cur.next\n```\n\n### 复杂度\n- 所有操作: O(1) 平均\n- 空间: O(n + SIZE)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "亚马逊"
+      ]
+    },
+    {
+      "slug": "maximum-depth-of-binary-tree",
+      "title": "二叉树的最大深度",
+      "difficulty": "easy",
+      "difficulty_score": 1200,
+      "description_md": "# 二叉树的最大深度\n\n给定一个二叉树，找出其最大深度。\n\n二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。\n\n**说明:** 叶子节点是指没有子节点的节点。\n\n## 示例\n\n给定二叉树 [3,9,20,null,null,15,7]：\n```\n    3\n   / \\\n  9  20\n    /  \\\n   15   7\n```\n返回最大深度 3。\n\n## 约束\n\n- 节点数在 [0, 10^4] 范围内\n- -100 <= Node.val <= 100",
+      "input_format": "第一行包含一个整数 n，表示节点数量（0 表示空树）。\n接下来 n 行，每行三个整数 val left right，val 为-1 表示空节点，left 和 right 分别为左子节点和右子节点的索引（-1 表示无）。",
+      "output_format": "输出一个整数，表示二叉树的最大深度。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Tree",
+        "DFS",
+        "BFS"
+      ],
+      "source": "LeetCode 104",
+      "sample_cases": [
+        {
+          "input": "5\n3 1 2\n9 -1 -1\n20 3 4\n15 -1 -1\n7 -1 -1",
+          "output": "3"
+        },
+        {
+          "input": "1\n1 -1 -1",
+          "output": "1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "0",
+          "output": "0"
+        },
+        {
+          "input": "3\n1 1 2\n2 -1 -1\n3 -1 -1",
+          "output": "3"
+        },
+        {
+          "input": "7\n1 1 2\n2 3 4\n3 5 6\n4 -1 -1\n5 -1 -1\n6 -1 -1\n7 -1 -1",
+          "output": "4"
+        },
+        {
+          "input": "2\n5 1 -1\n10 -1 -1",
+          "output": "2"
+        }
+      ],
+      "hints": [
+        "深度优先搜索（DFS）：递归计算左右子树的最大深度，返回 max(left, right) + 1。",
+        "广度优先搜索（BFS）：层序遍历，每遍历一层深度加 1。",
+        "DFS 更简洁但可能栈溢出，BFS 使用队列更可控。时间 O(n)，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：递归 DFS\n\n### 思路\n\n递归地计算左右子树的最大深度。当前节点的深度 = max(左子树深度, 右子树深度) + 1。空节点深度为 0。\n\n```python\ndef max_depth(root):\n    if not root:\n        return 0\n    return max(max_depth(root.left), max_depth(root.right)) + 1\n```\n\n### 复杂度\n- 时间: O(n)，访问每个节点一次\n- 空间: O(h)，h 为树的高度，递归栈空间",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "阿里巴巴"
+      ]
+    },
+    {
+      "slug": "invert-binary-tree",
+      "title": "翻转二叉树",
+      "difficulty": "easy",
+      "difficulty_score": 1200,
+      "description_md": "# 翻转二叉树\n\n给你一棵二叉树的根节点 root，翻转这棵二叉树，并返回其根节点。\n\n翻转的含义是将每个节点的左右子节点交换。\n\n## 示例\n\n输入：[4,2,7,1,3,6,9]\n输出：[4,7,2,9,6,3,1]\n\n```\n    4                      4\n   / \\                    / \\\n  2   7      =>          7   2\n / \\ / \\                / \\ / \\\n1  3 6  9              9  6 3  1\n```\n\n## 约束\n\n- 节点数在 [0, 100] 范围内\n- -100 <= Node.val <= 100",
+      "input_format": "第一行包含一个整数 n，表示节点数量（0 表示空树）。\n接下来 n 行，每行三个整数 val left right（同前格式）。",
+      "output_format": "输出翻转后的二叉树（按前序遍历输出节点值，用空格分隔）。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Tree",
+        "DFS",
+        "BFS"
+      ],
+      "source": "LeetCode 226",
+      "sample_cases": [
+        {
+          "input": "7\n4 1 2\n2 3 4\n7 5 6\n1 -1 -1\n3 -1 -1\n6 -1 -1\n9 -1 -1",
+          "output": "4 7 2 9 6 3 1"
+        },
+        {
+          "input": "1\n1 -1 -1",
+          "output": "1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "0",
+          "output": ""
+        },
+        {
+          "input": "3\n1 1 2\n2 -1 -1\n3 -1 -1",
+          "output": "1 3 2"
+        },
+        {
+          "input": "2\n1 -1 1\n2 -1 -1",
+          "output": "1 2"
+        },
+        {
+          "input": "5\n1 1 2\n2 3 4\n3 -1 -1\n4 -1 -1\n5 -1 -1",
+          "output": "1 2 5 4 3"
+        }
+      ],
+      "hints": [
+        "递归法：对每个节点，交换左右子节点，然后递归翻转左右子树。",
+        "迭代法：使用栈或队列，遍历每个节点并交换其左右子节点。",
+        "两种方法时间 O(n)，空间 O(n)。递归版本更简洁。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：递归交换\n\n### 思路\n\n递归遍历二叉树，对每个节点交换其左右子节点，然后递归处理左右子树。\n\n```python\ndef invert_tree(root):\n    if not root:\n        return None\n    root.left, root.right = root.right, root.left\n    invert_tree(root.left)\n    invert_tree(root.right)\n    return root\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(h)，递归栈深度",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "谷歌",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "validate-binary-search-tree",
+      "title": "验证二叉搜索树",
+      "difficulty": "medium",
+      "difficulty_score": 1500,
+      "description_md": "# 验证二叉搜索树\n\n给你一个二叉树的根节点 root，判断其是否是一个有效的二叉搜索树。\n\n有效二叉搜索树定义如下：\n- 节点的左子树只包含小于当前节点的数。\n- 节点的右子树只包含大于当前节点的数。\n- 所有左子树和右子树自身必须也是二叉搜索树。\n\n## 示例\n\n**示例 1：**\n输入：[2,1,3]\n输出：true\n\n**示例 2：**\n输入：[5,1,4,null,null,3,6]\n输出：false\n解释：根节点值是 5，但右子节点值为 4。\n\n## 约束\n\n- 节点数在 [1, 10^4] 范围内\n- -2^31 <= Node.val <= 2^31 - 1",
+      "input_format": "第一行包含一个整数 n，表示节点数量。\n接下来 n 行，每行三个整数 val left right（同前格式）。",
+      "output_format": "输出 true 或 false。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Tree",
+        "DFS",
+        "BST"
+      ],
+      "source": "LeetCode 98",
+      "sample_cases": [
+        {
+          "input": "3\n2 1 2\n1 -1 -1\n3 -1 -1",
+          "output": "true"
+        },
+        {
+          "input": "4\n5 1 2\n1 -1 -1\n4 3 -1\n3 -1 -1",
+          "output": "false"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1\n1 -1 -1",
+          "output": "true"
+        },
+        {
+          "input": "3\n1 -1 1\n1 -1 2\n1 -1 -1",
+          "output": "false"
+        },
+        {
+          "input": "3\n2 1 2\n2 -1 -1\n3 -1 -1",
+          "output": "false"
+        },
+        {
+          "input": "5\n10 1 2\n5 3 4\n15 -1 -1\n3 -1 -1\n7 -1 -1",
+          "output": "false"
+        }
+      ],
+      "hints": [
+        "二叉搜索树的中序遍历是严格递增的序列。对树进行中序遍历，检查是否严格递增。",
+        "递归法：为每个节点设置上下界。左子节点的值必须在 (lower, root.val) 内，右子节点的值必须在 (root.val, upper) 内。",
+        "初始下界为 -inf，上界为 +inf。递归验证每个节点是否在其有效范围内。时间 O(n)，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：递归带上下界\n\n### 思路\n\n对每个节点传入有效范围 (lower, upper)。检查 node.val 是否在范围内，然后递归检查左右子树（更新范围）。\n\n```python\ndef is_valid_bst(root):\n    def dfs(node, lo, hi):\n        if not node:\n            return True\n        if node.val <= lo or node.val >= hi:\n            return False\n        return dfs(node.left, lo, node.val) and dfs(node.right, node.val, hi)\n    return dfs(root, float('-inf'), float('inf'))\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(h)，递归栈深度",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "美团"
+      ]
+    },
+    {
+      "slug": "lowest-common-ancestor-of-bst",
+      "title": "二叉搜索树的最近公共祖先",
+      "difficulty": "medium",
+      "difficulty_score": 1500,
+      "description_md": "# 二叉搜索树的最近公共祖先\n\n给定一个二叉搜索树（BST），找到该树中两个指定节点的最近公共祖先（LCA）。\n\n最近公共祖先的定义为：对于有根树 T 的两个节点 p、q，最近公共祖先表示为一个节点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大。\n\n## 示例\n\n**示例 1：**\n输入：root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8\n输出：6\n\n**示例 2：**\n输入：root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 4\n输出：2\n\n## 约束\n\n- 节点数在 [2, 10^5] 范围内\n- -10^9 <= Node.val <= 10^9\n- 所有 Node.val 互不相同\n- p != q\n- p 和 q 均存在于给定的 BST 中",
+      "input_format": "第一行包含一个整数 n 和两个整数 p_val q_val。\n接下来 n 行，每行三个整数 val left right（同前格式）。",
+      "output_format": "输出一个整数，表示最近公共祖先的节点值。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Tree",
+        "DFS",
+        "BST"
+      ],
+      "source": "LeetCode 235",
+      "sample_cases": [
+        {
+          "input": "9 2 8\n6 1 2\n2 3 4\n8 5 6\n0 -1 -1\n4 7 8\n7 -1 -1\n9 -1 -1\n3 -1 -1\n5 -1 -1",
+          "output": "6"
+        },
+        {
+          "input": "9 2 4\n6 1 2\n2 3 4\n8 5 6\n0 -1 -1\n4 7 8\n7 -1 -1\n9 -1 -1\n3 -1 -1\n5 -1 -1",
+          "output": "2"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "3 1 3\n2 1 2\n1 -1 -1\n3 -1 -1",
+          "output": "2"
+        },
+        {
+          "input": "3 2 3\n1 1 2\n2 -1 -1\n3 -1 -1",
+          "output": "1"
+        },
+        {
+          "input": "5 1 5\n3 1 2\n1 3 -1\n5 -1 4\n0 -1 -1\n4 -1 -1",
+          "output": "3"
+        },
+        {
+          "input": "4 0 5\n4 1 2\n1 3 -1\n6 -1 4\n0 -1 -1\n5 -1 -1\n",
+          "output": "4"
+        }
+      ],
+      "hints": [
+        "BST 的性质：左子树所有节点值 < 根节点值 < 右子树所有节点值。",
+        "对于 BST，如果 p 和 q 分别位于当前节点的两侧（一个 <= 当前值，另一个 >= 当前值），则当前节点就是 LCA。",
+        "如果 p 和 q 都在左子树（都小于当前值），递归到左子树；如果都在右子树，递归到右子树。时间 O(h)，空间 O(h)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：BST 性质\n\n### 思路\n\n利用 BST 的性质：从根节点开始遍历。如果 p 和 q 的值都小于当前节点，说明都在左子树，往左走。如果都大于当前节点，说明都在右子树，往右走。否则当前节点就是分叉点，即 LCA。\n\n```python\ndef lowest_common_ancestor_bst(root, p, q):\n    cur = root\n    while cur:\n        if p.val < cur.val and q.val < cur.val:\n            cur = cur.left\n        elif p.val > cur.val and q.val > cur.val:\n            cur = cur.right\n        else:\n            return cur\n```\n\n### 复杂度\n- 时间: O(h)，h 为树高\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "华为"
+      ]
+    },
+    {
+      "slug": "binary-tree-level-order-traversal",
+      "title": "二叉树的层序遍历",
+      "difficulty": "medium",
+      "difficulty_score": 1500,
+      "description_md": "# 二叉树的层序遍历\n\n给你二叉树的根节点 root，返回其节点值的层序遍历。（即逐层地，从左到右访问所有节点）。\n\n## 示例\n\n**示例 1：**\n输入：[3,9,20,null,null,15,7]\n输出：[[3],[9,20],[15,7]]\n\n**示例 2：**\n输入：[1]\n输出：[[1]]\n\n**示例 3：**\n输入：[]\n输出：[]\n\n## 约束\n\n- 节点数在 [0, 2000] 范围内\n- -1000 <= Node.val <= 1000",
+      "input_format": "第一行包含一个整数 n，表示节点数量。\n接下来 n 行，每行三个整数 val left right（同前格式）。",
+      "output_format": "输出层序遍历结果，每层一行，层内节点值用空格分隔。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Tree",
+        "BFS",
+        "Binary Tree"
+      ],
+      "source": "LeetCode 102",
+      "sample_cases": [
+        {
+          "input": "5\n3 1 2\n9 -1 -1\n20 3 4\n15 -1 -1\n7 -1 -1",
+          "output": "3\n9 20\n15 7"
+        },
+        {
+          "input": "1\n1 -1 -1",
+          "output": "1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "0",
+          "output": ""
+        },
+        {
+          "input": "3\n1 1 2\n2 -1 -1\n3 -1 -1",
+          "output": "1\n2 3"
+        },
+        {
+          "input": "7\n1 1 2\n2 3 4\n3 5 6\n4 -1 -1\n5 -1 -1\n6 -1 -1\n7 -1 -1",
+          "output": "1\n2 3\n4 5 6 7"
+        },
+        {
+          "input": "2\n1 -1 1\n2 -1 -1",
+          "output": "1\n2"
+        }
+      ],
+      "hints": [
+        "使用队列进行广度优先搜索（BFS）。",
+        "将根节点入队。每次处理队列中的所有节点（即当前层的所有节点），记录值后将子节点入队。",
+        "处理完一层后将当前层的结果加入总结果。时间 O(n)，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：BFS 队列\n\n### 思路\n\n使用队列进行层序遍历。每次记录当前队列长度（即当前层节点数），处理完当前层后再进入下一层。\n\n```python\nfrom collections import deque\ndef level_order(root):\n    if not root:\n        return []\n    res = []\n    q = deque([root])\n    while q:\n        level = []\n        for _ in range(len(q)):\n            node = q.popleft()\n            level.append(node.val)\n            if node.left: q.append(node.left)\n            if node.right: q.append(node.right)\n        res.append(level)\n    return res\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "阿里巴巴"
+      ]
+    },
+    {
+      "slug": "serialize-and-deserialize-binary-tree",
+      "title": "二叉树的序列化与反序列化",
+      "difficulty": "hard",
+      "difficulty_score": 2400,
+      "description_md": "# 二叉树的序列化与反序列化\n\n序列化是将一个数据结构或者对象转换为连续的比特位的操作，进而可以将转换后的数据存储在一个文件或者内存中，同时也可以通过网络传输到另一个计算机环境。\n\n设计一个算法来序列化和反序列化二叉树。没有限制序列化/反序列化算法的执行方式，只需保证二叉树可以被序列化为一个字符串，并且将这个字符串反序列化为原始的树结构。\n\n## 示例\n\n**示例 1：**\n输入：root = [1,2,3,null,null,4,5]\n输出：[1,2,3,null,null,4,5]\n\n## 约束\n\n- 节点数在 [0, 10^4] 范围内\n- -1000 <= Node.val <= 1000",
+      "input_format": "第一行包含一个整数 n，表示节点数量。\n接下来 n 行，每行三个整数 val left right（同前格式）。\n输出序列化后的字符串（一行），然后输入该字符串，输出反序列化后树的节点数。",
+      "output_format": "第一行输出序列化后的字符串。\n第二行输出一个整数，表示反序列化验证后的节点数量（应与输入一致）。",
+      "time_limit_ms": 2000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Tree",
+        "DFS",
+        "BFS",
+        "Design"
+      ],
+      "source": "LeetCode 297",
+      "sample_cases": [
+        {
+          "input": "5\n1 1 2\n2 -1 -1\n3 3 4\n4 -1 -1\n5 -1 -1",
+          "output": "1,2,#,#,3,4,#,#,5,#,#"
+        },
+        {
+          "input": "0",
+          "output": ""
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1\n1 -1 -1",
+          "output": "1,#,#"
+        },
+        {
+          "input": "3\n1 1 2\n2 -1 -1\n3 -1 -1",
+          "output": "1,2,#,#,3,#,#"
+        },
+        {
+          "input": "2\n1 -1 1\n2 -1 -1",
+          "output": "1,#,2,#,#"
+        },
+        {
+          "input": "7\n1 1 2\n2 3 4\n3 -1 -1\n4 -1 -1\n5 5 6\n6 -1 -1\n7 -1 -1",
+          "output": "1,2,3,#,#,4,#,#,5,6,#,#,7,#,#"
+        }
+      ],
+      "hints": [
+        "序列化本质是遍历树并记录节点值。可以用先序遍历，遇到空节点用特殊标记（如 #）。",
+        "反序列化时，按照相同的遍历顺序解析字符串，遇到 # 返回空节点，否则创建节点并递归构建子树。",
+        "推荐使用先序遍历：根->左->右，配合标记 # 处理空节点。时间 O(n)，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：先序遍历 + 标记\n\n### 思路\n\n序列化：对树进行先序遍历，节点值之间用逗号分隔，空节点用 # 表示。\n反序列化：按逗号分割得到列表，用迭代器按先序顺序重建树。遇到 # 返回 None，否则创建节点并递归构建左右子树。\n\n```python\nclass Codec:\n    def serialize(self, root):\n        def dfs(node):\n            if not node:\n                return '#,'\n            return str(node.val) + ',' + dfs(node.left) + dfs(node.right)\n        return dfs(root).rstrip(',')\n\n    def deserialize(self, data):\n        if not data:\n            return None\n        vals = iter(data.split(','))\n        def dfs():\n            val = next(vals)\n            if val == '#':\n                return None\n            node = TreeNode(int(val))\n            node.left = dfs()\n            node.right = dfs()\n            return node\n        return dfs()\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "path-sum-iii",
+      "title": "路径总和III",
+      "difficulty": "medium",
+      "difficulty_score": 1600,
+      "description_md": "# 路径总和 III\n\n给定一个二叉树的根节点 root，和一个整数 targetSum，求该二叉树里节点值之和等于 targetSum 的路径的数目。\n\n路径不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）。\n\n## 示例\n\n**示例 1：**\n输入：root = [10,5,-3,3,2,null,11,3,-2,null,1], targetSum = 8\n输出：3\n解释：和等于 8 的路径有：5,3 / 5,2,1 / -3,11。\n\n**示例 2：**\n输入：root = [5,4,8,11,null,13,4,7,2,null,null,5,1], targetSum = 22\n输出：3\n\n## 约束\n\n- 节点数在 [0, 1000] 范围内\n- -10^9 <= Node.val <= 10^9\n- -1000 <= targetSum <= 1000",
+      "input_format": "第一行包含一个整数 n 和 targetSum。\n接下来 n 行，每行三个整数 val left right（同前格式）。",
+      "output_format": "输出一个整数，表示路径总和的数目。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Tree",
+        "DFS",
+        "Prefix Sum"
+      ],
+      "source": "LeetCode 437",
+      "sample_cases": [
+        {
+          "input": "9 8\n10 1 2\n5 3 4\n-3 -1 5\n3 6 7\n2 -1 8\n11 -1 -1\n3 -1 -1\n-2 -1 -1\n1 -1 -1",
+          "output": "3"
+        },
+        {
+          "input": "0 1",
+          "output": "0"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1 5\n5 -1 -1",
+          "output": "1"
+        },
+        {
+          "input": "3 3\n1 1 2\n2 -1 -1\n3 -1 -1",
+          "output": "2"
+        },
+        {
+          "input": "2 0\n1 -1 1\n0 -1 -1",
+          "output": "2"
+        },
+        {
+          "input": "5 6\n1 1 2\n2 3 4\n3 -1 -1\n4 -1 -1\n5 -1 -1",
+          "output": "2"
+        }
+      ],
+      "hints": [
+        "暴力法：以每个节点为起点，DFS 向下找和为 targetSum 的路径。时间 O(n^2)。",
+        "使用前缀和优化：记录从根到当前节点的路径和 prefix。若 prefix - targetSum 在之前出现过，说明存在一条以当前位置为终点的满足条件的路径。",
+        "类似和为 K 的子数组：用哈希表记录各前缀和的出现次数。DFS 回溯时需要恢复哈希表（减去当前前缀和的计数）。时间 O(n)，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：前缀和 + 回溯\n\n### 思路\n\n用哈希表记录从根到当前路径上所有前缀和的出现次数。对于当前节点，若 cur_sum - targetSum 在哈希表中，说明存在路径和为 targetSum。回溯时恢复计数。\n\n```python\ndef path_sum(root, target):\n    prefix = {0: 1}\n    ans = 0\n    def dfs(node, cur):\n        nonlocal ans\n        if not node:\n            return\n        cur += node.val\n        ans += prefix.get(cur - target, 0)\n        prefix[cur] = prefix.get(cur, 0) + 1\n        dfs(node.left, cur)\n        dfs(node.right, cur)\n        prefix[cur] -= 1\n    dfs(root, 0)\n    return ans\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(h)，h 为树高",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "美团"
+      ]
+    },
+    {
+      "slug": "construct-binary-tree-from-preorder-and-inorder",
+      "title": "从前序遍历和中序遍历构造二叉树",
+      "difficulty": "hard",
+      "difficulty_score": 2200,
+      "description_md": "# 从前序遍历与中序遍历构造二叉树\n\n给定两个整数数组 preorder 和 inorder，其中 preorder 是二叉树的先序遍历，inorder 是同一棵树的中序遍历，请构造二叉树并返回其根节点。\n\n## 示例\n\n**示例 1：**\n输入: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]\n输出: [3,9,20,null,null,15,7]\n\n**示例 2：**\n输入: preorder = [-1], inorder = [-1]\n输出: [-1]\n\n## 约束\n\n- 1 <= preorder.length <= 3000\n- inorder.length == preorder.length\n- -3000 <= preorder[i], inorder[i] <= 3000\n- preorder 和 inorder 均无重复元素\n- inorder 均出现在 preorder\n- preorder 保证为二叉树的先序遍历\n- inorder 保证为二叉树的中序遍历",
+      "input_format": "第一行包含一个整数 n，表示节点数量。\n第二行包含 n 个整数，表示先序遍历。\n第三行包含 n 个整数，表示中序遍历。",
+      "output_format": "按照构建的树的结构，输出 n 行，每行三个整数 val left right（索引格式）。",
+      "time_limit_ms": 2000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Tree",
+        "Array",
+        "Divide and Conquer"
+      ],
+      "source": "LeetCode 105",
+      "sample_cases": [
+        {
+          "input": "5\n3 9 20 15 7\n9 3 15 20 7",
+          "output": "3 1 2\n9 -1 -1\n20 3 4\n15 -1 -1\n7 -1 -1"
+        },
+        {
+          "input": "1\n-1\n-1",
+          "output": "-1 -1 -1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "3\n1 2 3\n2 1 3",
+          "output": "1 1 2\n2 -1 -1\n3 -1 -1"
+        },
+        {
+          "input": "2\n1 2\n2 1",
+          "output": "1 1 -1\n2 -1 -1"
+        },
+        {
+          "input": "4\n1 2 3 4\n2 1 4 3",
+          "output": "1 1 2\n2 -1 -1\n3 -1 3\n4 -1 -1"
+        },
+        {
+          "input": "3\n1 2 3\n1 2 3",
+          "output": "1 -1 1\n2 -1 2\n3 -1 -1"
+        }
+      ],
+      "hints": [
+        "先序遍历的第一个元素是根节点。在中序遍历中找到根节点的位置，左边是左子树，右边是右子树。",
+        "递归：根据中序中左子树的节点数，在先序遍历中分割出对应的左右子树。",
+        "使用哈希表预处理中序遍历中每个值的索引，实现 O(1) 查找。时间 O(n)，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：递归 + 哈希表\n\n### 思路\n\n先序遍历的第一个元素是根节点。在中序遍历中找到根的位置 idx，则左子树有 idx - in_start 个节点。递归构建左右子树。用哈希表预处理中序索引以实现 O(1) 查找。\n\n```python\ndef build_tree(preorder, inorder):\n    idx_map = {val: i for i, val in enumerate(inorder)}\n    pre_idx = 0\n    def build(in_l, in_r):\n        nonlocal pre_idx\n        if in_l > in_r:\n            return None\n        root_val = preorder[pre_idx]\n        pre_idx += 1\n        root = TreeNode(root_val)\n        i = idx_map[root_val]\n        root.left = build(in_l, i - 1)\n        root.right = build(i + 1, in_r)\n        return root\n    return build(0, len(inorder) - 1)\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "华为"
+      ]
+    },
+    {
+      "slug": "reverse-linked-list",
+      "title": "反转链表",
+      "difficulty": "easy",
+      "difficulty_score": 1200,
+      "description_md": "# 反转链表\n\n给你单链表的头节点 head，请你反转链表，并返回反转后的链表。\n\n## 示例\n\n**示例 1：**\n输入：head = [1,2,3,4,5]\n输出：[5,4,3,2,1]\n\n**示例 2：**\n输入：head = [1,2]\n输出：[2,1]\n\n**示例 3：**\n输入：head = []\n输出：[]\n\n## 约束\n\n- 链表中节点的数目范围是 [0, 5000]\n- -5000 <= Node.val <= 5000",
+      "input_format": "第一行包含一个整数 n，表示节点数量。\n第二行包含 n 个整数，表示链表节点值（从头部到尾部）。",
+      "output_format": "输出 n 个整数，表示反转后的链表节点值。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Linked List",
+        "Recursion"
+      ],
+      "source": "LeetCode 206",
+      "sample_cases": [
+        {
+          "input": "5\n1 2 3 4 5",
+          "output": "5 4 3 2 1"
+        },
+        {
+          "input": "2\n1 2",
+          "output": "2 1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "0",
+          "output": ""
+        },
+        {
+          "input": "1\n1",
+          "output": "1"
+        },
+        {
+          "input": "3\n1 2 3",
+          "output": "3 2 1"
+        },
+        {
+          "input": "4\n-1 0 1 2",
+          "output": "2 1 0 -1"
+        }
+      ],
+      "hints": [
+        "迭代法：使用三个指针 prev、cur、next，依次反转每个节点的指向。",
+        "初始时 prev = None，cur = head。每次循环：保存 next = cur.next，然后 cur.next = prev，prev 和 cur 同时前移。",
+        "递归法：递归到链表末尾，在回溯时修改节点指向。时间 O(n)，空间 O(1)（迭代）/ O(n)（递归）。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：迭代法\n\n### 思路\n\n使用 prev、cur 两个指针。每次迭代将 cur.next 指向 prev，然后 prev 和 cur 同时前移。\n\n```python\ndef reverse_list(head):\n    prev, cur = None, head\n    while cur:\n        nxt = cur.next\n        cur.next = prev\n        prev = cur\n        cur = nxt\n    return prev\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "merge-two-sorted-lists",
+      "title": "合并两个有序链表",
+      "difficulty": "easy",
+      "difficulty_score": 1300,
+      "description_md": "# 合并两个有序链表\n\n将两个升序链表合并为一个新的升序链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。\n\n## 示例\n\n**示例 1：**\n输入：l1 = [1,2,4], l2 = [1,3,4]\n输出：[1,1,2,3,4,4]\n\n**示例 2：**\n输入：l1 = [], l2 = []\n输出：[]\n\n**示例 3：**\n输入：l1 = [], l2 = [0]\n输出：[0]\n\n## 约束\n\n- 两个链表的节点数目范围是 [0, 50]\n- -100 <= Node.val <= 100\n- l1 和 l2 均按非递减顺序排列",
+      "input_format": "第一行包含两个整数 n1 n2，表示两个链表的长度。\n第二行包含 n1 个整数，表示链表 l1。\n第三行包含 n2 个整数，表示链表 l2。",
+      "output_format": "输出 n1+n2 个整数，表示合并后的链表。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Linked List",
+        "Recursion"
+      ],
+      "source": "LeetCode 21",
+      "sample_cases": [
+        {
+          "input": "3 3\n1 2 4\n1 3 4",
+          "output": "1 1 2 3 4 4"
+        },
+        {
+          "input": "0 0",
+          "output": ""
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "0 1\n0",
+          "output": "0"
+        },
+        {
+          "input": "2 2\n1 5\n2 6",
+          "output": "1 2 5 6"
+        },
+        {
+          "input": "3 1\n1 3 5\n2",
+          "output": "1 2 3 5"
+        },
+        {
+          "input": "2 3\n1 2\n1 1 2",
+          "output": "1 1 1 2 2"
+        }
+      ],
+      "hints": [
+        "比较两个链表当前节点的值，将较小值的节点接到结果链表后面。",
+        "使用哨兵节点（dummy）简化头节点处理。同时维护一个指针 tail 指向结果链表末尾。",
+        "当某个链表遍历完后，直接将另一个链表剩余部分接到结果链表末尾。时间 O(n+m)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：双指针迭代\n\n### 思路\n\n使用 dummy 哨兵节点简化边界处理。比较 l1 和 l2 当前节点值，将较小的节点接到 tail 后面。遍历完一个链表后，将另一个链表剩余部分直接接上。\n\n```python\ndef merge_two_lists(l1, l2):\n    dummy = tail = ListNode(0)\n    while l1 and l2:\n        if l1.val <= l2.val:\n            tail.next = l1\n            l1 = l1.next\n        else:\n            tail.next = l2\n            l2 = l2.next\n        tail = tail.next\n    tail.next = l1 or l2\n    return dummy.next\n```\n\n### 复杂度\n- 时间: O(n + m)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "美团"
+      ]
+    },
+    {
+      "slug": "linked-list-cycle",
+      "title": "环形链表",
+      "difficulty": "easy",
+      "difficulty_score": 1300,
+      "description_md": "# 环形链表\n\n给你一个链表的头节点 head，判断链表中是否有环。\n\n如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。\n\n如果链表中存在环，则返回 true。否则返回 false。\n\n## 示例\n\n**示例 1：**\n输入：head = [3,2,0,-4], pos = 1\n输出：true\n解释：链表中有一个环，其尾部连接到第 2 个节点（索引 1）。\n\n**示例 2：**\n输入：head = [1,2], pos = 0\n输出：true\n\n**示例 3：**\n输入：head = [1], pos = -1\n输出：false\n\n## 约束\n\n- 链表中节点数目范围是 [0, 10^4]\n- -10^5 <= Node.val <= 10^5\n- pos 为 -1 或链表中的一个有效索引",
+      "input_format": "第一行包含两个整数 n 和 pos，n 表示节点数，pos 表示环的入口索引（-1 表示无环）。\n第二行包含 n 个整数，表示链表节点值。",
+      "output_format": "输出 true 或 false。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Linked List",
+        "Hash Table",
+        "Two Pointers"
+      ],
+      "source": "LeetCode 141",
+      "sample_cases": [
+        {
+          "input": "4 1\n3 2 0 -4",
+          "output": "true"
+        },
+        {
+          "input": "1 -1\n1",
+          "output": "false"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "2 0\n1 2",
+          "output": "true"
+        },
+        {
+          "input": "3 -1\n1 2 3",
+          "output": "false"
+        },
+        {
+          "input": "5 2\n1 2 3 4 5",
+          "output": "true"
+        },
+        {
+          "input": "0 -1",
+          "output": "false"
+        }
+      ],
+      "hints": [
+        "哈希表法：遍历链表，将每个节点存入集合。若发现重复节点则有环。时间 O(n)，空间 O(n)。",
+        "双指针（快慢指针）法：慢指针每次走一步，快指针每次走两步。若有环，两个指针最终会相遇。",
+        "如果快指针走到了链表末尾（fast 或 fast.next 为 null），说明无环。时间 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：快慢指针\n\n### 思路\n\n快指针 fast 每次走两步，慢指针 slow 每次走一步。如果链表有环，两指针终会相遇。如果 fast 到达链表末尾，则无环。\n\n```python\ndef has_cycle(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow == fast:\n            return True\n    return False\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "middle-of-linked-list",
+      "title": "链表的中间节点",
+      "difficulty": "easy",
+      "difficulty_score": 1200,
+      "description_md": "# 链表的中间节点\n\n给定一个头节点为 head 的非空单链表，返回链表的中间节点。\n\n如果有两个中间节点，则返回第二个中间节点。\n\n## 示例\n\n**示例 1：**\n输入：[1,2,3,4,5]\n输出：此列表中的节点 3 (序列化形式：[3,4,5])\n\n**示例 2：**\n输入：[1,2,3,4,5,6]\n输出：此列表中的节点 4 (序列化形式：[4,5,6])\n\n## 约束\n\n- 链表的节点数范围是 [1, 100]",
+      "input_format": "第一行包含一个整数 n，表示节点数量。\n第二行包含 n 个整数，表示链表节点值。",
+      "output_format": "输出一个整数，表示中间节点的值。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Linked List",
+        "Two Pointers"
+      ],
+      "source": "LeetCode 876",
+      "sample_cases": [
+        {
+          "input": "5\n1 2 3 4 5",
+          "output": "3"
+        },
+        {
+          "input": "6\n1 2 3 4 5 6",
+          "output": "4"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1\n1",
+          "output": "1"
+        },
+        {
+          "input": "2\n1 2",
+          "output": "2"
+        },
+        {
+          "input": "3\n1 2 3",
+          "output": "2"
+        },
+        {
+          "input": "7\n1 2 3 4 5 6 7",
+          "output": "4"
+        }
+      ],
+      "hints": [
+        "方法一：先遍历一遍计算链表长度 n，再遍历到第 n//2 个节点。时间 O(n)，空间 O(1)。",
+        "方法二（快慢指针）：慢指针 slow 每次走一步，快指针 fast 每次走两步。当 fast 到达末尾时，slow 正好在中间。",
+        "注意偶数节点的情况：fast 不能继续走两步时（fast 或 fast.next 为 null），slow 所在位置即为第二个中间节点。时间 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：快慢指针\n\n### 思路\n\n快慢指针：slow 每次走一步，fast 每次走两步。当 fast 或 fast.next 为 None 时，slow 正好在中间位置。\n\n```python\ndef middle_node(head):\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n    return slow\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "美团"
+      ]
+    },
+    {
+      "slug": "remove-nth-node-from-end-of-list",
+      "title": "删除链表的倒数第N个节点",
+      "difficulty": "medium",
+      "difficulty_score": 1500,
+      "description_md": "# 删除链表的倒数第 N 个节点\n\n给你一个链表，删除链表的倒数第 n 个节点，并且返回链表的头节点。\n\n## 示例\n\n**示例 1：**\n输入：head = [1,2,3,4,5], n = 2\n输出：[1,2,3,5]\n\n**示例 2：**\n输入：head = [1], n = 1\n输出：[]\n\n**示例 3：**\n输入：head = [1,2], n = 1\n输出：[1]\n\n## 约束\n\n- 链表中节点的数目为 sz\n- 1 <= sz <= 30\n- 0 <= Node.val <= 100\n- 1 <= n <= sz",
+      "input_format": "第一行包含两个整数 sz 和 n，sz 表示链表长度，n 表示要删除的倒数位置。\n第二行包含 sz 个整数，表示链表节点值。",
+      "output_format": "输出 sz-1 个整数，表示删除后的链表（删除头节点可能导致空输出）。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Linked List",
+        "Two Pointers"
+      ],
+      "source": "LeetCode 19",
+      "sample_cases": [
+        {
+          "input": "5 2\n1 2 3 4 5",
+          "output": "1 2 3 5"
+        },
+        {
+          "input": "1 1\n1",
+          "output": ""
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "2 1\n1 2",
+          "output": "1"
+        },
+        {
+          "input": "2 2\n1 2",
+          "output": "2"
+        },
+        {
+          "input": "3 3\n1 2 3",
+          "output": "2 3"
+        },
+        {
+          "input": "4 1\n1 2 3 4",
+          "output": "1 2 3"
+        }
+      ],
+      "hints": [
+        "方法一：先计算链表长度 L，则要删除的是第 L - n + 1 个节点（从 1 开始计）。再遍历删除。",
+        "方法二（双指针）：快指针先走 n 步，然后快慢指针同时前进。当快指针到达末尾时，慢指针指向要删除节点的前一个节点。",
+        "使用哨兵节点处理删除头节点的情况。时间 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：快慢指针 + 哨兵\n\n### 思路\n\n使用哨兵节点 dummy。快指针 fast 先走 n+1 步（多走一步保证 slow 指向待删除节点的前一节点），然后 slow 和 fast 同时前进。当 fast 到达末尾时，删除 slow.next。\n\n```python\ndef remove_nth_from_end(head, n):\n    dummy = ListNode(0, head)\n    slow = fast = dummy\n    for _ in range(n + 1):\n        fast = fast.next\n    while fast:\n        slow = slow.next\n        fast = fast.next\n    slow.next = slow.next.next\n    return dummy.next\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "美团"
+      ]
+    },
+    {
+      "slug": "palindrome-linked-list",
+      "title": "回文链表",
+      "difficulty": "easy",
+      "difficulty_score": 1300,
+      "description_md": "# 回文链表\n\n给你一个单链表的头节点 head，请你判断该链表是否为回文链表。如果是，返回 true；否则，返回 false。\n\n## 示例\n\n**示例 1：**\n输入：head = [1,2,2,1]\n输出：true\n\n**示例 2：**\n输入：head = [1,2]\n输出：false\n\n## 约束\n\n- 链表中节点数目在范围 [1, 10^5] 内\n- 0 <= Node.val <= 9",
+      "input_format": "第一行包含一个整数 n，表示节点数量。\n第二行包含 n 个整数，表示链表节点值。",
+      "output_format": "输出 true 或 false。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Linked List",
+        "Two Pointers",
+        "Stack"
+      ],
+      "source": "LeetCode 234",
+      "sample_cases": [
+        {
+          "input": "4\n1 2 2 1",
+          "output": "true"
+        },
+        {
+          "input": "2\n1 2",
+          "output": "false"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1\n1",
+          "output": "true"
+        },
+        {
+          "input": "3\n1 2 1",
+          "output": "true"
+        },
+        {
+          "input": "4\n1 2 3 4",
+          "output": "false"
+        },
+        {
+          "input": "5\n1 2 3 2 1",
+          "output": "true"
+        }
+      ],
+      "hints": [
+        "方法一：将链表值复制到数组，然后用双指针判断回文。时间 O(n)，空间 O(n)。",
+        "方法二：用快慢指针找链表中间，反转后半部分链表，然后比较前后两部分。",
+        "比较完后可以将后半部分恢复（可选）。时间 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：反转后半部分\n\n### 思路\n\n1. 快慢指针找到中间节点\n2. 反转后半部分链表\n3. 比较前后两部分是否相同\n4. （可选）恢复链表\n\n```python\ndef is_palindrome(head):\n    # 找中间\n    slow = fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n    # 反转后半\n    prev = None\n    while slow:\n        nxt = slow.next\n        slow.next = prev\n        prev = slow\n        slow = nxt\n    # 比较\n    left, right = head, prev\n    while right:\n        if left.val != right.val:\n            return False\n        left = left.next\n        right = right.next\n    return True\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "intersection-of-two-linked-lists",
+      "title": "相交链表",
+      "difficulty": "easy",
+      "difficulty_score": 1300,
+      "description_md": "# 相交链表\n\n给你两个单链表的头节点 headA 和 headB，请你找出并返回两个单链表相交的起始节点。如果两个链表不存在相交节点，返回 null。\n\n图示两个链表在节点 c1 开始相交。题目数据保证整个链式结构中不存在环。\n\n注意，函数返回结果后，链表必须保持其原始结构。\n\n## 示例\n\n**示例 1：**\n输入：listA = [4,1,8,4,5], listB = [5,6,1,8,4,5], skipA = 2, skipB = 3\n输出：8\n\n**示例 2：**\n输入：listA = [2,6,4], listB = [1,5], skipA = 3, skipB = 2\n输出：null\n\n## 约束\n\n- listA 和 listB 中节点数目分别为 m 和 n\n- 1 <= m, n <= 3 * 10^4\n- 1 <= Node.val <= 10^5",
+      "input_format": "第一行包含两个整数 n1 n2 和一个交叉点值 crossVal（-1 表示不相交）。\n第二行包含 n1 个整数，表示链表 A。\n第三行包含 n2 个整数，表示链表 B。\n（交叉点之后的值应相同）",
+      "output_format": "输出交叉点的值，如果不相交则输出 -1。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Linked List",
+        "Hash Table",
+        "Two Pointers"
+      ],
+      "source": "LeetCode 160",
+      "sample_cases": [
+        {
+          "input": "5 6 8\n4 1 8 4 5\n5 6 1 8 4 5",
+          "output": "8"
+        },
+        {
+          "input": "3 2 -1\n2 6 4\n1 5",
+          "output": "-1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "2 3 3\n1 3 5\n2 3 5",
+          "output": "3"
+        },
+        {
+          "input": "1 1 1\n1\n1",
+          "output": "1"
+        },
+        {
+          "input": "4 4 -1\n1 2 3 4\n5 6 7 8",
+          "output": "-1"
+        },
+        {
+          "input": "3 3 2\n1 9 1\n3 2 1",
+          "output": "2"
+        }
+      ],
+      "hints": [
+        "哈希表法：遍历链表 A，将所有节点存入集合。然后遍历链表 B，第一个在集合中的节点即交点。时间 O(m+n)，空间 O(m)。",
+        "双指针法：指针 pa 从 A 头部开始，pb 从 B 头部开始，同时向后移动。当 pa 到尾部时重定向到 B 头部，pb 同理。",
+        "当 pa 和 pb 相遇时即为交点（或都为 null 表示不相交）。每个指针走过的路程都是 m+n。时间 O(m+n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：双指针\n\n### 思路\n\n两个指针分别从两链表头部出发。当任一指针到达末尾时，重定向到另一链表头部。这样两指针会走过相同的总路程，最终在交点相遇。\n\n```python\ndef get_intersection_node(headA, headB):\n    a, b = headA, headB\n    while a != b:\n        a = a.next if a else headB\n        b = b.next if b else headA\n    return a\n```\n\n### 复杂度\n- 时间: O(m + n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "百度"
+      ]
+    },
+    {
+      "slug": "climbing-stairs",
+      "title": "爬楼梯",
+      "difficulty": "easy",
+      "difficulty_score": 1200,
+      "description_md": "# 爬楼梯\n\n假设你正在爬楼梯。需要 n 阶你才能到达楼顶。\n\n每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？\n\n## 示例\n\n**示例 1：**\n输入：n = 2\n输出：2\n解释：有两种方法可以爬到楼顶。(1) 1+1 (2) 2\n\n**示例 2：**\n输入：n = 3\n输出：3\n解释：(1) 1+1+1 (2) 1+2 (3) 2+1\n\n## 约束\n\n- 1 <= n <= 45",
+      "input_format": "一行，包含一个整数 n。",
+      "output_format": "输出一个整数，表示爬到楼顶的方法数。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Math",
+        "Dynamic Programming",
+        "Memoization"
+      ],
+      "source": "LeetCode 70",
+      "sample_cases": [
+        {
+          "input": "2",
+          "output": "2"
+        },
+        {
+          "input": "3",
+          "output": "3"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1",
+          "output": "1"
+        },
+        {
+          "input": "4",
+          "output": "5"
+        },
+        {
+          "input": "5",
+          "output": "8"
+        },
+        {
+          "input": "10",
+          "output": "89"
+        }
+      ],
+      "hints": [
+        "这是一个斐波那契数列问题。到达第 n 阶的方法数 = 到达第 n-1 阶的方法数 + 到达第 n-2 阶的方法数。",
+        "递推公式：dp[i] = dp[i-1] + dp[i-2]，初始条件 dp[1] = 1, dp[2] = 2。",
+        "可以优化空间：只用两个变量 a 和 b 滚动计算。时间 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：斐波那契数列\n\n### 思路\n\n到达第 n 阶的方法数等于到达第 n-1 阶的方法数（再爬1步）+ 到达第 n-2 阶的方法数（再爬2步）。这就是斐波那契数列。\n\n```python\ndef climb_stairs(n):\n    if n <= 2:\n        return n\n    a, b = 1, 2\n    for _ in range(3, n + 1):\n        a, b = b, a + b\n    return b\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "house-robber",
+      "title": "打家劫舍",
+      "difficulty": "medium",
+      "difficulty_score": 1500,
+      "description_md": "# 打家劫舍\n\n你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。\n\n给定一个代表每个房屋存放金额的非负整数数组，计算你不触动警报装置的情况下，一夜之内能够偷窃到的最高金额。\n\n## 示例\n\n**示例 1：**\n输入：[1,2,3,1]\n输出：4\n解释：偷窃 1 号房屋 (金额=1)，然后偷窃 3 号房屋 (金额=3)。最高金额=1+3=4。\n\n**示例 2：**\n输入：[2,7,9,3,1]\n输出：12\n解释：偷窃 1+3+5 号房屋，金额=2+9+1=12。\n\n## 约束\n\n- 1 <= nums.length <= 100\n- 0 <= nums[i] <= 400",
+      "input_format": "第一行包含一个整数 n，表示房屋数量。\n第二行包含 n 个整数，表示每个房屋的金额。",
+      "output_format": "输出一个整数，表示能偷窃到的最高金额。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Dynamic Programming"
+      ],
+      "source": "LeetCode 198",
+      "sample_cases": [
+        {
+          "input": "4\n1 2 3 1",
+          "output": "4"
+        },
+        {
+          "input": "5\n2 7 9 3 1",
+          "output": "12"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1\n5",
+          "output": "5"
+        },
+        {
+          "input": "2\n2 1",
+          "output": "2"
+        },
+        {
+          "input": "6\n2 1 1 2 1 2",
+          "output": "6"
+        },
+        {
+          "input": "3\n1 1 1",
+          "output": "2"
+        }
+      ],
+      "hints": [
+        "动态规划：对于第 i 间房屋，有两种选择：偷或不偷。",
+        "dp[i] = max(dp[i-1], dp[i-2] + nums[i])。即要么不偷第 i 间（继承 i-1 的结果），要么偷第 i 间（加上 i-2 的结果）。",
+        "优化空间：只用两个变量 rob（偷当前）和 not_rob（不偷当前）。时间 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：DP 滚动变量\n\n### 思路\n\n对于每个房屋，有两种状态：偷或不偷。用 prev1（上一家不偷或偷的最大值）和 prev2（上上家的最大值）滚动。\n\n```python\ndef rob(nums):\n    prev2 = prev1 = 0\n    for num in nums:\n        cur = max(prev1, prev2 + num)\n        prev2 = prev1\n        prev1 = cur\n    return prev1\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "百度"
+      ]
+    },
+    {
+      "slug": "coin-change",
+      "title": "零钱兑换",
+      "difficulty": "medium",
+      "difficulty_score": 1700,
+      "description_md": "# 零钱兑换\n\n给你一个整数数组 coins，表示不同面额的硬币；以及一个整数 amount，表示总金额。\n\n计算并返回可以凑成总金额所需的最少的硬币个数。如果没有任何一种硬币组合能组成总金额，返回 -1。\n\n你可以认为每种硬币的数量是无限的。\n\n## 示例\n\n**示例 1：**\n输入：coins = [1, 2, 5], amount = 11\n输出：3\n解释：11 = 5 + 5 + 1\n\n**示例 2：**\n输入：coins = [2], amount = 3\n输出：-1\n\n**示例 3：**\n输入：coins = [1], amount = 0\n输出：0\n\n## 约束\n\n- 1 <= coins.length <= 12\n- 1 <= coins[i] <= 2^31 - 1\n- 0 <= amount <= 10^4",
+      "input_format": "第一行包含两个整数 n 和 amount，n 表示硬币种类数。\n第二行包含 n 个整数，表示硬币面额。",
+      "output_format": "输出一个整数，表示最少硬币数（无法凑出则输出 -1）。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Dynamic Programming",
+        "BFS"
+      ],
+      "source": "LeetCode 322",
+      "sample_cases": [
+        {
+          "input": "3 11\n1 2 5",
+          "output": "3"
+        },
+        {
+          "input": "1 3\n2",
+          "output": "-1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1 0\n1",
+          "output": "0"
+        },
+        {
+          "input": "2 6\n1 3",
+          "output": "2"
+        },
+        {
+          "input": "3 10\n1 2 5",
+          "output": "2"
+        },
+        {
+          "input": "4 15\n1 3 4 5",
+          "output": "3"
+        }
+      ],
+      "hints": [
+        "这是完全背包问题。dp[i] 表示凑出金额 i 所需的最少硬币数。",
+        "dp[i] = min(dp[i], dp[i - coin] + 1) 对于每种硬币面额 coin。",
+        "初始化 dp[0] = 0，其余为 amount+1（表示无穷大）。遍历所有 i 从 1 到 amount。时间 O(n * amount)，空间 O(amount)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：DP（完全背包）\n\n### 思路\n\ndp[i] 表示凑出金额 i 的最少硬币数。对每个金额，尝试每种硬币面额，取最小值。\n\n```python\ndef coin_change(coins, amount):\n    dp = [amount + 1] * (amount + 1)\n    dp[0] = 0\n    for i in range(1, amount + 1):\n        for coin in coins:\n            if i >= coin:\n                dp[i] = min(dp[i], dp[i - coin] + 1)\n    return dp[amount] if dp[amount] != amount + 1 else -1\n```\n\n### 复杂度\n- 时间: O(n * amount)，n 为硬币种类数\n- 空间: O(amount)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "美团"
+      ]
+    },
+    {
+      "slug": "longest-increasing-subsequence",
+      "title": "最长递增子序列",
+      "difficulty": "hard",
+      "difficulty_score": 2200,
+      "description_md": "# 最长递增子序列\n\n给你一个整数数组 nums，找到其中最长严格递增子序列的长度。\n\n**子序列**是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。\n\n## 示例\n\n**示例 1：**\n输入：nums = [10,9,2,5,3,7,101,18]\n输出：4\n解释：最长递增子序列是 [2,3,7,101]，因此长度为 4。\n\n**示例 2：**\n输入：nums = [0,1,0,3,2,3]\n输出：4\n\n**示例 3：**\n输入：nums = [7,7,7,7,7,7,7]\n输出：1\n\n## 约束\n\n- 1 <= nums.length <= 2500\n- -10^4 <= nums[i] <= 10^4",
+      "input_format": "第一行包含一个整数 n，表示数组长度。\n第二行包含 n 个整数。",
+      "output_format": "输出一个整数，表示最长递增子序列的长度。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Dynamic Programming",
+        "Binary Search"
+      ],
+      "source": "LeetCode 300",
+      "sample_cases": [
+        {
+          "input": "8\n10 9 2 5 3 7 101 18",
+          "output": "4"
+        },
+        {
+          "input": "6\n0 1 0 3 2 3",
+          "output": "4"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1\n1",
+          "output": "1"
+        },
+        {
+          "input": "7\n7 7 7 7 7 7 7",
+          "output": "1"
+        },
+        {
+          "input": "5\n1 2 3 4 5",
+          "output": "5"
+        },
+        {
+          "input": "6\n4 10 4 3 8 9",
+          "output": "3"
+        }
+      ],
+      "hints": [
+        "方法一（DP）：dp[i] 表示以 nums[i] 结尾的最长递增子序列长度。dp[i] = max(dp[j]+1) 对于所有 j < i 且 nums[j] < nums[i]。时间 O(n^2)。",
+        "方法二（贪心+二分）：维护一个 tails 数组，tails[k] 表示长度为 k+1 的递增子序列的最小尾元素。",
+        "遍历 nums，用二分查找在 tails 中找到第一个 >= nums[i] 的位置并替换（或追加）。tails 的长度即为答案。时间 O(n log n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：贪心 + 二分查找\n\n### 思路\n\ntails[k] 存储长度为 k+1 的递增子序列的最小尾元素。对于每个数 num，用二分查找找到 tails 中第一个 >= num 的位置。如果 num 比所有 tails 都大则追加；否则替换该位置。\n\n```python\nimport bisect\ndef length_of_lis(nums):\n    tails = []\n    for num in nums:\n        idx = bisect.bisect_left(tails, num)\n        if idx == len(tails):\n            tails.append(num)\n        else:\n            tails[idx] = num\n    return len(tails)\n```\n\n### 复杂度\n- 时间: O(n log n)\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "华为"
+      ]
+    },
+    {
+      "slug": "edit-distance",
+      "title": "编辑距离",
+      "difficulty": "hard",
+      "difficulty_score": 2200,
+      "description_md": "# 编辑距离\n\n给你两个单词 word1 和 word2，请返回将 word1 转换成 word2 所使用的最少操作数。\n\n你可以对一个单词进行如下三种操作：\n- 插入一个字符\n- 删除一个字符\n- 替换一个字符\n\n## 示例\n\n**示例 1：**\n输入：word1 = \"horse\", word2 = \"ros\"\n输出：3\n解释：horse -> rorse (替换'h') -> rose (删除'r') -> ros (删除'e')\n\n**示例 2：**\n输入：word1 = \"intention\", word2 = \"execution\"\n输出：5\n\n## 约束\n\n- 0 <= word1.length, word2.length <= 500\n- word1 和 word2 由小写英文字母组成",
+      "input_format": "第一行包含字符串 word1。\n第二行包含字符串 word2。",
+      "output_format": "输出一个整数，表示将 word1 变为 word2 的最少操作数。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "String",
+        "Dynamic Programming"
+      ],
+      "source": "LeetCode 72",
+      "sample_cases": [
+        {
+          "input": "horse\nros",
+          "output": "3"
+        },
+        {
+          "input": "intention\nexecution",
+          "output": "5"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "\na",
+          "output": "1"
+        },
+        {
+          "input": "abc\nabc",
+          "output": "0"
+        },
+        {
+          "input": "a\nb",
+          "output": "1"
+        },
+        {
+          "input": "abc\nab",
+          "output": "1"
+        }
+      ],
+      "hints": [
+        "定义 dp[i][j] 表示 word1 的前 i 个字符转换为 word2 的前 j 个字符所需的最少操作数。",
+        "状态转移：(1) 如果 word1[i-1] == word2[j-1]，dp[i][j] = dp[i-1][j-1]。(2) 否则 dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])，分别对应删除、插入、替换。",
+        "初始化 dp[i][0] = i（全部删除），dp[0][j] = j（全部插入）。时间 O(mn)，空间可优化为 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：二维 DP\n\n### 思路\n\n经典的编辑距离（Levenshtein Distance）问题。dp[i][j] 表示 word1[0:i] 和 word2[0:j] 的最小编辑距离。\n\n```python\ndef min_distance(word1, word2):\n    m, n = len(word1), len(word2)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    for i in range(m + 1):\n        dp[i][0] = i\n    for j in range(n + 1):\n        dp[0][j] = j\n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if word1[i-1] == word2[j-1]:\n                dp[i][j] = dp[i-1][j-1]\n            else:\n                dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])\n    return dp[m][n]\n```\n\n### 复杂度\n- 时间: O(mn)\n- 空间: O(mn)，可优化为 O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "zero-one-knapsack",
+      "title": "0-1背包问题",
+      "difficulty": "medium",
+      "difficulty_score": 1800,
+      "description_md": "# 0-1 背包问题\n\n有 N 件物品和一个容量为 V 的背包。第 i 件物品的重量是 w[i]，价值是 v[i]。求解将哪些物品装入背包可使这些物品的重量总和不超过背包容量，且价值总和最大。\n\n每件物品只能使用一次（0-1 背包）。\n\n## 示例\n\n**示例 1：**\n输入：N = 4, V = 5, w = [2,1,3,2], v = [12,10,20,15]\n输出：37\n解释：选物品 1、2、4（重量 2+1+2=5，价值 12+10+15=37）\n\n**示例 2：**\n输入：N = 3, V = 4, w = [4,5,1], v = [1,2,3]\n输出：3\n\n## 约束\n\n- 1 <= N <= 1000\n- 1 <= V <= 1000\n- 1 <= w[i] <= 1000\n- 1 <= v[i] <= 1000",
+      "input_format": "第一行包含两个整数 N 和 V。\n第二行包含 N 个整数，表示每个物品的重量 w[i]。\n第三行包含 N 个整数，表示每个物品的价值 v[i]。",
+      "output_format": "输出一个整数，表示最大价值。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Dynamic Programming",
+        "Knapsack"
+      ],
+      "source": "洛谷 P1048",
+      "sample_cases": [
+        {
+          "input": "4 5\n2 1 3 2\n12 10 20 15",
+          "output": "37"
+        },
+        {
+          "input": "3 4\n4 5 1\n1 2 3",
+          "output": "3"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1 10\n5\n10",
+          "output": "10"
+        },
+        {
+          "input": "2 3\n2 3\n5 8",
+          "output": "8"
+        },
+        {
+          "input": "3 6\n1 2 3\n10 20 30",
+          "output": "60"
+        },
+        {
+          "input": "5 10\n2 3 4 5 9\n3 4 5 8 10",
+          "output": "16"
+        }
+      ],
+      "hints": [
+        "定义 dp[i][j] 为考虑前 i 件物品、背包容量为 j 时的最大价值。",
+        "状态转移：对于第 i 件物品，有两种选择：(1) 不选：dp[i][j] = dp[i-1][j]；(2) 选：dp[i][j] = dp[i-1][j-w[i]] + v[i]（需 j >= w[i]）。取两者的最大值。",
+        "滚动数组优化：用一维 dp[j] 从大到小遍历，dp[j] = max(dp[j], dp[j-w[i]] + v[i])。时间 O(N*V)，空间 O(V)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：一维 DP（滚动数组）\n\n### 思路\n\n用一维数组 dp[j] 表示容量为 j 时的最大价值。对每个物品，从大到小遍历容量来确保每个物品只用一次。\n\n```python\ndef knapsack(N, V, w, v):\n    dp = [0] * (V + 1)\n    for i in range(N):\n        for j in range(V, w[i] - 1, -1):\n            dp[j] = max(dp[j], dp[j - w[i]] + v[i])\n    return dp[V]\n```\n\n### 复杂度\n- 时间: O(N * V)\n- 空间: O(V)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "华为",
+        "阿里巴巴"
+      ]
+    },
+    {
+      "slug": "unique-paths",
+      "title": "不同路径",
+      "difficulty": "medium",
+      "difficulty_score": 1500,
+      "description_md": "# 不同路径\n\n一个机器人位于一个 m x n 网格的左上角（起始点在下图中标记为 Start）。机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（标记为 Finish）。\n\n问总共有多少条不同的路径？\n\n## 示例\n\n**示例 1：**\n输入：m = 3, n = 7\n输出：28\n\n**示例 2：**\n输入：m = 3, n = 2\n输出：3\n解释：从左上角开始，总共有 3 条路径可以到达右下角。(1) 右->下->下 (2) 下->下->右 (3) 下->右->下\n\n## 约束\n\n- 1 <= m, n <= 100",
+      "input_format": "一行，包含两个整数 m 和 n。",
+      "output_format": "输出一个整数，表示不同路径的总数。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Math",
+        "Dynamic Programming",
+        "Combinatorics"
+      ],
+      "source": "LeetCode 62",
+      "sample_cases": [
+        {
+          "input": "3 7",
+          "output": "28"
+        },
+        {
+          "input": "3 2",
+          "output": "3"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1 1",
+          "output": "1"
+        },
+        {
+          "input": "2 2",
+          "output": "2"
+        },
+        {
+          "input": "3 3",
+          "output": "6"
+        },
+        {
+          "input": "10 10",
+          "output": "48620"
+        }
+      ],
+      "hints": [
+        "动态规划：dp[i][j] 表示从起点到 (i,j) 的路径数。dp[i][j] = dp[i-1][j] + dp[i][j-1]。",
+        "边界条件：第一行和第一列的 dp 值都为 1。",
+        "空间优化：每行只依赖上一行，可用一维数组 dp[j] += dp[j-1]。时间 O(mn)，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：DP\n\n### 思路\n\ndp[i][j] = dp[i-1][j] + dp[i][j-1]。即从上方来的路径数 + 从左边来的路径数。\n\n```python\ndef unique_paths(m, n):\n    dp = [1] * n\n    for i in range(1, m):\n        for j in range(1, n):\n            dp[j] += dp[j-1]\n    return dp[-1]\n```\n\n### 复杂度\n- 时间: O(m * n)\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "阿里巴巴"
+      ]
+    },
+    {
+      "slug": "partition-equal-subset-sum",
+      "title": "分割等和子集",
+      "difficulty": "hard",
+      "difficulty_score": 2200,
+      "description_md": "# 分割等和子集\n\n给你一个只包含正整数的非空数组 nums。请你判断是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。\n\n## 示例\n\n**示例 1：**\n输入：nums = [1,5,11,5]\n输出：true\n解释：数组可以分割成 [1, 5, 5] 和 [11]。\n\n**示例 2：**\n输入：nums = [1,2,3,5]\n输出：false\n\n## 约束\n\n- 1 <= nums.length <= 200\n- 1 <= nums[i] <= 100",
+      "input_format": "第一行包含一个整数 n，表示数组长度。\n第二行包含 n 个正整数。",
+      "output_format": "输出 true 或 false。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Array",
+        "Dynamic Programming"
+      ],
+      "source": "LeetCode 416",
+      "sample_cases": [
+        {
+          "input": "4\n1 5 11 5",
+          "output": "true"
+        },
+        {
+          "input": "4\n1 2 3 5",
+          "output": "false"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1\n1",
+          "output": "false"
+        },
+        {
+          "input": "2\n1 1",
+          "output": "true"
+        },
+        {
+          "input": "3\n2 2 3",
+          "output": "false"
+        },
+        {
+          "input": "6\n1 2 3 4 5 6",
+          "output": "false"
+        }
+      ],
+      "hints": [
+        "转化为 0-1 背包问题：能否选出一些数使得总和等于所有数和的一半 target = sum/2。",
+        "如果总和为奇数，直接返回 false。dp[i] 表示是否能选出和为 i 的子集。",
+        "dp[0] = True。遍历每个数 num，从大到小更新 dp[i] = dp[i] or dp[i-num]。时间 O(n * target)，空间 O(target)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：0-1 背包转化\n\n### 思路\n\n问题等价于：能否选出一些数使其和为 sum/2。即 0-1 背包，容量为 sum/2，每个物品重量和价值都等于元素值。\n\n```python\ndef can_partition(nums):\n    total = sum(nums)\n    if total % 2 != 0:\n        return False\n    target = total // 2\n    dp = [False] * (target + 1)\n    dp[0] = True\n    for num in nums:\n        for i in range(target, num - 1, -1):\n            dp[i] = dp[i] or dp[i - num]\n    return dp[target]\n```\n\n### 复杂度\n- 时间: O(n * target)\n- 空间: O(target)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "jump-game",
+      "title": "跳跃游戏",
+      "difficulty": "medium",
+      "difficulty_score": 1500,
+      "description_md": "# 跳跃游戏\n\n给定一个非负整数数组 nums，你最初位于数组的第一个下标。\n\n数组中的每个元素代表你在该位置可以跳跃的最大长度。\n\n判断你是否能够到达最后一个下标。\n\n## 示例\n\n**示例 1：**\n输入：nums = [2,3,1,1,4]\n输出：true\n解释：可以先跳 1 步，从下标 0 到达下标 1, 然后再从下标 1 跳 3 步到达最后一个下标。\n\n**示例 2：**\n输入：nums = [3,2,1,0,4]\n输出：false\n解释：无论怎样，总会到达下标 3 的位置。该位置的最大跳跃长度是 0，所以永远不可能到达最后一个下标。\n\n## 约束\n\n- 1 <= nums.length <= 10^4\n- 0 <= nums[i] <= 10^5",
+      "input_format": "第一行包含一个整数 n，表示数组长度。\n第二行包含 n 个整数，表示每个位置的最大跳跃长度。",
+      "output_format": "输出 true 或 false。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Greedy",
+        "Array",
+        "Dynamic Programming"
+      ],
+      "source": "LeetCode 55",
+      "sample_cases": [
+        {
+          "input": "5\n2 3 1 1 4",
+          "output": "true"
+        },
+        {
+          "input": "5\n3 2 1 0 4",
+          "output": "false"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1\n0",
+          "output": "true"
+        },
+        {
+          "input": "2\n0 1",
+          "output": "false"
+        },
+        {
+          "input": "3\n2 0 0",
+          "output": "true"
+        },
+        {
+          "input": "7\n1 2 3 4 5 6 7",
+          "output": "true"
+        }
+      ],
+      "hints": [
+        "动态规划：dp[i] 表示能否到达位置 i，但 O(n^2) 可能超时。",
+        "贪心：维护当前能到达的最远位置 max_reach。遍历数组，若当前位置 i > max_reach，说明无法到达，返回 false。",
+        "每次更新 max_reach = max(max_reach, i + nums[i])。若 max_reach >= n-1，可到达终点。时间 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：贪心\n\n### 思路\n\n维护一个变量 max_reach 表示当前能到达的最远位置。遍历数组时，如果当前位置超过了 max_reach 说明无法到达；否则更新 max_reach。\n\n```python\ndef can_jump(nums):\n    max_reach = 0\n    for i, num in enumerate(nums):\n        if i > max_reach:\n            return False\n        max_reach = max(max_reach, i + num)\n    return True\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "assign-cookies",
+      "title": "分发饼干",
+      "difficulty": "easy",
+      "difficulty_score": 1200,
+      "description_md": "# 分发饼干\n\n假设你是一位很棒的家长，想要给你的孩子们一些小饼干。但是，每个孩子最多只能给一块饼干。\n\n对每个孩子 i，都有一个胃口值 g[i]，这是能让孩子们满足的最小饼干尺寸；每块饼干 j，都有一个尺寸 s[j]。如果 s[j] >= g[i]，我们可以将这个饼干 j 分配给孩子 i，这个孩子会得到满足。\n\n你的目标是尽可能满足越多数量的孩子，并输出这个最大数值。\n\n## 示例\n\n**示例 1：**\n输入: g = [1,2,3], s = [1,1]\n输出: 1\n解释: 你有三个孩子和两块小饼干，3个孩子的胃口值分别是1,2,3。虽然你有两块小饼干，由于尺寸都是1，你只能让胃口值是1的孩子满足。\n\n**示例 2：**\n输入: g = [1,2], s = [1,2,3]\n输出: 2\n\n## 约束\n\n- 1 <= g.length <= 3 * 10^4\n- 0 <= s.length <= 3 * 10^4\n- 1 <= g[i], s[j] <= 2^31 - 1",
+      "input_format": "第一行包含两个整数 ng ns，表示孩子数和饼干数。\n第二行包含 ng 个整数，表示每个孩子的胃口值。\n第三行包含 ns 个整数，表示每块饼干的尺寸。",
+      "output_format": "输出一个整数，表示最多能满足的孩子数量。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Greedy",
+        "Array",
+        "Sorting",
+        "Two Pointers"
+      ],
+      "source": "LeetCode 455",
+      "sample_cases": [
+        {
+          "input": "3 2\n1 2 3\n1 1",
+          "output": "1"
+        },
+        {
+          "input": "2 3\n1 2\n1 2 3",
+          "output": "2"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1 0\n1\n",
+          "output": "0"
+        },
+        {
+          "input": "2 3\n1 2\n1 1 1",
+          "output": "2"
+        },
+        {
+          "input": "3 4\n10 9 8\n5 6 7 8",
+          "output": "1"
+        },
+        {
+          "input": "4 3\n1 2 3 4\n2 3 4",
+          "output": "3"
+        }
+      ],
+      "hints": [
+        "贪心策略：用最小的饼干满足胃口最小的孩子，这样能最大化满足的孩子数。",
+        "先对两个数组排序，然后使用双指针：p_g 指向当前孩子，p_s 指向当前饼干。",
+        "若 s[p_s] >= g[p_g]，满足该孩子，两个指针都前进；否则饼干太小，饼干指针前进。时间 O(n log n + m log m)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：排序 + 双指针\n\n### 思路\n\n排序后，用最小的满足条件的饼干去满足胃口最小的孩子。双指针遍历。\n\n```python\ndef find_content_children(g, s):\n    g.sort()\n    s.sort()\n    i = j = 0\n    while i < len(g) and j < len(s):\n        if s[j] >= g[i]:\n            i += 1\n        j += 1\n    return i\n```\n\n### 复杂度\n- 时间: O(n log n + m log m)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "美团",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "non-overlapping-intervals",
+      "title": "无重叠区间",
+      "difficulty": "medium",
+      "difficulty_score": 1600,
+      "description_md": "# 无重叠区间\n\n给定一个区间的集合 intervals，其中 intervals[i] = [start_i, end_i]。返回需要移除区间的最小数量，使剩余区间互不重叠。\n\n## 示例\n\n**示例 1：**\n输入: [[1,2],[2,3],[3,4],[1,3]]\n输出: 1\n解释: 移除 [1,3] 后，剩下的区间没有重叠。\n\n**示例 2：**\n输入: [[1,2],[1,2],[1,2]]\n输出: 2\n解释: 需要移除两个 [1,2] 来使剩下的区间没有重叠。\n\n**示例 3：**\n输入: [[1,2],[2,3]]\n输出: 0\n\n## 约束\n\n- 1 <= intervals.length <= 10^5\n- intervals[i].length == 2\n- -5 * 10^4 <= start_i < end_i <= 5 * 10^4",
+      "input_format": "第一行包含一个整数 n，表示区间数量。\n接下来 n 行，每行两个整数 start 和 end。",
+      "output_format": "输出一个整数，表示需要移除的最小区间数。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Greedy",
+        "Array",
+        "Sorting"
+      ],
+      "source": "LeetCode 435",
+      "sample_cases": [
+        {
+          "input": "4\n1 2\n2 3\n3 4\n1 3",
+          "output": "1"
+        },
+        {
+          "input": "3\n1 2\n1 2\n1 2",
+          "output": "2"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "2\n1 2\n2 3",
+          "output": "0"
+        },
+        {
+          "input": "3\n1 3\n2 4\n3 5",
+          "output": "1"
+        },
+        {
+          "input": "1\n1 2",
+          "output": "0"
+        },
+        {
+          "input": "5\n1 5\n2 3\n3 4\n4 5\n5 6",
+          "output": "1"
+        }
+      ],
+      "hints": [
+        "贪心策略：按区间的结束时间升序排序。优先保留结束时间早的区间（给后面留更多空间）。",
+        "遍历排序后的区间，维护上一个不重叠区间的结束时间 end。若当前区间 start < end，说明重叠，需要移除当前区间。",
+        "否则更新 end 为当前区间的结束时间。时间 O(n log n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：按结束时间排序\n\n### 思路\n\n按结束时间排序后，贪心地选择结束最早的区间。当发现重叠时（当前 start < 上一个 end），需要移除当前区间（因为它结束更晚）。\n\n```python\ndef erase_overlap_intervals(intervals):\n    intervals.sort(key=lambda x: x[1])\n    end = float('-inf')\n    ans = 0\n    for s, e in intervals:\n        if s >= end:\n            end = e\n        else:\n            ans += 1\n    return ans\n```\n\n### 复杂度\n- 时间: O(n log n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "gas-station",
+      "title": "加油站",
+      "difficulty": "medium",
+      "difficulty_score": 1500,
+      "description_md": "# 加油站\n\n在一条环路上有 n 个加油站，其中第 i 个加油站有汽油 gas[i] 升。\n\n你有一辆油箱容量无限的汽车，从第 i 个加油站开往第 i+1 个加油站需要消耗汽油 cost[i] 升。你从其中的一个加油站出发，开始时油箱为空。\n\n给定两个整数数组 gas 和 cost，如果你可以绕环路行驶一周，则返回出发时加油站的编号，否则返回 -1。如果存在解，则保证它是唯一的。\n\n## 示例\n\n**示例 1：**\n输入: gas = [1,2,3,4,5], cost = [3,4,5,1,2]\n输出: 3\n解释: 从 3 号加油站出发可绕一周。\n\n**示例 2：**\n输入: gas = [2,3,4], cost = [3,4,3]\n输出: -1\n\n## 约束\n\n- n == gas.length == cost.length\n- 1 <= n <= 10^5\n- 0 <= gas[i], cost[i] <= 10^4",
+      "input_format": "第一行包含一个整数 n。\n第二行包含 n 个整数，表示 gas 数组。\n第三行包含 n 个整数，表示 cost 数组。",
+      "output_format": "输出一个整数，表示出发加油站的编号（0 到 n-1）。若无法环绕则输出 -1。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Greedy",
+        "Array"
+      ],
+      "source": "LeetCode 134",
+      "sample_cases": [
+        {
+          "input": "5\n1 2 3 4 5\n3 4 5 1 2",
+          "output": "3"
+        },
+        {
+          "input": "3\n2 3 4\n3 4 3",
+          "output": "-1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1\n5\n4",
+          "output": "0"
+        },
+        {
+          "input": "4\n1 2 3 4\n1 2 3 4",
+          "output": "0"
+        },
+        {
+          "input": "3\n1 2 3\n1 2 3",
+          "output": "0"
+        },
+        {
+          "input": "5\n5 8 2 1 3\n4 3 1 3 2",
+          "output": "1"
+        }
+      ],
+      "hints": [
+        "总油量 >= 总消耗是绕行的必要条件。如果总油量 < 总消耗，返回 -1。",
+        "从起点 start 开始，维护当前油箱剩余油量 tank。若 tank < 0，说明从 start 到当前位置不可行，将 start 重置为 i+1 并将 tank 清零。",
+        "贪心：既然前面的路段不可达，任何从前面出发的路线也会卡在同一位置。所以直接跳到 i+1。时间 O(n)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：贪心遍历\n\n### 思路\n\n如果总油量 >= 总消耗，则必存在一个可行起点。遍历时维护当前油量 tank，当 tank < 0 时重置起点。\n\n```python\ndef can_complete_circuit(gas, cost):\n    if sum(gas) < sum(cost):\n        return -1\n    start = tank = 0\n    for i in range(len(gas)):\n        tank += gas[i] - cost[i]\n        if tank < 0:\n            start = i + 1\n            tank = 0\n    return start\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "美团"
+      ]
+    },
+    {
+      "slug": "candy",
+      "title": "分发糖果",
+      "difficulty": "hard",
+      "difficulty_score": 2200,
+      "description_md": "# 分发糖果\n\nn 个孩子站成一排。给你一个整数数组 ratings 表示每个孩子的评分。\n\n你需要按照以下要求，给这些孩子分发糖果：\n- 每个孩子至少分配到 1 个糖果。\n- 相邻两个孩子评分更高的孩子会获得更多的糖果。\n\n请你给每个孩子分发糖果，计算并返回需要准备的最少糖果数目。\n\n## 示例\n\n**示例 1：**\n输入：ratings = [1,0,2]\n输出：5\n解释：你可以分别给第一个、第二个、第三个孩子分发 2、1、2 颗糖果。\n\n**示例 2：**\n输入：ratings = [1,2,2]\n输出：4\n解释：你可以分别给第一个、第二个、第三个孩子分发 1、2、1 颗糖果。第三个孩子只得到 1 颗糖果，这满足题面中的两个条件。\n\n## 约束\n\n- n == ratings.length\n- 1 <= n <= 2 * 10^4\n- 0 <= ratings[i] <= 2 * 10^4",
+      "input_format": "第一行包含一个整数 n。\n第二行包含 n 个整数，表示每个孩子的评分。",
+      "output_format": "输出一个整数，表示需要的最少糖果数。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Greedy",
+        "Array"
+      ],
+      "source": "LeetCode 135",
+      "sample_cases": [
+        {
+          "input": "3\n1 0 2",
+          "output": "5"
+        },
+        {
+          "input": "3\n1 2 2",
+          "output": "4"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1\n1",
+          "output": "1"
+        },
+        {
+          "input": "5\n1 2 3 4 5",
+          "output": "15"
+        },
+        {
+          "input": "4\n1 3 2 1",
+          "output": "7"
+        },
+        {
+          "input": "1\n0",
+          "output": "1"
+        }
+      ],
+      "hints": [
+        "需要满足两个方向的约束：(1) 从左到右：若 ratings[i] > ratings[i-1]，则 candy[i] = candy[i-1] + 1。(2) 从右到左：同理。",
+        "两次遍历：第一次从左到右，满足右比左大的规则；第二次从右到左，满足左比右大的规则，取两次的较大值。",
+        "最终结果 = sum(candy)。时间 O(n)，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：双向贪心\n\n### 思路\n\n两次遍历确保两个方向的条件都满足。第一次从左到右处理上升，第二次从右到左处理下降并取较大值。\n\n```python\ndef candy(ratings):\n    n = len(ratings)\n    candies = [1] * n\n    for i in range(1, n):\n        if ratings[i] > ratings[i-1]:\n            candies[i] = candies[i-1] + 1\n    for i in range(n-2, -1, -1):\n        if ratings[i] > ratings[i+1]:\n            candies[i] = max(candies[i], candies[i+1] + 1)\n    return sum(candies)\n```\n\n### 复杂度\n- 时间: O(n)\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "阿里巴巴"
+      ]
+    },
+    {
+      "slug": "task-scheduler",
+      "title": "任务调度器",
+      "difficulty": "medium",
+      "difficulty_score": 1600,
+      "description_md": "# 任务调度器\n\n给你一个用字符数组 tasks 表示的 CPU 需要执行的任务列表。每个字母表示一种不同种类的任务。任务可以以任意顺序执行，并且每个任务都可以在 1 个单位时间内执行完。在任何一个单位时间，CPU 可以完成一个任务，或者处于待命状态。\n\n然而，两个相同种类的任务之间必须有长度为整数 n 的冷却时间，因此至少有连续 n 个单位时间内 CPU 在执行不同的任务，或者在待命状态。\n\n你需要计算完成所有任务所需要的最短时间。\n\n## 示例\n\n**示例 1：**\n输入：tasks = [\"A\",\"A\",\"A\",\"B\",\"B\",\"B\"], n = 2\n输出：8\n解释：A -> B -> (待命) -> A -> B -> (待命) -> A -> B\n\n**示例 2：**\n输入：tasks = [\"A\",\"A\",\"A\",\"B\",\"B\",\"B\"], n = 0\n输出：6\n\n**示例 3：**\n输入：tasks = [\"A\",\"A\",\"A\",\"A\",\"A\",\"A\",\"B\",\"C\",\"D\",\"E\",\"F\",\"G\"], n = 2\n输出：16\n\n## 约束\n\n- 1 <= task.length <= 10^4\n- tasks[i] 是大写英文字母\n- 0 <= n <= 100",
+      "input_format": "第一行包含两个整数 m 和 n，m 表示任务数量，n 表示冷却时间。\n第二行包含 m 个大写字母，表示任务列表。",
+      "output_format": "输出一个整数，表示完成所有任务的最短时间。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Greedy",
+        "Array",
+        "Hash Table"
+      ],
+      "source": "LeetCode 621",
+      "sample_cases": [
+        {
+          "input": "6 2\nA A A B B B",
+          "output": "8"
+        },
+        {
+          "input": "6 0\nA A A B B B",
+          "output": "6"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "12 2\nA A A A A A B C D E F G",
+          "output": "16"
+        },
+        {
+          "input": "3 1\nA A B",
+          "output": "3"
+        },
+        {
+          "input": "4 3\nA B C D",
+          "output": "4"
+        },
+        {
+          "input": "5 2\nA A A B B",
+          "output": "7"
+        }
+      ],
+      "hints": [
+        "统计每种任务的频次。频次最高的任务决定了总时间的下界。",
+        "设最高频次为 max_freq，有 max_count 种任务的频次等于 max_freq。这些任务需要 (max_freq - 1) * (n + 1) + max_count 的时间。",
+        "如果 n 很小，上述公式的结果可能小于总任务数，此时答案是总任务数（不需要空闲时间）。时间 O(m)，空间 O(1)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：桶思想\n\n### 思路\n\n出现次数最多的任务决定了最小时间。设 max_freq 是最大频次，max_count 是频次等于 max_freq 的任务种类数。最少时间为 max((max_freq-1)*(n+1)+max_count, len(tasks))。\n\n```python\nfrom collections import Counter\ndef least_interval(tasks, n):\n    freq = Counter(tasks)\n    max_freq = max(freq.values())\n    max_count = sum(1 for v in freq.values() if v == max_freq)\n    return max((max_freq - 1) * (n + 1) + max_count, len(tasks))\n```\n\n### 复杂度\n- 时间: O(m)\n- 空间: O(1)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "华为"
+      ]
+    },
+    {
+      "slug": "queue-reconstruction-by-height",
+      "title": "根据身高重建队列",
+      "difficulty": "medium",
+      "difficulty_score": 1700,
+      "description_md": "# 根据身高重建队列\n\n假设有打乱顺序的一群人站成一个队列，数组 people 表示队列中一些人的属性（不一定按顺序）。每个 people[i] = [h_i, k_i] 表示第 i 个人的身高为 h_i，前面正好有 k_i 个身高大于或等于 h_i 的人。\n\n请你重新构造并返回输入数组 people 所表示的队列。返回的队列应该格式化为数组 queue，其中 queue[j] = [h_j, k_j] 是队列中第 j 个人的属性。\n\n## 示例\n\n**示例 1：**\n输入：people = [[7,0],[4,4],[7,1],[5,0],[6,1],[5,2]]\n输出：[[5,0],[7,0],[5,2],[6,1],[4,4],[7,1]]\n\n**示例 2：**\n输入：people = [[6,0],[5,0],[4,0],[3,2],[2,2],[1,4]]\n输出：[[4,0],[5,0],[2,2],[3,2],[1,4],[6,0]]\n\n## 约束\n\n- 1 <= people.length <= 2000\n- 0 <= h_i <= 10^6\n- 0 <= k_i < people length\n- 题目数据确保队列可以被重建",
+      "input_format": "第一行包含一个整数 n，表示人数。\n接下来 n 行，每行两个整数 h 和 k。",
+      "output_format": "输出 n 行，每行两个整数，表示重建后的队列。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Greedy",
+        "Array",
+        "Sorting"
+      ],
+      "source": "LeetCode 406",
+      "sample_cases": [
+        {
+          "input": "6\n7 0\n4 4\n7 1\n5 0\n6 1\n5 2",
+          "output": "5 0\n7 0\n5 2\n6 1\n4 4\n7 1"
+        },
+        {
+          "input": "6\n6 0\n5 0\n4 0\n3 2\n2 2\n1 4",
+          "output": "4 0\n5 0\n2 2\n3 2\n1 4\n6 0"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1\n1 0",
+          "output": "1 0"
+        },
+        {
+          "input": "3\n1 0\n2 0\n3 0",
+          "output": "1 0\n2 0\n3 0"
+        },
+        {
+          "input": "4\n4 0\n3 1\n2 2\n1 3",
+          "output": "4 0\n3 1\n2 2\n1 3"
+        },
+        {
+          "input": "5\n5 0\n5 1\n5 2\n5 3\n5 4",
+          "output": "5 0\n5 1\n5 2\n5 3\n5 4"
+        }
+      ],
+      "hints": [
+        "贪心策略：先按身高 h 降序排序，同身高按 k 升序排序。",
+        "排序后依次将每个人插入到结果队列的第 k 个位置。因为身高高的人先入队，后来的人身高更矮，插入到前面不会影响之前人的 k 值。",
+        "使用 insert(k, person) 操作。时间 O(n^2)（或 O(n log n) 用平衡树优化），空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：排序 + 插入\n\n### 思路\n\n按身高降序、k 升序排序。然后遍历排序后的数组，将每个人插入到结果数组的第 k 个位置。\n\n```python\ndef reconstruct_queue(people):\n    people.sort(key=lambda x: (-x[0], x[1]))\n    res = []\n    for p in people:\n        res.insert(p[1], p)\n    return res\n```\n\n### 复杂度\n- 时间: O(n^2)，因为 list.insert 是 O(n)\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "阿里巴巴"
+      ]
+    },
+    {
+      "slug": "number-of-islands",
+      "title": "岛屿数量",
+      "difficulty": "medium",
+      "difficulty_score": 1600,
+      "description_md": "# 岛屿数量\n\n给你一个由 '1'（陆地）和 '0'（水）组成的二维网格，请你计算网格中岛屿的数量。\n\n岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。\n\n此外，你可以假设该网格的四条边均被水包围。\n\n## 示例\n\n**示例 1：**\n输入：grid = [\n  [\"1\",\"1\",\"1\",\"1\",\"0\"],\n  [\"1\",\"1\",\"0\",\"1\",\"0\"],\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"0\",\"0\",\"0\",\"0\",\"0\"]\n]\n输出：1\n\n**示例 2：**\n输入：grid = [\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"0\",\"0\",\"1\",\"0\",\"0\"],\n  [\"0\",\"0\",\"0\",\"1\",\"1\"]\n]\n输出：3\n\n## 约束\n\n- m == grid.length\n- n == grid[i].length\n- 1 <= m, n <= 300\n- grid[i][j] 的值为 '0' 或 '1'",
+      "input_format": "第一行包含两个整数 m 和 n，表示网格的行数和列数。\n接下来 m 行，每行 n 个字符（0 或 1），表示网格。",
+      "output_format": "输出一个整数，表示岛屿数量。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Graph",
+        "DFS",
+        "BFS",
+        "Union Find"
+      ],
+      "source": "LeetCode 200",
+      "sample_cases": [
+        {
+          "input": "4 5\n1 1 1 1 0\n1 1 0 1 0\n1 1 0 0 0\n0 0 0 0 0",
+          "output": "1"
+        },
+        {
+          "input": "4 5\n1 1 0 0 0\n1 1 0 0 0\n0 0 1 0 0\n0 0 0 1 1",
+          "output": "3"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1 1\n1",
+          "output": "1"
+        },
+        {
+          "input": "2 2\n1 0\n0 1",
+          "output": "2"
+        },
+        {
+          "input": "3 3\n1 1 1\n0 1 0\n1 1 1",
+          "output": "1"
+        },
+        {
+          "input": "2 3\n0 0 0\n0 0 0",
+          "output": "0"
+        }
+      ],
+      "hints": [
+        "遍历网格，当遇到一个 '1' 时，岛屿计数加 1，然后进行 DFS 或 BFS 将相连的所有陆地标记为已访问（改为 '0' 或其他标记）。",
+        "DFS 递归可能栈溢出（网格最大 300x300=90000），建议使用 BFS 队列或迭代 DFS。",
+        "也可以使用并查集（Union Find）：将所有相邻的陆地合并，最后数连通分量的个数。时间 O(mn)，空间 O(mn)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：DFS 沉岛法\n\n### 思路\n\n遍历网格，遇到陆地 '1' 就岛屿计数加 1，然后用 DFS 将这座岛屿的所有陆地沉没（标记为 '0'）。\n\n```python\ndef num_islands(grid):\n    m, n = len(grid), len(grid[0])\n    def dfs(i, j):\n        if i < 0 or i >= m or j < 0 or j >= n or grid[i][j] == '0':\n            return\n        grid[i][j] = '0'\n        for di, dj in [(1,0),(-1,0),(0,1),(0,-1)]:\n            dfs(i + di, j + dj)\n    ans = 0\n    for i in range(m):\n        for j in range(n):\n            if grid[i][j] == '1':\n                ans += 1\n                dfs(i, j)\n    return ans\n```\n\n### 复杂度\n- 时间: O(m * n)\n- 空间: O(m * n)（递归栈）",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "course-schedule",
+      "title": "课程表",
+      "difficulty": "hard",
+      "difficulty_score": 2200,
+      "description_md": "# 课程表\n\n你这个学期必须选修 numCourses 门课程，记为 0 到 numCourses - 1。\n\n在选修某些课程之前需要一些先修课程。先修课程按数组 prerequisites 给出，其中 prerequisites[i] = [a_i, b_i]，表示如果要学习课程 a_i 则必须先学习课程 b_i。\n\n例如，[0, 1] 表示想要学习课程 0，需要先完成课程 1。\n\n请你判断是否可能完成所有课程的学习？如果可以，返回 true；否则，返回 false。\n\n## 示例\n\n**示例 1：**\n输入：numCourses = 2, prerequisites = [[1,0]]\n输出：true\n\n**示例 2：**\n输入：numCourses = 2, prerequisites = [[1,0],[0,1]]\n输出：false\n\n## 约束\n\n- 1 <= numCourses <= 2000\n- 0 <= prerequisites.length <= 5000\n- prerequisites[i].length == 2\n- 0 <= a_i, b_i < numCourses\n- 所有先修课程对互不相同",
+      "input_format": "第一行包含两个整数 N 和 M，N 表示课程数，M 表示先修关系数。\n接下来 M 行，每行两个整数 a b，表示要学 a 必须先学 b。",
+      "output_format": "输出 true 或 false。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Graph",
+        "DFS",
+        "BFS",
+        "Topological Sort"
+      ],
+      "source": "LeetCode 207",
+      "sample_cases": [
+        {
+          "input": "2 1\n1 0",
+          "output": "true"
+        },
+        {
+          "input": "2 2\n1 0\n0 1",
+          "output": "false"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "1 0",
+          "output": "true"
+        },
+        {
+          "input": "3 3\n0 1\n1 2\n2 0",
+          "output": "false"
+        },
+        {
+          "input": "4 4\n0 1\n1 2\n2 3\n3 0",
+          "output": "false"
+        },
+        {
+          "input": "4 3\n1 0\n2 0\n3 1",
+          "output": "true"
+        }
+      ],
+      "hints": [
+        "这是经典的拓扑排序/判环问题。使用入度表 + BFS（Kahn 算法）。",
+        "计算每个节点的入度，将入度为 0 的节点入队。每次出队一个节点，将其所有邻接节点的入度减 1，若变为 0 则入队。",
+        "若最终处理的节点数等于总节点数，说明无环（可以完成所有课程）。时间 O(V+E)，空间 O(V+E)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：拓扑排序（Kahn 算法）\n\n### 思路\n\n构建邻接表 graph 和入度数组 indegree。将入度为 0 的节点入队，BFS 过程中减少后续节点的入度。\n\n```python\nfrom collections import deque\ndef can_finish(N, prerequisites):\n    graph = [[] for _ in range(N)]\n    indegree = [0] * N\n    for a, b in prerequisites:\n        graph[b].append(a)\n        indegree[a] += 1\n    q = deque([i for i in range(N) if indegree[i] == 0])\n    count = 0\n    while q:\n        u = q.popleft()\n        count += 1\n        for v in graph[u]:\n            indegree[v] -= 1\n            if indegree[v] == 0:\n                q.append(v)\n    return count == N\n```\n\n### 复杂度\n- 时间: O(V + E)\n- 空间: O(V + E)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "clone-graph",
+      "title": "克隆图",
+      "difficulty": "medium",
+      "difficulty_score": 1600,
+      "description_md": "# 克隆图\n\n给你无向连通图中一个节点的引用，请你返回该图的深拷贝（克隆）。\n\n图中的每个节点都包含它的值 val（int）和其邻居的列表（list[Node]）。\n\n## 示例\n\n**示例 1：**\n输入：adjList = [[2,4],[1,3],[2,4],[1,3]]\n输出：[[2,4],[1,3],[2,4],[1,3]]\n解释：图中有 4 个节点。节点 1 的值是 1，有两个邻居：节点 2 和 4。\n\n**示例 2：**\n输入：adjList = [[]]\n输出：[[]]\n\n**示例 3：**\n输入：adjList = []\n输出：[]\n\n## 约束\n\n- 节点数在 [0, 100] 之间\n- 1 <= Node.val <= 100\n- 每个节点值 Node.val 是唯一的\n- 无向图是一个简单图，没有自环和重复边",
+      "input_format": "第一行包含两个整数 n 和 m，n 表示节点数，m 表示边数。\n接下来 m 行，每行两个整数 u v，表示无向边。节点编号从 1 到 n。",
+      "output_format": "输出 n 行，每行输出节点值及其邻居（节点值列表），与输入格式相同。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Graph",
+        "Hash Table",
+        "DFS",
+        "BFS"
+      ],
+      "source": "LeetCode 133",
+      "sample_cases": [
+        {
+          "input": "4 4\n1 2\n1 4\n2 3\n3 4",
+          "output": "1 2 4\n2 1 3\n3 2 4\n4 1 3"
+        },
+        {
+          "input": "1 0",
+          "output": "1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "0 0",
+          "output": ""
+        },
+        {
+          "input": "2 1\n1 2",
+          "output": "1 2\n2 1"
+        },
+        {
+          "input": "3 2\n1 2\n2 3",
+          "output": "1 2\n2 1 3\n3 2"
+        },
+        {
+          "input": "5 4\n1 2\n2 3\n3 4\n4 5",
+          "output": "1 2\n2 1 3\n3 2 4\n4 3 5\n5 4"
+        }
+      ],
+      "hints": [
+        "使用哈希表记录已克隆的节点（原节点 -> 新节点），避免重复克隆和无限递归。",
+        "DFS 或 BFS 遍历原图。对于每个当前节点，如果未克隆则创建新节点并加入哈希表，然后递归/BFS 处理所有邻居。",
+        "每次处理邻居时，从哈希表获取或创建克隆节点，并建立连接。时间 O(V+E)，空间 O(V)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：DFS + 哈希表\n\n### 思路\n\n用哈希表 visited 记录 (原节点 -> 克隆节点) 的映射。DFS 遍历，若节点已克隆则直接返回，否则创建新节点并递归克隆所有邻居。\n\n```python\ndef clone_graph(node):\n    if not node:\n        return None\n    visited = {}\n    def dfs(n):\n        if n in visited:\n            return visited[n]\n        clone = Node(n.val)\n        visited[n] = clone\n        for neighbor in n.neighbors:\n            clone.neighbors.append(dfs(neighbor))\n        return clone\n    return dfs(node)\n```\n\n### 复杂度\n- 时间: O(V + E)\n- 空间: O(V)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "谷歌"
+      ]
+    },
+    {
+      "slug": "pacific-atlantic-water-flow",
+      "title": "太平洋大西洋水流问题",
+      "difficulty": "hard",
+      "difficulty_score": 2200,
+      "description_md": "# 太平洋大西洋水流问题\n\n有一个 m x n 的矩形岛屿，与太平洋和大西洋相邻。太平洋在岛屿的左边和上边，大西洋在岛屿的右边和下边。\n\n给定一个 m x n 的整数矩阵 heights，heights[r][c] 表示坐标 (r, c) 上单元格高于海平面的高度。\n\n岛上雨水较多，如果相邻单元格的高度小于或等于当前单元格的高度，雨水可以直接向北、南、东、西流向相邻单元格。水可以从靠近边界的单元格流入海洋。\n\n找出网格中哪些坐标的雨水可以同时流入太平洋和大西洋。\n\n## 示例\n\n**示例 1：**\n输入: heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]\n输出: [[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]\n\n## 约束\n\n- m == heights.length\n- n == heights[i].length\n- 1 <= m, n <= 200\n- 0 <= heights[i][j] <= 10^5",
+      "input_format": "第一行包含两个整数 m 和 n。\n接下来 m 行，每行 n 个整数，表示高度矩阵。",
+      "output_format": "第一行输出满足条件的坐标数量 k。\n接下来 k 行，每行两个整数 r c。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Graph",
+        "DFS",
+        "BFS",
+        "Matrix"
+      ],
+      "source": "LeetCode 417",
+      "sample_cases": [
+        {
+          "input": "5 5\n1 2 2 3 5\n3 2 3 4 4\n2 4 5 3 1\n6 7 1 4 5\n5 1 1 2 4",
+          "output": "7\n0 4\n1 3\n1 4\n2 2\n3 0\n3 1\n4 0"
+        },
+        {
+          "input": "1 1\n1",
+          "output": "1\n0 0"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "2 2\n1 2\n2 3",
+          "output": "4\n0 0\n0 1\n1 0\n1 1"
+        },
+        {
+          "input": "3 3\n1 1 1\n1 1 1\n1 1 1",
+          "output": "9\n0 0\n0 1\n0 2\n1 0\n1 1\n1 2\n2 0\n2 1\n2 2"
+        },
+        {
+          "input": "2 3\n3 2 1\n1 2 3",
+          "output": "6\n0 0\n0 1\n0 2\n1 0\n1 1\n1 2"
+        },
+        {
+          "input": "3 2\n1 2\n2 1\n1 3",
+          "output": "3\n0 0\n0 1\n2 1"
+        }
+      ],
+      "hints": [
+        "正向 DFS（从每个单元格出发）会超时。改为反向 DFS：从海洋边界出发，向高处走。",
+        "分别从太平洋边界（上边和左边）和大西洋边界（下边和右边）开始 DFS/BFS，标记能到达的单元格。",
+        "最终，在两个标记数组中都为 True 的单元格即为答案。时间 O(mn)，空间 O(mn)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：反向 DFS\n\n### 思路\n\n从海洋边界向内搜索：从低处向高处走（与水流方向相反）。分别标记能到达太平洋和大西洋的单元格，取交集。\n\n```python\ndef pacific_atlantic(heights):\n    m, n = len(heights), len(heights[0])\n    pac = [[False]*n for _ in range(m)]\n    atl = [[False]*n for _ in range(m)]\n    def dfs(i, j, ocean):\n        ocean[i][j] = True\n        for di, dj in [(1,0),(-1,0),(0,1),(0,-1)]:\n            ni, nj = i + di, j + dj\n            if 0 <= ni < m and 0 <= nj < n and not ocean[ni][nj] and heights[ni][nj] >= heights[i][j]:\n                dfs(ni, nj, ocean)\n    for i in range(m):\n        dfs(i, 0, pac)\n        dfs(i, n-1, atl)\n    for j in range(n):\n        dfs(0, j, pac)\n        dfs(m-1, j, atl)\n    res = []\n    for i in range(m):\n        for j in range(n):\n            if pac[i][j] and atl[i][j]:\n                res.append([i, j])\n    return res\n```\n\n### 复杂度\n- 时间: O(m * n)\n- 空间: O(m * n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "谷歌",
+        "阿里巴巴"
+      ]
+    },
+    {
+      "slug": "word-ladder",
+      "title": "单词接龙",
+      "difficulty": "hard",
+      "difficulty_score": 2300,
+      "description_md": "# 单词接龙\n\n字典 wordList 中从单词 beginWord 到 endWord 的转换序列是一个按下述规格形成的序列 beginWord -> s1 -> s2 -> ... -> sk：\n- 每一对相邻的单词只差一个字母。\n- 对于 1 <= i <= k，每个 s_i 都在 wordList 中。注意 beginWord 不需要在 wordList 中。\n- s_k == endWord\n\n给你两个单词 beginWord 和 endWord 和一个字典 wordList，返回从 beginWord 到 endWord 的最短转换序列中的单词数目。如果不存在这样的转换序列，返回 0。\n\n## 示例\n\n**示例 1：**\n输入：beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]\n输出：5\n解释：\"hit\" -> \"hot\" -> \"dot\" -> \"dog\" -> \"cog\"，共 5 个单词。\n\n**示例 2：**\n输入：beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\"]\n输出：0\n解释：endWord \"cog\" 不在字典中，故无法转换。\n\n## 约束\n\n- 1 <= beginWord.length <= 10\n- endWord.length == beginWord.length\n- 1 <= wordList.length <= 5000\n- 单词仅由小写英文字母组成",
+      "input_format": "第一行包含两个单词 beginWord 和 endWord。\n第二行包含一个整数 n，表示字典大小。\n接下来 n 行，每行一个单词。",
+      "output_format": "输出一个整数，表示最短转换序列的长度（包含 beginWord）。无法转换输出 0。",
+      "time_limit_ms": 2000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Graph",
+        "BFS",
+        "String"
+      ],
+      "source": "LeetCode 127",
+      "sample_cases": [
+        {
+          "input": "hit cog\n6\nhot\ndot\ndog\nlot\nlog\ncog",
+          "output": "5"
+        },
+        {
+          "input": "hit cog\n5\nhot\ndot\ndog\nlot\nlog",
+          "output": "0"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "a c\n3\na\nb\nc",
+          "output": "3"
+        },
+        {
+          "input": "hot dog\n3\nhot\ndog\ndot",
+          "output": "3"
+        },
+        {
+          "input": "abc def\n0",
+          "output": "0"
+        },
+        {
+          "input": "log cog\n3\nhog\ncog\nfog",
+          "output": "3"
+        }
+      ],
+      "hints": [
+        "将每个单词看作图中的节点，相差一个字母的单词间有一条边。问题转化为求最短路径。",
+        "BFS 是最自然的选择。关键是如何高效找到当前单词的所有相邻单词。",
+        "两种方法：(1) 遍历字典中所有单词，逐个比较 O(L*N)；(2) 对当前单词的每个位置，尝试替换为 26 个字母，生成候选词并查字典 O(26*L)。当 N 很大时后者更优。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：BFS + 模式匹配\n\n### 思路\n\nBFS 从 beginWord 开始，每次对当前单词的每个位置尝试所有字母替换，检查是否在 wordSet 中。\n\n```python\nfrom collections import deque\ndef ladder_length(beginWord, endWord, wordList):\n    wordSet = set(wordList)\n    if endWord not in wordSet:\n        return 0\n    q = deque([(beginWord, 1)])\n    visited = {beginWord}\n    while q:\n        word, steps = q.popleft()\n        if word == endWord:\n            return steps\n        for i in range(len(word)):\n            for c in 'abcdefghijklmnopqrstuvwxyz':\n                nxt = word[:i] + c + word[i+1:]\n                if nxt in wordSet and nxt not in visited:\n                    visited.add(nxt)\n                    q.append((nxt, steps + 1))\n    return 0\n```\n\n### 复杂度\n- 时间: O(26 * L * N)\n- 空间: O(N)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "谷歌"
+      ]
+    },
+    {
+      "slug": "network-delay-time",
+      "title": "网络延迟时间",
+      "difficulty": "hard",
+      "difficulty_score": 2200,
+      "description_md": "# 网络延迟时间\n\n有 n 个网络节点，标记为 1 到 n。\n\n给你一个列表 times，表示信号经过有向边的传递时间。times[i] = (u_i, v_i, w_i)，其中 u_i 是源节点，v_i 是目标节点，w_i 是一个信号从源节点传递到目标节点的时间。\n\n现在，从某个节点 k 发出一个信号。需要多久才能使所有节点都收到信号？如果不能使所有节点收到，返回 -1。\n\n## 示例\n\n**示例 1：**\n输入：times = [[2,1,1],[2,3,1],[3,4,1]], n = 4, k = 2\n输出：2\n\n**示例 2：**\n输入：times = [[1,2,1]], n = 2, k = 1\n输出：1\n\n**示例 3：**\n输入：times = [[1,2,1]], n = 2, k = 2\n输出：-1\n\n## 约束\n\n- 1 <= k <= n <= 100\n- 1 <= times.length <= 6000\n- times[i].length == 3\n- 1 <= u_i, v_i <= n\n- u_i != v_i\n- 0 <= w_i <= 100",
+      "input_format": "第一行包含三个整数 n m k，n 为节点数，m 为边数，k 为起始节点。\n接下来 m 行，每行三个整数 u v w，表示从 u 到 v 的边权为 w。",
+      "output_format": "输出一个整数，表示所有节点收到信号的最短时间。若无法到达所有节点输出 -1。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Graph",
+        "Dijkstra",
+        "Heap"
+      ],
+      "source": "LeetCode 743",
+      "sample_cases": [
+        {
+          "input": "4 3 2\n2 1 1\n2 3 1\n3 4 1",
+          "output": "2"
+        },
+        {
+          "input": "2 1 1\n1 2 1",
+          "output": "1"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "2 1 2\n1 2 1",
+          "output": "-1"
+        },
+        {
+          "input": "3 3 1\n1 2 1\n2 3 2\n1 3 4",
+          "output": "3"
+        },
+        {
+          "input": "4 4 1\n1 2 2\n1 3 3\n2 4 1\n3 4 5",
+          "output": "3"
+        },
+        {
+          "input": "1 0 1",
+          "output": "0"
+        }
+      ],
+      "hints": [
+        "这是单源最短路径问题。用 Dijkstra 算法计算节点 k 到所有其他节点的最短距离。",
+        "用优先队列（最小堆）优化 Dijkstra：每次选择当前距离最小的未处理节点。对于每条边进行松弛操作。",
+        "最终所有距离中的最大值即为答案。如果存在节点距离为无穷大，返回 -1。时间 O(E log V)，空间 O(V+E)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：Dijkstra（最小堆）\n\n### 思路\n\n用邻接表存储图，优先队列实现 Dijkstra。dist[i] 记录从 k 到 i 的最短距离。每次从堆中取出最小距离的节点，更新其邻居。\n\n```python\nimport heapq\nfrom collections import defaultdict\ndef network_delay_time(times, n, k):\n    graph = defaultdict(list)\n    for u, v, w in times:\n        graph[u].append((v, w))\n    dist = [float('inf')] * (n + 1)\n    dist[k] = 0\n    heap = [(0, k)]\n    while heap:\n        d, u = heapq.heappop(heap)\n        if d > dist[u]:\n            continue\n        for v, w in graph[u]:\n            nd = d + w\n            if nd < dist[v]:\n                dist[v] = nd\n                heapq.heappush(heap, (nd, v))\n    ans = max(dist[1:])\n    return ans if ans != float('inf') else -1\n```\n\n### 复杂度\n- 时间: O(E log V)\n- 空间: O(V + E)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "腾讯"
+      ]
+    },
+    {
+      "slug": "find-the-town-judge",
+      "title": "找到小镇的法官",
+      "difficulty": "easy",
+      "difficulty_score": 1200,
+      "description_md": "# 找到小镇的法官\n\n小镇里有 n 个人，按 1 到 n 编号。传言称，这些人中有一个暗地里是小镇法官。\n\n如果小镇法官真的存在，那么：\n1. 小镇法官不会信任任何人。\n2. 每个人（除了小镇法官）都信任小镇法官。\n3. 只有一个人同时满足属性 1 和属性 2。\n\n给你一个数组 trust，其中 trust[i] = [a_i, b_i] 表示编号为 a_i 的人信任编号为 b_i 的人。\n\n如果小镇法官存在且可以确定，返回该法官的编号；否则，返回 -1。\n\n## 示例\n\n**示例 1：**\n输入：n = 2, trust = [[1,2]]\n输出：2\n\n**示例 2：**\n输入：n = 3, trust = [[1,3],[2,3]]\n输出：3\n\n**示例 3：**\n输入：n = 3, trust = [[1,3],[2,3],[3,1]]\n输出：-1\n\n## 约束\n\n- 1 <= n <= 1000\n- 0 <= trust.length <= 10^4\n- trust[i].length == 2\n- trust 中的所有对互不相同\n- a_i != b_i\n- 1 <= a_i, b_i <= n",
+      "input_format": "第一行包含两个整数 n 和 m，n 为人数，m 为信任关系数。\n接下来 m 行，每行两个整数 a b，表示 a 信任 b。",
+      "output_format": "输出法官的编号（1 到 n）。不存在则输出 -1。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Graph",
+        "Array",
+        "Hash Table"
+      ],
+      "source": "LeetCode 997",
+      "sample_cases": [
+        {
+          "input": "2 1\n1 2",
+          "output": "2"
+        },
+        {
+          "input": "3 2\n1 3\n2 3",
+          "output": "3"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "3 3\n1 3\n2 3\n3 1",
+          "output": "-1"
+        },
+        {
+          "input": "1 0",
+          "output": "1"
+        },
+        {
+          "input": "2 2\n1 2\n2 1",
+          "output": "-1"
+        },
+        {
+          "input": "4 3\n1 4\n2 4\n3 4",
+          "output": "4"
+        }
+      ],
+      "hints": [
+        "法官的出度为 0（不信任任何人），入度为 n-1（其他人都信任他）。",
+        "用两个数组 indegree 和 outdegree（或一个 diff 数组 indegree - outdegree）。遍历 trust 更新。",
+        "最后找 indegree - outdegree == n - 1 的节点。若找不到，返回 -1。时间 O(n+m)，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：入度-出度差\n\n### 思路\n\n维护每个节点的入度和出度。法官的出度为 0，入度为 n-1。用 degree[i] = indegree[i] - outdegree[i]。法官的 degree = n - 1。\n\n```python\ndef find_judge(n, trust):\n    degree = [0] * (n + 1)\n    for a, b in trust:\n        degree[a] -= 1\n        degree[b] += 1\n    for i in range(1, n + 1):\n        if degree[i] == n - 1:\n            return i\n    return -1\n```\n\n### 复杂度\n- 时间: O(n + m)\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "腾讯",
+        "阿里巴巴"
+      ]
+    },
+    {
+      "slug": "redundant-connection",
+      "title": "冗余连接",
+      "difficulty": "hard",
+      "difficulty_score": 2100,
+      "description_md": "# 冗余连接\n\n树可以看成是一个连通且无环的无向图。\n\n给定往一棵 n 个节点（节点值 1~n）的树中添加一条边后的图。添加的边的两个顶点包含在 1 到 n 中间，且这条附加的边不属于树中已存在的边。图的信息记录于长度为 n 的二维数组 edges，edges[i] = [a_i, b_i] 表示图中在 a_i 和 b_i 之间存在一条边。\n\n请找出一条可以删去的边，删除后可使得剩余部分是一个有着 n 个节点的树。如果有多个答案，则返回数组 edges 中最后出现的那条边。\n\n## 示例\n\n**示例 1：**\n输入: edges = [[1,2],[1,3],[2,3]]\n输出: [2,3]\n\n**示例 2：**\n输入: edges = [[1,2],[2,3],[3,4],[1,4],[1,5]]\n输出: [1,4]\n\n## 约束\n\n- n == edges.length\n- 3 <= n <= 1000\n- edges[i].length == 2\n- 1 <= a_i, b_i <= n\n- a_i != b_i",
+      "input_format": "第一行包含一个整数 n，表示边数（也等于节点数）。\n接下来 n 行，每行两个整数 u v，表示一条无向边。",
+      "output_format": "输出两个整数 u v，表示需要删除的边（最后出现的那条）。格式为 u v（u < v）。",
+      "time_limit_ms": 1000,
+      "memory_limit_mb": 256,
+      "tags": [
+        "Graph",
+        "Union Find",
+        "DFS"
+      ],
+      "source": "LeetCode 684",
+      "sample_cases": [
+        {
+          "input": "3\n1 2\n1 3\n2 3",
+          "output": "2 3"
+        },
+        {
+          "input": "5\n1 2\n2 3\n3 4\n1 4\n1 5",
+          "output": "1 4"
+        }
+      ],
+      "hidden_cases": [
+        {
+          "input": "3\n1 2\n2 3\n1 3",
+          "output": "1 3"
+        },
+        {
+          "input": "4\n1 2\n2 3\n3 4\n1 4",
+          "output": "1 4"
+        },
+        {
+          "input": "4\n1 2\n1 3\n1 4\n2 3",
+          "output": "2 3"
+        },
+        {
+          "input": "5\n1 2\n1 3\n2 4\n3 5\n4 5",
+          "output": "4 5"
+        }
+      ],
+      "hints": [
+        "使用并查集（Union Find）。遍历每条边，对于边 (u, v)，检查 u 和 v 是否已经连通。",
+        "如果 find(u) == find(v)，说明加入这条边会形成环，这条边就是冗余边。返回它。",
+        "否则 union(u, v) 合并。并查集支持路径压缩和按秩合并。时间 O(n * alpha(n))，空间 O(n)。"
+      ],
+      "solutions": [
+        {
+          "language": "python",
+          "content": "## 题解：并查集\n\n### 思路\n\n遍历所有边，用并查集检测环。当发现一条边的两个端点已经在同一集合中时，这条边就是冗余的。\n\n```python\ndef find_redundant_connection(edges):\n    parent = list(range(len(edges) + 1))\n    def find(x):\n        while parent[x] != x:\n            parent[x] = parent[parent[x]]\n            x = parent[x]\n        return x\n    def union(x, y):\n        px, py = find(x), find(y)\n        if px == py:\n            return False\n        parent[px] = py\n        return True\n    for u, v in edges:\n        if not union(u, v):\n            return [u, v]\n    return []\n```\n\n### 复杂度\n- 时间: O(n * alpha(n))\n- 空间: O(n)",
+          "is_official": true
+        }
+      ],
+      "company_tags": [
+        "字节跳动",
+        "阿里巴巴",
+        "谷歌"
+      ]
+    }
+  ]
+}
