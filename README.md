@@ -58,11 +58,11 @@ chmod +x deploy.sh
 ./deploy.sh
 ```
 
-## 管理员
+## 创建管理员
 
-```
-用户名: admin
-密码:   admin123
+```bash
+# 先注册普通用户，再进入数据库提升权限
+sqlite3 backend/algohub_dev.db "UPDATE users SET role='admin' WHERE username='你的用户名';"
 ```
 
 ## 项目结构
