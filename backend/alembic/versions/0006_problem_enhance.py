@@ -14,13 +14,14 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.add_column("problems", sa.Column("slug", sa.String(200), unique=True))
-    op.add_column("problems", sa.Column("view_count", sa.Integer(), server_default="0"))
-    op.add_column("problems", sa.Column("accept_count", sa.Integer(), server_default="0"))
-    op.add_column("problems", sa.Column("submit_count", sa.Integer(), server_default="0"))
-    op.add_column("problems", sa.Column("upvote_count", sa.Integer(), server_default="0"))
-    op.add_column("problems", sa.Column("downvote_count", sa.Integer(), server_default="0"))
-    op.create_index("idx_problems_slug", "problems", ["slug"])
+    with op.batch_alter_table("problems") as batch_op:
+        batch_op.add_column(sa.Column("slug", sa.String(200)))
+        batch_op.add_column(sa.Column("view_count", sa.Integer(), server_default="0"))
+        batch_op.add_column(sa.Column("accept_count", sa.Integer(), server_default="0"))
+        batch_op.add_column(sa.Column("submit_count", sa.Integer(), server_default="0"))
+        batch_op.add_column(sa.Column("upvote_count", sa.Integer(), server_default="0"))
+        batch_op.add_column(sa.Column("downvote_count", sa.Integer(), server_default="0"))
+        batch_op.create_index("idx_problems_slug", ["slug"], unique=True)
     op.create_index("idx_problems_list", "problems", ["is_public", "difficulty", "id"])
 
     op.create_table("problem_hints",
@@ -67,7 +68,7 @@ def upgrade() -> None:
         sa.Column("title", sa.String(200), nullable=False),
         sa.Column("description", sa.Text()),
         sa.Column("is_public", sa.Boolean(), server_default="false"),
-        sa.Column("problem_ids", sa.ARRAY(sa.Integer()), nullable=False),
+        sa.Column("problem_ids", sa.JSON(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
         sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), onupdate=sa.func.now()),
     )

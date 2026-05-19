@@ -23,7 +23,7 @@ def upgrade() -> None:
     op.add_column("user_profiles", sa.Column("current_status", sa.Integer(), server_default="1", nullable=False))
     op.add_column("user_profiles", sa.Column("organization", sa.String(length=128), nullable=True))
     op.add_column("user_profiles", sa.Column("region_code", sa.String(length=12), nullable=True))
-    op.add_column("user_profiles", sa.Column("privacy_settings", sa.JSON(), nullable=False, server_default=sa.text("'{}'::json")))
+    op.add_column("user_profiles", sa.Column("privacy_settings", sa.JSON(), nullable=False, server_default=sa.text("'{}'")))
 
     op.create_index("idx_profiles_nickname", "user_profiles", ["nickname"], unique=True, if_not_exists=False)
     op.create_index("idx_profiles_organization", "user_profiles", ["organization"], unique=False)

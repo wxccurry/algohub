@@ -1,5 +1,6 @@
 {
   "permissions": {
+    "defaultMode": "acceptEdits",
     "allow": [
       "Bash(python \"C:/Users/win11/.claude/plugins/cache/claude-plugins-official/hookify/b5a156b6ecd2/hooks/pretooluse.py\")",
       "Bash(echo \"EXIT: $?\")",
@@ -51,7 +52,41 @@
       "Bash(git init *)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(git config *)"
+      "Bash(git config *)",
+      "Bash(python -c \"from app.exceptions import NotFoundError, ForbiddenError, UnauthorizedError, ConflictError, ValidationError, RateLimitError; e = NotFoundError\\('Problem', 1\\); assert e.code == 404; assert 'not found' in e.message; print\\('OK: Exceptions work'\\)\")",
+      "Bash(python -c \"from app.middleware.request_id import RequestIDMiddleware; from app.middleware.access_log import AccessLogMiddleware; from app.middleware.error_handler import app_error_handler; print\\('OK: All middleware imports work'\\)\")",
+      "Skill(update-config)",
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "TaskCreate",
+      "TaskUpdate",
+      "TaskGet",
+      "TaskList",
+      "Agent(description:*)",
+      "Skill(*)",
+      "Bash(cd E:/桌面/platform/*)",
+      "Bash(cd E:\\\\桌面\\\\platform\\*)",
+      "Bash(ls *)",
+      "Bash(mkdir *)",
+      "Bash(cat *)",
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "Bash(pip *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(git *)",
+      "Bash(alembic *)",
+      "Bash(docker *)",
+      "Bash(curl *)",
+      "Bash(taskkill *)",
+      "Bash(sleep *)",
+      "Bash(echo *)",
+      "Bash(rm *)",
+      "WebFetch(domain:*)",
+      "WebSearch"
     ]
   }
 }

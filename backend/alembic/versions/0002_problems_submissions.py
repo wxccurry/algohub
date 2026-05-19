@@ -8,7 +8,7 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects.postgresql import JSONB
+# SQLite-compatible JSON columns
 
 revision: str = "0002_problems"
 down_revision: Union[str, None] = "0001_initial"
@@ -24,8 +24,8 @@ def upgrade() -> None:
         sa.Column("description", sa.Text(), nullable=False),
         sa.Column("input_format", sa.Text(), nullable=True),
         sa.Column("output_format", sa.Text(), nullable=True),
-        sa.Column("sample_cases", JSONB(), nullable=False, server_default=sa.text("'[]'::jsonb")),
-        sa.Column("hidden_cases", JSONB(), nullable=False, server_default=sa.text("'[]'::jsonb")),
+        sa.Column("sample_cases", sa.JSON(), nullable=False, server_default=sa.text("'[]'")),
+        sa.Column("hidden_cases", sa.JSON(), nullable=False, server_default=sa.text("'[]'")),
         sa.Column("difficulty", sa.String(length=20), server_default="简单", nullable=False),
         sa.Column("time_limit", sa.Integer(), server_default="1000", nullable=False),
         sa.Column("memory_limit", sa.Integer(), server_default="256", nullable=False),

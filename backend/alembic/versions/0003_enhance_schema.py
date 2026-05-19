@@ -8,7 +8,7 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects.postgresql import JSONB
+# SQLite-compatible (no JSONB import needed)
 
 revision: str = "0003_enhance"
 down_revision: Union[str, None] = "0002_problems"

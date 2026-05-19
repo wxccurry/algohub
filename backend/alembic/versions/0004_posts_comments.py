@@ -7,7 +7,7 @@ Create Date: 2026-05-17
 from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects.postgresql import ARRAY
+# SQLite-compatible (no ARRAY type)
 
 revision: str = "0004_posts"
 down_revision: Union[str, None] = "0003_enhance"
@@ -23,7 +23,7 @@ def upgrade() -> None:
         sa.Column("title", sa.String(length=200), nullable=False),
         sa.Column("content", sa.Text(), nullable=False),
         sa.Column("summary", sa.Text(), nullable=True),
-        sa.Column("tags", ARRAY(sa.String()), nullable=True),
+        sa.Column("tags", sa.JSON(), nullable=True),
         sa.Column("cover_image", sa.Text(), nullable=True),
         sa.Column("stars_count", sa.Integer(), server_default="0", nullable=False),
         sa.Column("forks_count", sa.Integer(), server_default="0", nullable=False),

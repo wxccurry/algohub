@@ -9,6 +9,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from sqlalchemy import select
 from app.shared.database import async_session
+from app.modules.auth.models import User  # ensure users table is registered
 from app.modules.problem.models import (
     Problem,
     ProblemTag,
