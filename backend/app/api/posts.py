@@ -1,3 +1,4 @@
+import json
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -37,9 +38,14 @@ async def get_post(post_id: int, db: AsyncSession = Depends(get_db)):
         return error(message="笔记不存在", code=404)
     await db.execute(sa_text("UPDATE posts SET views = views + 1 WHERE id = :pid"), {"pid": post_id})
     await db.commit()
+    tags_val = row[5]
+    if isinstance(tags_val, str):
+        try: tags_val = json.loads(tags_val)
+        except: tags_val = []
+    if tags_val is None: tags_val = []
     return success(data={
         "id": row[0], "author_id": row[1], "title": row[2],
-        "content": row[3], "summary": row[4], "tags": row[5],
+        "content": row[3], "summary": row[4], "tags": tags_val,
         "stars_count": row[6], "forks_count": row[7],
         "views": (row[8] or 0) + 1, "forked_from": row[9],
         "is_public": row[10], "is_pinned": row[11],
