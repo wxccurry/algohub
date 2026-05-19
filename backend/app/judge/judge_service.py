@@ -2,12 +2,14 @@ import hashlib
 import hmac
 import json
 import logging
+from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 
 from app.config import settings
+from app.exceptions import RateLimitError
 from app.models.submission import Submission
 from app.models.problem import Problem
 from app.judge.security import compute_code_hash, verify_hmac
@@ -26,6 +28,22 @@ async def create_submission(
     user_agent: str | None = None,
     contest_id: int | None = None,
 ) -> Submission:
+    # Submission cooldown: reject duplicate submissions (same user + problem + language)
+    # within 30 seconds to prevent accidental duplicate submissions and abuse.
+    recent = await db.execute(
+        select(Submission)
+        .where(
+            Submission.user_id == user_id,
+            Submission.problem_id == problem_id,
+            Submission.language == language,
+            Submission.created_at >= datetime.now(timezone.utc) - timedelta(seconds=30),
+        )
+        .order_by(desc(Submission.created_at))
+        .limit(1)
+    )
+    if recent.scalar_one_or_none():
+        raise RateLimitError(30)
+
     problem = await db.get(Problem, problem_id)
     if not problem:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="题目不存在")

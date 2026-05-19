@@ -1,3 +1,9 @@
+# Rate limit documentation:
+# - Global: 100 requests/minute per IP
+# - Auth endpoints: 20 requests/minute per IP
+# - Submission: 5 requests/minute per user
+# - AI endpoints: 20 requests/day per user (free tier)
+
 import logging
 from fastapi import Request
 from slowapi import Limiter

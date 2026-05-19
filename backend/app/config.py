@@ -1,3 +1,11 @@
+# NOTE: All secrets are read from environment variables (prefixed with ALGOHUB_).
+# For production deployments, consider using a dedicated secrets manager:
+# - HashiCorp Vault (https://www.vaultproject.io/)
+# - AWS Secrets Manager / GCP Secret Manager
+# - Azure Key Vault
+# These tools provide encrypted storage, access auditing, and rotation support
+# that .env files and plain env vars cannot offer.
+
 from pydantic_settings import BaseSettings
 
 

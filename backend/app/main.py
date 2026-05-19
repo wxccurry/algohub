@@ -35,6 +35,12 @@ async def lifespan(app: FastAPI):
             pass
 
 
+# CSRF protection is intentionally not implemented here.
+# This is an API-only backend using token-based authentication (JWT Bearer tokens),
+# which is inherently immune to CSRF attacks. CSRF relies on browsers automatically
+# attaching cookies to cross-origin requests; since we do not use session cookies
+# for authentication, there is no attack vector for CSRF.
+
 app = FastAPI(
     title="AlgoHub API",
     description="大学生算法学习与开源社区平台",
