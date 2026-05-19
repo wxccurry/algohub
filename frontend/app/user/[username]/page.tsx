@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import api from "@/lib/api";
@@ -22,6 +22,83 @@ interface Profile {
 }
 
 interface Post { id: number; title: string; stars_count: number; created_at: string; }
+
+function HeatmapSection() {
+  const cells = useMemo(() => {
+    const days = 365;
+    const today = new Date();
+    return Array.from({ length: days }, (_, i) => {
+      const d = new Date(today);
+      d.setDate(d.getDate() - (days - 1 - i));
+      return { date: d, count: Math.random() > 0.6 ? Math.floor(Math.random() * 5) + 1 : 0 };
+    });
+  }, []);
+
+  // Pad so the first cell aligns with Monday (GitHub-style)
+  const firstDay = cells[0].date.getDay(); // 0=Sun
+  const padStart = firstDay === 0 ? 6 : firstDay - 1;
+  const paddedCells = useMemo(
+    () => [...Array<null>(padStart).fill(null), ...cells],
+    [cells, padStart],
+  );
+
+  function cellColor(count: number) {
+    if (count === 0) return "bg-gray-100 dark:bg-gray-800";
+    if (count <= 2) return "bg-green-200 dark:bg-green-900";
+    if (count <= 4) return "bg-green-400 dark:bg-green-600";
+    return "bg-green-600 dark:bg-green-400";
+  }
+
+  const CELL_SIZE = 12;
+  const GAP = 2;
+  const columns = Math.ceil(paddedCells.length / 7);
+
+  return (
+    <Card className="mb-8">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">活动热力图</CardTitle>
+        <p className="text-xs text-muted-foreground">
+          过去 365 天的刷题打卡记录（模拟数据）
+        </p>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto pb-1">
+          <div
+            className="grid"
+            style={{
+              gridTemplateRows: `repeat(7, ${CELL_SIZE}px)`,
+              gridAutoFlow: "column",
+              gap: `${GAP}px`,
+              width: columns * (CELL_SIZE + GAP) + "px",
+            }}
+          >
+            {paddedCells.map((cell, idx) => {
+              if (!cell) return <div key={`pad-${idx}`} style={{ width: CELL_SIZE, height: CELL_SIZE }} />;
+              const dateStr = cell.date.toISOString().slice(0, 10);
+              return (
+                <div
+                  key={dateStr}
+                  className={`rounded-sm ${cellColor(cell.count)}`}
+                  style={{ width: CELL_SIZE, height: CELL_SIZE }}
+                  title={`${dateStr}: ${cell.count} 次打卡`}
+                />
+              );
+            })}
+          </div>
+          {/* Legend */}
+          <div className="flex items-center gap-1 mt-3 text-xs text-muted-foreground">
+            <span>少</span>
+            <div className="w-3 h-3 rounded-sm bg-gray-100 dark:bg-gray-800" />
+            <div className="w-3 h-3 rounded-sm bg-green-200 dark:bg-green-900" />
+            <div className="w-3 h-3 rounded-sm bg-green-400 dark:bg-green-600" />
+            <div className="w-3 h-3 rounded-sm bg-green-600 dark:bg-green-400" />
+            <span>多</span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function UserPage() {
   const { username } = useParams<{ username: string }>();
@@ -145,6 +222,9 @@ export default function UserPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Activity Heatmap */}
+      <HeatmapSection />
 
       <h2 className="text-xl font-semibold mb-4">📝 TA 的笔记</h2>
       {posts.length === 0 ? (

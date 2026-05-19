@@ -9,20 +9,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, RotateCcw } from "lucide-react";
 import api from "@/lib/api";
 
-const DIFFICULTIES = ["all", "easy", "medium", "hard", "expert"];
+const DIFFICULTIES = ["all", "简单", "中等", "困难", "专家"];
 const DIFFICULTY_LABELS: Record<string, string> = {
-  all: "全部难度",
-  easy: "简单",
-  medium: "中等",
-  hard: "困难",
-  expert: "专家",
+  all: "全部难度", 简单: "简单", 中等: "中等", 困难: "困难", 专家: "专家",
 };
 const DIFFICULTY_COLORS: Record<string, string> = {
-  easy: "text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-950",
-  medium: "text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-950",
-  hard: "text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-950",
-  expert: "text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-950",
+  简单: "text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-950",
+  中等: "text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-950",
+  困难: "text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-950",
+  专家: "text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-950",
 };
+const ALGORITHM_TAGS = [
+  "数组", "字符串", "哈希表", "动态规划",
+  "树", "图", "链表", "栈", "队列",
+  "二分查找", "双指针", "贪心", "回溯", "排序",
+  "滑动窗口", "前缀和", "并查集", "拓扑排序", "最短路",
+];
 
 interface Problem {
   id: number;
@@ -64,6 +66,7 @@ export default function ProblemsPageContent() {
         if (filters.search) setSearch(filters.search);
         if (filters.difficulty) setDifficulty(filters.difficulty);
         if (filters.status) setStatusFilter(filters.status);
+        if (filters.tag) setSelectedTag(filters.tag);
       } catch {
         // ignore corrupted data
       }
@@ -81,6 +84,7 @@ export default function ProblemsPageContent() {
         if (search) params.search = search;
         if (difficulty !== "all") params.difficulty = difficulty;
         if (statusFilter !== "all") params.status = statusFilter;
+        if (selectedTag) params.tag = selectedTag;
         const res = await api.get("/problems", { params });
         const data = res.data.data;
         if (append) {
@@ -97,7 +101,7 @@ export default function ProblemsPageContent() {
         setLoading(false);
       }
     },
-    [search, difficulty, statusFilter]
+    [search, difficulty, statusFilter, selectedTag]
   );
 
   // Fetch on filter change
@@ -128,7 +132,7 @@ export default function ProblemsPageContent() {
         sessionStorage.setItem(SCROLL_STORAGE_KEY, String(window.scrollY));
         sessionStorage.setItem(
           FILTERS_STORAGE_KEY,
-          JSON.stringify({ search, difficulty, status: statusFilter })
+          JSON.stringify({ search, difficulty, status: statusFilter, tag: selectedTag })
         );
       }, 150);
     };
@@ -137,7 +141,7 @@ export default function ProblemsPageContent() {
       window.removeEventListener("scroll", handleScroll);
       clearTimeout(timer);
     };
-  }, [search, difficulty, statusFilter]);
+  }, [search, difficulty, statusFilter, selectedTag]);
 
   // Infinite scroll observer
   useEffect(() => {
@@ -167,6 +171,7 @@ export default function ProblemsPageContent() {
     setSearch("");
     setDifficulty("all");
     setStatusFilter("all");
+    setSelectedTag("");
   };
 
   return (
@@ -223,6 +228,24 @@ export default function ProblemsPageContent() {
         <Button variant="outline" size="icon" onClick={handleReset}>
           <RotateCcw className="h-4 w-4" />
         </Button>
+      </div>
+
+      {/* Tag filters */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <span className="text-xs text-muted-foreground">标签:</span>
+        {ALGORITHM_TAGS.map((tag) => (
+          <Badge
+            key={tag}
+            variant={selectedTag === tag ? "default" : "outline"}
+            className="cursor-pointer text-xs"
+            onClick={() => {
+              setSelectedTag(selectedTag === tag ? "" : tag);
+              setPage(1);
+            }}
+          >
+            {tag}
+          </Badge>
+        ))}
       </div>
 
       {fetchError && problems.length === 0 && (

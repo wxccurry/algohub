@@ -19,8 +19,9 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Check, Copy, Maximize2, Minus, Plus, Shrink } from "lucide-react";
+import { Check, Copy, Loader2, Maximize2, Minus, Play, Plus, Shrink, X } from "lucide-react";
 
 const LANGUAGES = [
   { value: "python", label: "Python" },
@@ -64,6 +65,8 @@ export default function ProblemPage() {
   const [waCount, setWaCount] = useState(0);
   const [solutions, setSolutions] = useState<{ id: number; author: string; language: string; content: string }[]>([]);
   const [solutionsLoading, setSolutionsLoading] = useState(false);
+  const [runResults, setRunResults] = useState<any>(null);
+  const [runLoading, setRunLoading] = useState(false);
 
   // Polling fallback ref to allow cancellation
   const pollAbortRef = useRef(false);
@@ -137,6 +140,22 @@ export default function ProblemPage() {
     } catch { toast.error("加载失败"); }
   }, []);
 
+  // Run code against sample tests
+  const handleRunTest = useCallback(async () => {
+    if (!code.trim()) { toast.error("请输入代码"); return; }
+    setRunLoading(true);
+    setRunResults(null);
+    try {
+      const resp = await api.post(`/problems/${id}/run`, { language, code });
+      setRunResults(resp.data.data);
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail || "运行失败";
+      toast.error(msg);
+    } finally {
+      setRunLoading(false);
+    }
+  }, [id, language, code]);
+
   // Copy sample case text
   const copySample = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -147,7 +166,7 @@ export default function ProblemPage() {
   // Global keyboard shortcuts
   useHotkeys([
     { key: "Enter", ctrl: true, handler: () => handleSubmit(), enabled: !!problem && !submitting },
-    { key: "'", ctrl: true, handler: () => { /* run test — placeholder */ }, enabled: !!problem },
+    { key: "'", ctrl: true, handler: () => handleRunTest(), enabled: !!problem && !runLoading },
   ]);
 
   // Polling fallback — same logic as before, called when SSE fails
@@ -286,6 +305,15 @@ export default function ProblemPage() {
             {fullscreen ? <Shrink className="h-4 w-4 mr-1" /> : <Maximize2 className="h-4 w-4 mr-1" />}
             {fullscreen ? "退出全屏" : "全屏"}
           </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRunTest}
+            disabled={runLoading || !code.trim()}
+          >
+            {runLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Play className="h-4 w-4 mr-1" />}
+            运行
+          </Button>
           <SubmitButton onSubmit={handleSubmit} disabled={submitting || !code.trim()} />
         </div>
       </div>
@@ -294,6 +322,49 @@ export default function ProblemPage() {
       <div className="flex-1 min-h-0 border rounded-lg overflow-hidden">
         <MonacoEditor language={language} value={code} onChange={setCode} height="100%" fontSize={fontSize} />
       </div>
+
+      {/* Run test results */}
+      {runResults && (
+        <div className="border rounded-lg p-3 space-y-2 shrink-0 max-h-48 overflow-y-auto">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <h4 className="text-sm font-semibold">运行结果</h4>
+              <Badge variant={runResults.passed ? "default" : "destructive"} className="text-xs">
+                {runResults.passed ? "全部通过" : `${runResults.results?.filter((r: any) => r.status === "AC").length || 0}/${runResults.total}`}
+              </Badge>
+            </div>
+            <span className="text-xs text-muted-foreground">{runResults.results?.length || 0} 个样例</span>
+          </div>
+          <div className="space-y-1.5">
+            {runResults.results?.map((r: any) => (
+              <div key={r.case} className="flex items-start gap-2 text-sm">
+                {r.status === "AC" ? (
+                  <Check className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                ) : (
+                  <X className="h-4 w-4 text-red-500 mt-0.5 shrink-0" />
+                )}
+                <div className="flex-1 min-w-0">
+                  <span className="font-medium">样例 #{r.case}</span>
+                  <Badge variant="outline" className="ml-2 text-xs">{r.status}</Badge>
+                  {r.message && <p className="text-xs text-red-500 mt-0.5">{r.message}</p>}
+                  {r.status !== "AC" && (r.expected || r.actual) && (
+                    <div className="grid grid-cols-2 gap-2 mt-1">
+                      <div>
+                        <span className="text-xs text-muted-foreground">期望输出：</span>
+                        <pre className="text-xs bg-muted p-1 rounded mt-0.5 whitespace-pre-wrap">{r.expected}</pre>
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground">实际输出：</span>
+                        <pre className="text-xs bg-muted p-1 rounded mt-0.5 whitespace-pre-wrap">{r.actual}</pre>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Submission result */}
       {result && (

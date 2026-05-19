@@ -27,6 +27,11 @@ class SubmitRequest(BaseModel):
         return v
 
 
+class RunCodeRequest(BaseModel):
+    language: str
+    code: str
+
+
 class SubmissionOut(BaseModel):
     """Full detail — includes code, only returned to the submitter."""
     id: int

@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.dependencies import get_current_user_from_token
 from app.dependencies.auth import require_login
 from app.modules.submission.service import SubmissionService
-from app.modules.submission.schemas import SubmitRequest
+from app.modules.submission.schemas import RunCodeRequest, SubmitRequest
 from app.shared.database import get_db
 from app.shared.sse import sse_manager
 from app.utils.response import success
@@ -42,6 +42,43 @@ async def submit_code(
         message="提交成功，正在评测",
         code=201,
     )
+
+
+@router.post("/problems/{problem_id}/run")
+async def run_code(
+    problem_id: int,
+    req: RunCodeRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Run user code against sample test cases only — no submission created."""
+    from app.modules.problem.service import ProblemService
+
+    problem_svc = ProblemService(db)
+    problem = await problem_svc.get_problem(problem_id)
+    sample_cases = problem.get("sample_cases", [])
+
+    if not sample_cases:
+        return success(data={"message": "本题无示例用例"}, message="ok")
+
+    from celery_app.tasks.judge_tasks import _judge_python_subprocess
+
+    results = _judge_python_subprocess(req.code, sample_cases, problem.get("time_limit", 5000))
+
+    passed = all(r["status"] == "AC" for r in results)
+    return success(data={
+        "passed": passed,
+        "total": len(results),
+        "results": [
+            {
+                "case": r["case"],
+                "status": r["status"],
+                "expected": r.get("expected", ""),
+                "actual": r.get("actual", ""),
+                "message": r.get("message", ""),
+            }
+            for r in results
+        ],
+    })
 
 
 @router.get("/submissions/{submission_id}")

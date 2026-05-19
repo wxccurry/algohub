@@ -40,15 +40,15 @@ const STAT_CARDS = [
 ];
 
 const DIFFICULTY_COLORS: Record<string, string> = {
-  easy: "bg-green-100 text-green-700",
-  medium: "bg-yellow-100 text-yellow-700",
-  hard: "bg-red-100 text-red-700",
-  expert: "bg-purple-100 text-purple-700",
+  "简单": "bg-green-100 text-green-700",
+  "中等": "bg-yellow-100 text-yellow-700",
+  "困难": "bg-red-100 text-red-700",
+  "专家": "bg-purple-100 text-purple-700",
 };
 
 const EMPTY_FORM = {
   title: "",
-  difficulty: "easy",
+  difficulty: "简单",
   tags: "",
   description: "",
   input_format: "",
@@ -252,10 +252,10 @@ export default function AdminPage() {
           <Select value={form.difficulty} onValueChange={(v) => updateForm("difficulty", v ?? "easy")}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="easy">简单</SelectItem>
-              <SelectItem value="medium">中等</SelectItem>
-              <SelectItem value="hard">困难</SelectItem>
-              <SelectItem value="expert">专家</SelectItem>
+              <SelectItem value="简单">简单</SelectItem>
+              <SelectItem value="中等">中等</SelectItem>
+              <SelectItem value="困难">困难</SelectItem>
+              <SelectItem value="专家">专家</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -422,10 +422,10 @@ export default function AdminPage() {
               <SelectTrigger className="w-28"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">全部</SelectItem>
-                <SelectItem value="easy">简单</SelectItem>
-                <SelectItem value="medium">中等</SelectItem>
-                <SelectItem value="hard">困难</SelectItem>
-                <SelectItem value="expert">专家</SelectItem>
+                <SelectItem value="简单">简单</SelectItem>
+                <SelectItem value="中等">中等</SelectItem>
+                <SelectItem value="困难">困难</SelectItem>
+                <SelectItem value="专家">专家</SelectItem>
               </SelectContent>
             </Select>
           </div>

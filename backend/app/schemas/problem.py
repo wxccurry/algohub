@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, field_validator
 
-VALID_DIFFICULTIES = {"easy", "medium", "hard", "expert"}
+VALID_DIFFICULTIES = {"简单", "中等", "困难", "专家"}
 
 
 class TagOut(BaseModel):
