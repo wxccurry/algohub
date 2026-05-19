@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Query, Request
+from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -8,6 +9,7 @@ from app.dependencies import get_current_user_from_token, require_login
 from app.schemas.submission import SubmitRequest
 from app.judge import judge_service
 from app.utils.response import success
+from app.shared.sse import sse_manager
 
 router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
@@ -88,3 +90,17 @@ async def list_submissions(
         for s in submissions
     ]
     return success(data={"items": items, "total": total, "page": page, "page_size": page_size})
+
+
+@router.get("/submissions/{submission_id}/stream")
+async def stream_submission(submission_id: int):
+    """SSE endpoint for real-time submission status updates."""
+    return StreamingResponse(
+        sse_manager.stream(submission_id),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )

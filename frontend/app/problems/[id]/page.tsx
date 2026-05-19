@@ -13,6 +13,7 @@ import SubmitButton from "@/components/editor/SubmitButton";
 import { getTemplate } from "@/components/editor/CodeTemplate";
 import { getSavedCode, useCodeAutoSave } from "@/hooks/useCodeAutoSave";
 import { useHotkeys } from "@/hooks/useHotkeys";
+import { useSSE } from "@/hooks/useSSE";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -56,6 +57,11 @@ export default function ProblemPage() {
   const [fullscreen, setFullscreen] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("description");
+  const [sseEnabled, setSseEnabled] = useState(false);
+  const [currentSubmissionId, setCurrentSubmissionId] = useState<number | null>(null);
+
+  // Polling fallback ref to allow cancellation
+  const pollAbortRef = useRef(false);
 
   // Auto-save code changes
   useCodeAutoSave(id, language, code);
@@ -94,26 +100,10 @@ export default function ProblemPage() {
       const resp = await api.post(`/problems/${id}/submit`, { language, code });
       const subId = resp.data.data.submission_id;
 
-      // Background polling — does not block handleSubmit return
-      (async () => {
-        for (let i = 0; i < 30; i++) {
-          await new Promise((r) => setTimeout(r, 1500));
-          try {
-            const subResp = await api.get(`/submissions/${subId}`);
-            const sub = subResp.data.data;
-            if (sub.status !== "Pending" && sub.status !== "Running" && sub.status !== "Compiling") {
-              setResult(sub);
-              setSubRefreshKey((k) => k + 1);
-              if (sub.status === "AC") toast.success("通过！");
-              else toast.error(`结果: ${sub.status}`);
-              break;
-            }
-            setResult((prev) => prev ? { ...prev, status: sub.status } : null);
-          } catch { break; }
-        }
-        submittingRef.current = false;
-        setSubmitting(false);
-      })();
+      // Use SSE for real-time updates with polling fallback on error
+      pollAbortRef.current = false; // Cancel any running polling fallback
+      setCurrentSubmissionId(subId);
+      setSseEnabled(true);
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail || "提交失败";
       toast.error(msg);
@@ -145,6 +135,69 @@ export default function ProblemPage() {
     { key: "Enter", ctrl: true, handler: () => handleSubmit(), enabled: !!problem && !submitting },
     { key: "'", ctrl: true, handler: () => { /* run test — placeholder */ }, enabled: !!problem },
   ]);
+
+  // Polling fallback — same logic as before, called when SSE fails
+  const startPolling = useCallback(
+    (subId: number) => {
+      pollAbortRef.current = false;
+      (async () => {
+        for (let i = 0; i < 30; i++) {
+          if (pollAbortRef.current) break;
+          await new Promise((r) => setTimeout(r, 1500));
+          if (pollAbortRef.current) break;
+          try {
+            const subResp = await api.get(`/submissions/${subId}`);
+            const sub = subResp.data.data;
+            if (sub.status !== "Pending" && sub.status !== "Running" && sub.status !== "Compiling") {
+              setResult(sub);
+              setSubRefreshKey((k) => k + 1);
+              if (sub.status === "AC") toast.success("通过！");
+              else toast.error(`结果: ${sub.status}`);
+              break;
+            }
+            setResult((prev) => (prev ? { ...prev, status: sub.status } : null));
+          } catch {
+            break;
+          }
+        }
+        submittingRef.current = false;
+        setSubmitting(false);
+      })();
+    },
+    [],
+  );
+
+  // SSE real-time streaming for submission status
+  const sseUrl = currentSubmissionId
+    ? `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"}/submissions/${currentSubmissionId}/stream`
+    : "";
+
+  useSSE(sseUrl, {
+    enabled: sseEnabled,
+    onMessage: (data: any) => {
+      if (data.type === "judge_complete") {
+        setResult(data.data);
+        setSubRefreshKey((k) => k + 1);
+        const status = data.data?.status;
+        if (status === "AC") toast.success("通过！");
+        else toast.error(`结果: ${status}`);
+        setSseEnabled(false);
+        submittingRef.current = false;
+        setSubmitting(false);
+      } else if (data.type === "judge_progress") {
+        setResult(data.data);
+      } else if (data.type === "judge_queued") {
+        // Submission accepted by judge queue
+      }
+    },
+    onError: () => {
+      setSseEnabled(false);
+      // Fall back to polling
+      if (currentSubmissionId) {
+        startPolling(currentSubmissionId);
+      }
+    },
+  });
 
   // ── Loading skeleton ──
   if (loading) {

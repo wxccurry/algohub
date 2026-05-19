@@ -11,6 +11,7 @@ from app.config import settings
 from app.models.submission import Submission
 from app.models.problem import Problem
 from app.judge.security import compute_code_hash, verify_hmac
+from app.shared.sse import sse_manager
 
 logger = logging.getLogger("algohub.judge")
 
@@ -55,6 +56,16 @@ async def create_submission(
         time_limit=problem.time_limit,
         memory_limit=problem.memory_limit,
     )
+
+    # Notify SSE subscribers that the judge has been queued
+    try:
+        await sse_manager.publish(
+            submission_id=submission.id,
+            event_type="judge_queued",
+            data={"status": "Pending"},
+        )
+    except Exception:
+        logger.warning("Failed to publish SSE queued event", exc_info=True)
 
     return submission
 
