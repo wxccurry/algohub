@@ -1,0 +1,61 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: algohub
+      POSTGRES_USER: algohub
+      POSTGRES_PASSWORD: algohub_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U algohub -d algohub"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      ALGOHUB_DATABASE_URL: postgresql+asyncpg://algohub:algohub_dev@db:5432/algohub
+      ALGOHUB_DATABASE_URL_SYNC: postgresql+psycopg2://algohub:algohub_dev@db:5432/algohub
+      ALGOHUB_REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ./backend:/app
+
+  celery_worker:
+    build: ./backend
+    command: celery -A celery_app worker -l info -c 2
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      ALGOHUB_DATABASE_URL: postgresql+asyncpg://algohub:algohub_dev@db:5432/algohub
+      ALGOHUB_DATABASE_URL_SYNC: postgresql+psycopg2://algohub:algohub_dev@db:5432/algohub
+      ALGOHUB_REDIS_URL: redis://redis:6379/0
+      ALGOHUB_JUDGE_CALLBACK_URL: http://backend:8000/api/judge/callback
+    volumes:
+      - ./backend:/app
+
+volumes:
+  pgdata:

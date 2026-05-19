@@ -1,0 +1,55 @@
+AlgoHub 2.0 企业级架构评审、优化与落地建议（ChatGPT + Gemini 综合版）
+本报告整合 ChatGPT 与 Gemini 对 AlgoHub 2.0 顶级刷题平台架构设计的评估意见，围绕企业级落地、架构演进、安全、性能、AI 成本、Judge 稳定性、数据库优化、可观测性与实施风险进行系统性分析。
+一、总体评估结论
+AlgoHub 2.0 产品方向优秀，具备明显差异化竞争力，尤其在 AI 学习闭环、算法可视化和交互体验方面。
+当前架构更偏向“中大型平台蓝图”，复杂度高于冷启动阶段实际需求。
+若直接按现方案硬落地，容易被复杂度、维护成本和稳定性问题拖慢进度。
+推荐采用“阶段式企业演进架构”，先保证核心体验，再逐步增强基础设施能力。
+二、保留与强化的核心亮点
+Judge 独立服务（Go）方向正确，建议长期保留，与 Web API 解耦。
+AI 悬浮导师 + 渐进式 Hint 是核心竞争力，应定位为 Learning Copilot。
+前端体验设计成熟：Hover 体系、四阶段评测反馈、Monaco 编辑器、快捷键体系均值得保留。
+安全意识强：gVisor、seccomp、cgroup、断网机制体现了高标准安全设计。
+三、架构复杂度控制（重点建议）
+后端建议从重 DDD + Clean Architecture 调整为 Modular Monolith。
+保留模块边界：auth、problem、submission、contest、ai、user。
+移除 Lagom DI 容器，优先使用 FastAPI 原生依赖注入。
+Result[T,E] 风格建议替换为统一异常机制 + middleware。
+四、Judge 评测系统优化
+Judge 状态回传建议使用 SSE，而非轮询。Go Worker → Redis Pub/Sub → SSE Gateway → 前端。
+采用 Pre-warmed Worker Pool（预热池）减少 Python/Java 冷启动问题。
+gVisor 不建议默认全量开启，可分级启用。
+Redis Queue 建议升级为 Redis Streams，长期演进 Kafka 或 NATS JetStream。
+AST 分析建议改为风险评分（Risk Scoring），而不是强阻断。
+五、算法可视化边界定义
+前期仅支持官方题解静态可视化。
+visualization_frames 不建议存储用户动态 Trace 数据。
+动态运行时可视化属于独立产品能力，应单独演进。
+可优先支持：数组、链表、树、图搜索、动态规划等核心结构。
+六、数据库与缓存优化
+submissions 表提前做分区设计（按月或 hash partition）。
+visualization_frames 建议迁移对象存储，仅保留元数据。
+user_problem_status 初期保留表结构即可，大规模后再升级 Bitmap。
+竞赛排行榜使用 Redis Sorted Set，但采用整数复合 Score，而非浮点方案。
+Redis 排行榜必须定期落盘，避免恢复问题。
+七、AI 服务治理与成本控制
+上下文裁剪：只保留题目摘要、最新代码、失败 testcase、最近 2 轮对话。
+建立 Prompt Versioning（如 hint_v3.2）。
+构建 Error Signature 缓存机制，相同错误复用分析结果。
+AI 自动弹窗建议改为低侵入提醒，减少用户干扰。
+增加 Token 成本监控与限流。
+八、可观测性与稳定性建设
+接入 OpenTelemetry 实现全链路 Trace。
+接入 Sentry 监控前后端错误与 Judge panic。
+构建 Grafana Dashboard 监控核心指标。
+增加管理员审计日志能力（题目修改、测试数据变更等）。
+九、安全与反作弊体系
+竞赛场景增加代码相似度检测（MOSS/JPlag/AST Similarity）。
+细粒度限流：IP、User、Contest、AI、Judge。
+Secrets 管理升级至 Vault 或 Secret Manager。
+高风险代码采用安全风险评分，而非简单拦截。
+十、最终落地建议
+核心资源优先投入到刷题体验与学习闭环。
+避免第一阶段追求超大型架构。
+采用阶段式演进：先核心能力，再基础设施升级。
+企业级成功关键不只是技术先进，更在于稳定性、成本控制与持续演进能力。
