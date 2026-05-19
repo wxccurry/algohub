@@ -129,7 +129,7 @@
   }
 
   html {
-    font-size: 15px;
+    font-size: 14px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -145,9 +145,9 @@
     font-size: 0.9em;
   }
 
-  h1 { font-size: 1.75rem; font-weight: 700; }
-  h2 { font-size: 1.4rem; font-weight: 600; }
-  h3 { font-size: 1.15rem; font-weight: 600; }
+  h1 { font-size: 1.5rem; font-weight: 700; }
+  h2 { font-size: 1.25rem; font-weight: 600; }
+  h3 { font-size: 1.1rem; font-weight: 600; }
 }
 
 @keyframes tab-fade-in {

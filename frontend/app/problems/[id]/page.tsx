@@ -421,7 +421,7 @@ export default function ProblemPage() {
                   </TabsList>
 
                   <div className="flex-1 min-h-0 overflow-y-auto p-4">
-                    <TabsContent value="description" className="mt-0 space-y-6 motion-safe:animate-[tab-fade-in_200ms_ease-out]">
+                    <TabsContent value="description" className="mt-0 space-y-6 motion-safe:animate-[tab-fade-in_200ms_ease-out] text-[0.95rem] leading-relaxed">
                       <MarkdownRenderer content={problem.description} />
 
                       {problem.input_format && (

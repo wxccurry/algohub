@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import AlgoCanvas from "@/components/visualization/AlgoCanvas";
 import PlaybackControls from "@/components/visualization/controls/PlaybackControls";
 import { useAnimation } from "@/hooks/useAnimation";
@@ -12,9 +12,18 @@ interface FrameData {
   target: number;
 }
 
-export default function TwoPointersViz() {
-  const target = 14;
-  const initialArray = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
+interface TwoPointersProps {
+  customArray?: number[];
+  customTarget?: number;
+}
+
+export default function TwoPointersViz({ customArray, customTarget }: TwoPointersProps) {
+  const target = customTarget ?? 14;
+  const defaultArr = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
+  const initialArray = useMemo(() => {
+    if (customArray && customArray.length >= 2) return customArray;
+    return defaultArr;
+  }, [customArray]);
 
   const frames = useMemo(() => {
     const frames: FrameData[] = [];
@@ -37,7 +46,7 @@ export default function TwoPointersViz() {
       frames.push({ array: [...arr], leftIdx: left, rightIdx: right, found: false, target });
     }
     return frames;
-  }, []);
+  }, [initialArray, target]);
 
   interface D { array: number[]; leftIdx: number; rightIdx: number; found: boolean; target: number; }
   const anim = useAnimation<D>(
@@ -45,9 +54,22 @@ export default function TwoPointersViz() {
     frames.length - 1
   );
 
+  const isFirstRender = useRef(true);
+
   useEffect(() => {
     anim.registerSteps(frames.map((d, i) => ({ step: i, data: d })));
   }, [frames, anim.registerSteps]);
+
+  // Reset animation when custom input changes
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    anim.pause();
+    anim.reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customArray, customTarget]);
 
   const draw = useCallback(
     (ctx: CanvasRenderingContext2D, w: number, h: number) => {

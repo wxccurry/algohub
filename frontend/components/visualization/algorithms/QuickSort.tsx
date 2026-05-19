@@ -12,8 +12,16 @@ interface FrameData {
   activeRange: { lo: number; hi: number };
 }
 
-export default function QuickSortViz() {
-  const initialArray = [38, 27, 43, 3, 9, 82, 10, 15, 55, 21];
+interface QuickSortProps {
+  customArray?: number[];
+}
+
+export default function QuickSortViz({ customArray }: QuickSortProps) {
+  const defaultArr = [38, 27, 43, 3, 9, 82, 10, 15, 55, 21];
+  const initialArray = useMemo(() => {
+    if (customArray && customArray.length >= 2) return customArray;
+    return defaultArr;
+  }, [customArray]);
 
   const frames = useMemo(() => {
     const result: FrameData[] = [];
@@ -48,7 +56,7 @@ export default function QuickSortViz() {
     quicksort(0, arr.length - 1);
     result.push({ array: [...arr], pivotIdx: -1, leftIdx: -1, rightIdx: -1, activeRange: { lo: 0, hi: arr.length - 1 } });
     return result;
-  }, []);
+  }, [initialArray]);
 
   interface D { array: number[]; pivotIdx: number; leftIdx: number; rightIdx: number; activeRange: { lo: number; hi: number } }
   const anim = useAnimation<D>(
@@ -56,9 +64,22 @@ export default function QuickSortViz() {
     frames.length - 1
   );
 
+  const isFirstRender = useRef(true);
+
   useEffect(() => {
     anim.registerSteps(frames.map((d, i) => ({ step: i, data: d })));
   }, [frames, anim.registerSteps]);
+
+  // Reset animation when custom input changes
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    anim.pause();
+    anim.reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customArray]);
 
   const draw = useCallback(
     (ctx: CanvasRenderingContext2D, w: number, h: number) => {
