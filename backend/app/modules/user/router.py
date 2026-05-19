@@ -1,0 +1,55 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
+from app.modules.auth.models import User, UserProfile
+from app.shared.database import get_db
+
+router = APIRouter(prefix="/api/users", tags=["users"])
+
+
+@router.get("/{username}")
+async def get_user_profile(username: str, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        select(User).options(selectinload(User.profile)).where(User.username == username)
+    )
+    user = result.scalar_one_or_none()
+    if not user:
+        return {"code": 404, "message": "用户不存在", "data": None}
+
+    p = user.profile
+    profile_data = None
+    if p:
+        profile_data = {
+            "nickname": p.nickname,
+            "avatar": p.avatar,
+            "gender": p.gender,
+            "bio": p.bio,
+            "school": p.school,
+            "major": p.major,
+            "organization": p.organization,
+            "github_url": p.github_url,
+            "blog_url": p.blog_url,
+            "preferred_languages": p.preferred_languages,
+            "current_status": p.current_status,
+            "region_code": p.region_code,
+            "solved_count": p.solved_count,
+            "rating": p.rating,
+            "streak_days": p.streak_days,
+            "max_streak": p.max_streak,
+            "contribution": p.contribution,
+            "privacy_settings": p.privacy_settings,
+        }
+
+    return {
+        "code": 200,
+        "message": "ok",
+        "data": {
+            "id": user.id,
+            "username": user.username,
+            "role": user.role,
+            "created_at": user.created_at.isoformat() if user.created_at else None,
+            "profile": profile_data,
+        },
+    }

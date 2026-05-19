@@ -6,7 +6,9 @@ from fastapi.responses import JSONResponse
 from slowapi.errors import RateLimitExceeded
 
 from app.config import settings
-from app.api import auth, problems, submissions, judge, posts, admin, users
+from app.api import problems, submissions, judge, posts, admin
+from app.modules.auth.router import router as auth_router
+from app.modules.user.router import router as user_router
 from app.database import init_db
 from app.middleware.rate_limit import limiter, rate_limit_exceeded_handler
 from app.middleware.request_id import RequestIDMiddleware
@@ -53,13 +55,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router, prefix="/api/auth", tags=["认证"])
+app.include_router(auth_router)
 app.include_router(problems.router, prefix="/api/problems", tags=["题库"])
 app.include_router(submissions.router, prefix="/api", tags=["提交"])
 app.include_router(judge.router, prefix="/api", tags=["评测"])
 app.include_router(posts.router, prefix="/api/posts", tags=["社区"])
 app.include_router(admin.router, prefix="/api/admin", tags=["管理"])
-app.include_router(users.router, prefix="/api/users", tags=["用户"])
+app.include_router(user_router)
 
 
 @app.exception_handler(Exception)
