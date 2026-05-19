@@ -87,7 +87,8 @@
       "WebFetch(domain:*)",
       "WebSearch",
       "Bash(kill %%)",
-      "Bash(curl -s \"http://localhost:8000/api/posts/2\")"
+      "Bash(curl -s \"http://localhost:8000/api/posts/2\")",
+      "Bash(start *)"
     ],
     "defaultMode": "acceptEdits"
   }
