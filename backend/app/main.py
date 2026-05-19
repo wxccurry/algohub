@@ -9,6 +9,10 @@ from app.config import settings
 from app.api import auth, problems, submissions, judge, posts, admin, users
 from app.database import init_db
 from app.middleware.rate_limit import limiter, rate_limit_exceeded_handler
+from app.middleware.request_id import RequestIDMiddleware
+from app.middleware.access_log import AccessLogMiddleware
+from app.middleware.error_handler import app_error_handler
+from app.exceptions import AppError
 from app.utils.redis import get_redis, redis_client
 
 
@@ -36,6 +40,10 @@ app = FastAPI(
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
+app.add_exception_handler(AppError, app_error_handler)
+
+app.add_middleware(RequestIDMiddleware)
+app.add_middleware(AccessLogMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
