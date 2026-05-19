@@ -1,6 +1,5 @@
 {
   "permissions": {
-    "defaultMode": "acceptEdits",
     "allow": [
       "Bash(python \"C:/Users/win11/.claude/plugins/cache/claude-plugins-official/hookify/b5a156b6ecd2/hooks/pretooluse.py\")",
       "Bash(echo \"EXIT: $?\")",
@@ -86,7 +85,10 @@
       "Bash(echo *)",
       "Bash(rm *)",
       "WebFetch(domain:*)",
-      "WebSearch"
-    ]
+      "WebSearch",
+      "Bash(kill %%)",
+      "Bash(curl -s \"http://localhost:8000/api/posts/2\")"
+    ],
+    "defaultMode": "acceptEdits"
   }
 }

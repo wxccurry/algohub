@@ -26,14 +26,25 @@ async def list_posts(
 
 @router.get("/{post_id}")
 async def get_post(post_id: int, db: AsyncSession = Depends(get_db)):
-    post = await post_service.get_post(db, post_id)
+    from sqlalchemy import text as sa_text
+    r = await db.execute(sa_text(
+        "SELECT id, author_id, title, content, summary, tags, stars_count, forks_count, "
+        "views, forked_from, is_public, is_pinned, created_at, updated_at "
+        "FROM posts WHERE id = :pid"
+    ), {"pid": post_id})
+    row = r.fetchone()
+    if not row:
+        return error(message="笔记不存在", code=404)
+    await db.execute(sa_text("UPDATE posts SET views = views + 1 WHERE id = :pid"), {"pid": post_id})
+    await db.commit()
     return success(data={
-        "id": post.id, "author_id": post.author_id, "title": post.title,
-        "content": post.content, "summary": post.summary, "tags": post.tags,
-        "stars_count": post.stars_count, "forks_count": post.forks_count,
-        "views": post.views, "forked_from": post.forked_from,
-        "is_public": post.is_public, "is_pinned": post.is_pinned,
-        "created_at": post.created_at, "updated_at": post.updated_at,
+        "id": row[0], "author_id": row[1], "title": row[2],
+        "content": row[3], "summary": row[4], "tags": row[5],
+        "stars_count": row[6], "forks_count": row[7],
+        "views": (row[8] or 0) + 1, "forked_from": row[9],
+        "is_public": row[10], "is_pinned": row[11],
+        "created_at": str(row[12]) if row[12] else None,
+        "updated_at": str(row[13]) if row[13] else None,
     })
 
 

@@ -26,7 +26,7 @@ class Post(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
-    comments: Mapped[list["Comment"]] = relationship(back_populates="post", cascade="all, delete-orphan")
+    comments: Mapped[list["Comment"]] = relationship(back_populates="post", cascade="all, delete-orphan", lazy="raise")
 
 
 class Comment(Base):
@@ -39,12 +39,12 @@ class Comment(Base):
     content: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
-    post: Mapped["Post"] = relationship(back_populates="comments")
+    post: Mapped["Post"] = relationship(back_populates="comments", lazy="raise")
     parent: Mapped["Comment | None"] = relationship(
-        "Comment", back_populates="replies", remote_side=[id], foreign_keys=[parent_id]
+        "Comment", back_populates="replies", remote_side=[id], foreign_keys=[parent_id], lazy="raise"
     )
     replies: Mapped[list["Comment"]] = relationship(
-        "Comment", back_populates="parent", cascade="all, delete-orphan"
+        "Comment", back_populates="parent", cascade="all, delete-orphan", lazy="raise"
     )
 
 
