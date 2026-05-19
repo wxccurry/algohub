@@ -64,12 +64,12 @@ export default function SubmissionPanel({ problemId, refreshKey, onSelect }: Pro
                   onClick={() => onSelect(s)}
                 >
                   <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="text-xs">{s.language}</Badge>
-                    <span className="text-xs text-muted-foreground">
+                    <Badge variant="secondary" className="text-xs font-medium">{s.language}</Badge>
+                    <span className="text-xs text-muted-foreground tabular-nums">
                       {new Date(s.created_at).toLocaleString("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                     </span>
                   </div>
-                  <span className={`text-xs px-1.5 py-0.5 rounded ${STATUS_COLORS[s.status] || "bg-zinc-100"}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded font-medium ${STATUS_COLORS[s.status] || "bg-zinc-100 dark:bg-zinc-800"}`}>
                     {s.status}
                   </span>
                 </button>

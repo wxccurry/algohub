@@ -20,6 +20,21 @@ async def get_user_by_id(user_id: int, db: AsyncSession = Depends(get_db)):
     return {"code": 200, "message": "ok", "data": {"id": user.id, "username": user.username}}
 
 
+@router.get("/{username}/checkins")
+async def get_user_checkins(username: str, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).where(User.username == username))
+    user = result.scalar_one_or_none()
+    if not user:
+        return {"code": 404, "message": "用户不存在", "data": None}
+    from sqlalchemy import text as sa_text
+    checkin_result = await db.execute(
+        sa_text("SELECT checkin_date, problem_count FROM user_checkins WHERE user_id = :uid ORDER BY checkin_date DESC LIMIT 366"),
+        {"uid": user.id}
+    )
+    checkins = {str(row[0]): row[1] for row in checkin_result}
+    return {"code": 200, "message": "ok", "data": {"checkins": checkins}}
+
+
 @router.get("/{username}")
 async def get_user_profile(username: str, db: AsyncSession = Depends(get_db)):
     result = await db.execute(

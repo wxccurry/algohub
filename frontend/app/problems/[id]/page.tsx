@@ -9,6 +9,7 @@ import MonacoEditor from "@/components/editor/MonacoEditor";
 import ProblemHeader from "@/components/editor/ProblemHeader";
 import SubmissionResult from "@/components/editor/SubmissionResult";
 import SubmissionPanel from "@/components/editor/SubmissionPanel";
+import SampleCases from "@/components/editor/SampleCases";
 import SubmitButton from "@/components/editor/SubmitButton";
 import { getTemplate } from "@/components/editor/CodeTemplate";
 import { getSavedCode, useCodeAutoSave } from "@/hooks/useCodeAutoSave";
@@ -21,7 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Check, Copy, Loader2, Maximize2, Minus, Play, Plus, Shrink, X } from "lucide-react";
+import { Check, Loader2, Maximize2, Minus, Play, Plus, Shrink, X } from "lucide-react";
 
 const LANGUAGES = [
   { value: "python", label: "Python" },
@@ -58,7 +59,6 @@ export default function ProblemPage() {
   const [subRefreshKey, setSubRefreshKey] = useState(0);
   const [fontSize, setFontSize] = useState(14);
   const [fullscreen, setFullscreen] = useState(false);
-  const [copied, setCopied] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("description");
   const [sseEnabled, setSseEnabled] = useState(false);
   const [currentSubmissionId, setCurrentSubmissionId] = useState<number | null>(null);
@@ -155,13 +155,6 @@ export default function ProblemPage() {
       setRunLoading(false);
     }
   }, [id, language, code]);
-
-  // Copy sample case text
-  const copySample = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(label);
-    setTimeout(() => setCopied(null), 1500);
-  };
 
   // Global keyboard shortcuts
   useHotkeys([
@@ -420,70 +413,34 @@ export default function ProblemPage() {
             <Panel defaultSize="45" minSize="25">
               <div className="h-full overflow-hidden">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-                  <TabsList className="w-full shrink-0 rounded-none border-b">
-                    <TabsTrigger value="description">描述</TabsTrigger>
-                    <TabsTrigger value="solutions">题解</TabsTrigger>
-                    <TabsTrigger value="submissions">提交</TabsTrigger>
-                    <TabsTrigger value="visualization">可视化</TabsTrigger>
+                  <TabsList className="w-full shrink-0 rounded-none border-b h-10">
+                    <TabsTrigger value="description" className="text-[0.9375rem]">描述</TabsTrigger>
+                    <TabsTrigger value="solutions" className="text-[0.9375rem]">题解</TabsTrigger>
+                    <TabsTrigger value="submissions" className="text-[0.9375rem]">提交</TabsTrigger>
+                    <TabsTrigger value="visualization" className="text-[0.9375rem]">可视化</TabsTrigger>
                   </TabsList>
 
                   <div className="flex-1 min-h-0 overflow-y-auto p-4">
-                    <TabsContent value="description" className="mt-0 space-y-4">
+                    <TabsContent value="description" className="mt-0 space-y-6 motion-safe:animate-[tab-fade-in_200ms_ease-out]">
                       <MarkdownRenderer content={problem.description} />
 
                       {problem.input_format && (
-                        <>
-                          <h3 className="font-semibold">输入格式</h3>
-                          <pre className="bg-muted p-3 rounded text-sm whitespace-pre-wrap">{problem.input_format}</pre>
-                        </>
+                        <div>
+                          <h3 className="font-semibold text-base mb-2">输入格式</h3>
+                          <pre className="bg-muted p-3 rounded text-sm whitespace-pre-wrap border">{problem.input_format}</pre>
+                        </div>
                       )}
                       {problem.output_format && (
-                        <>
-                          <h3 className="font-semibold">输出格式</h3>
-                          <pre className="bg-muted p-3 rounded text-sm whitespace-pre-wrap">{problem.output_format}</pre>
-                        </>
+                        <div>
+                          <h3 className="font-semibold text-base mb-2">输出格式</h3>
+                          <pre className="bg-muted p-3 rounded text-sm whitespace-pre-wrap border">{problem.output_format}</pre>
+                        </div>
                       )}
 
-                      {problem.sample_cases?.length > 0 && (
-                        <>
-                          <h3 className="font-semibold">样例</h3>
-                          {problem.sample_cases.map((tc, i) => (
-                            <div key={i} className="grid grid-cols-2 gap-2">
-                              <div>
-                                <div className="flex items-center justify-between mb-1">
-                                  <span className="text-xs text-muted-foreground">输入 #{i + 1}</span>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6"
-                                    onClick={() => copySample(tc.input, `in-${i}`)}
-                                  >
-                                    {copied === `in-${i}` ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
-                                  </Button>
-                                </div>
-                                <pre className="bg-zinc-900 text-zinc-100 p-2 rounded text-sm whitespace-pre-wrap">{tc.input}</pre>
-                              </div>
-                              <div>
-                                <div className="flex items-center justify-between mb-1">
-                                  <span className="text-xs text-muted-foreground">输出 #{i + 1}</span>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6"
-                                    onClick={() => copySample(tc.output, `out-${i}`)}
-                                  >
-                                    {copied === `out-${i}` ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
-                                  </Button>
-                                </div>
-                                <pre className="bg-zinc-900 text-zinc-100 p-2 rounded text-sm whitespace-pre-wrap">{tc.output}</pre>
-                              </div>
-                            </div>
-                          ))}
-                        </>
-                      )}
+                      <SampleCases cases={problem.sample_cases} />
                     </TabsContent>
 
-                    <TabsContent value="solutions" className="mt-0">
+                    <TabsContent value="solutions" className="mt-0 motion-safe:animate-[tab-fade-in_200ms_ease-out]">
                       {solutionsLoading ? (
                         <div className="space-y-4">
                           {Array.from({ length: 3 }).map((_, i) => (
@@ -507,11 +464,11 @@ export default function ProblemPage() {
                       )}
                     </TabsContent>
 
-                    <TabsContent value="submissions" className="mt-0">
+                    <TabsContent value="submissions" className="mt-0 motion-safe:animate-[tab-fade-in_200ms_ease-out]">
                       <SubmissionPanel problemId={id} refreshKey={subRefreshKey} onSelect={handleLoadSubmission} />
                     </TabsContent>
 
-                    <TabsContent value="visualization" className="mt-0">
+                    <TabsContent value="visualization" className="mt-0 motion-safe:animate-[tab-fade-in_200ms_ease-out]">
                       <p className="text-muted-foreground text-sm">可视化演示加载中...</p>
                     </TabsContent>
                   </div>

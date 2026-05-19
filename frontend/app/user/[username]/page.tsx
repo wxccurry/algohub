@@ -23,16 +23,27 @@ interface Profile {
 
 interface Post { id: number; title: string; stars_count: number; created_at: string; }
 
-function HeatmapSection() {
+function HeatmapSection({ username }: { username: string }) {
+  const [checkins, setCheckins] = useState<Record<string, number>>({});
+  const [checkinLoading, setCheckinLoading] = useState(true);
+
+  useEffect(() => {
+    api.get(`/users/${username}/checkins`).then(r => {
+      const data = r.data?.data?.checkins || {};
+      setCheckins(data);
+    }).catch(() => {}).finally(() => setCheckinLoading(false));
+  }, [username]);
+
   const cells = useMemo(() => {
     const days = 365;
     const today = new Date();
     return Array.from({ length: days }, (_, i) => {
       const d = new Date(today);
       d.setDate(d.getDate() - (days - 1 - i));
-      return { date: d, count: Math.random() > 0.6 ? Math.floor(Math.random() * 5) + 1 : 0 };
+      const key = d.toISOString().slice(0, 10);
+      return { date: d, count: checkins[key] || 0 };
     });
-  }, []);
+  }, [checkins]);
 
   // Pad so the first cell aligns with Monday (GitHub-style)
   const firstDay = cells[0].date.getDay(); // 0=Sun
@@ -224,7 +235,7 @@ export default function UserPage() {
       </Card>
 
       {/* Activity Heatmap */}
-      <HeatmapSection />
+      <HeatmapSection username={username as string} />
 
       <h2 className="text-xl font-semibold mb-4">📝 TA 的笔记</h2>
       {posts.length === 0 ? (
