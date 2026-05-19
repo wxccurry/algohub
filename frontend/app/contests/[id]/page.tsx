@@ -116,14 +116,10 @@ export default function ContestDetailPage() {
                             isLocked ? "cursor-not-allowed opacity-70" : "hover:bg-muted/50 cursor-pointer group"
                           }`}>
                           <Badge variant="secondary" className="font-mono text-sm w-8 h-7 flex items-center justify-center shrink-0">{p.display_id}</Badge>
-                          <span className={`text-sm flex-1 ${!isLocked && "group-hover:text-primary transition-colors"} ${isLocked ? "font-medium" : "font-medium"}`}>
+                          <span className={`text-sm flex-1 ${!isLocked && "group-hover:text-primary transition-colors"} font-medium`}>
                             {isLocked ? `题目 ${p.display_id}` : p.title}
                           </span>
-                          {isLocked ? (
-                            <Badge variant="outline" className="text-xs">???</Badge>
-                          ) : (
-                            <Badge className={`text-xs ${DIFF_COLORS[p.difficulty] || ""}`}>{p.difficulty}</Badge>
-                          )}
+                          <Badge className={`text-xs ${DIFF_COLORS[p.difficulty] || ""}`}>{p.difficulty}</Badge>
                           <span className="text-xs text-muted-foreground w-14 text-right">{p.points} 分</span>
                         </div>
                       );
