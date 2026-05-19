@@ -196,7 +196,18 @@ export default function ProblemPage() {
         <MonacoEditor language={language} value={code} onChange={setCode} height="100%" />
       </div>
 
-      {result && <SubmissionResult result={result} />}
+      {result && (
+        <SubmissionResult
+          initialPhase={
+            result.status === "Pending" ? "submitted"
+            : result.status === "Running" || result.status === "Compiling" ? "running"
+            : "done"
+          }
+          status={result.status}
+          executionTime={result.execution_time ?? undefined}
+          executionMemory={result.execution_memory ?? undefined}
+        />
+      )}
     </div>
   );
 
