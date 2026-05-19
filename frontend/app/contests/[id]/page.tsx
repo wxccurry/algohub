@@ -107,18 +107,33 @@ export default function ContestDetailPage() {
               <CardContent>
                 {problems.length > 0 ? (
                   <div className="space-y-1.5">
-                    {problems.map((p: ProblemItem) => (
-                      <div key={p.display_id} onClick={() => router.push(`/problems/${p.problem_id}`)}
-                        className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer group">
-                        <Badge variant="secondary" className="font-mono text-sm w-8 h-7 flex items-center justify-center shrink-0">{p.display_id}</Badge>
-                        <span className="text-sm font-medium flex-1 group-hover:text-primary transition-colors">{p.title}</span>
-                        <Badge className={`text-xs ${DIFF_COLORS[p.difficulty] || ""}`}>{p.difficulty}</Badge>
-                        <span className="text-xs text-muted-foreground w-14 text-right">{p.points} 分</span>
-                      </div>
-                    ))}
+                    {problems.map((p: ProblemItem) => {
+                      const isLocked = status === "upcoming";
+                      return (
+                        <div key={p.display_id}
+                          onClick={() => { if (!isLocked) router.push(`/problems/${p.problem_id}`); }}
+                          className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
+                            isLocked ? "cursor-not-allowed opacity-70" : "hover:bg-muted/50 cursor-pointer group"
+                          }`}>
+                          <Badge variant="secondary" className="font-mono text-sm w-8 h-7 flex items-center justify-center shrink-0">{p.display_id}</Badge>
+                          <span className={`text-sm flex-1 ${!isLocked && "group-hover:text-primary transition-colors"} ${isLocked ? "font-medium" : "font-medium"}`}>
+                            {isLocked ? `题目 ${p.display_id}` : p.title}
+                          </span>
+                          {isLocked ? (
+                            <Badge variant="outline" className="text-xs">???</Badge>
+                          ) : (
+                            <Badge className={`text-xs ${DIFF_COLORS[p.difficulty] || ""}`}>{p.difficulty}</Badge>
+                          )}
+                          <span className="text-xs text-muted-foreground w-14 text-right">{p.points} 分</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground py-6 text-center">暂未公布题目</p>
+                )}
+                {status === "upcoming" && problems.length > 0 && (
+                  <p className="text-xs text-muted-foreground mt-3 text-center">🔒 题目将在比赛开始时公布</p>
                 )}
               </CardContent>
             </Card>
