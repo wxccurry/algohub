@@ -18,6 +18,53 @@ from app.shared.sse import sse_manager
 logger = logging.getLogger("algohub.judge")
 
 
+async def _run_judge_async(submission_id: int, code: str, language: str, test_cases: list, time_limit: int, memory_limit: int):
+    """Run judge in background, then callback to update submission and notify SSE."""
+    import asyncio as _asyncio
+    try:
+        from celery_app.tasks.judge_tasks import _judge_python_subprocess, _summarise_results
+        if language == "python" and test_cases:
+            results = _judge_python_subprocess(code, test_cases, time_limit)
+        elif not test_cases:
+            results = [{"case": 1, "status": "AC"}]
+        else:
+            results = [{"case": 1, "status": "SE", "message": f"Language {language} requires Docker"}]
+        summary = _summarise_results(results)
+    except Exception as e:
+        summary = {"status": "SE", "error_message": str(e)[:500], "judge_log": "[]"}
+
+    # Update submission in DB
+    try:
+        _loop = _asyncio.get_event_loop()
+    except RuntimeError:
+        return  # No event loop available
+
+    from app.database import async_session
+    from app.shared.sse import sse_manager as _sse_mgr
+    async with async_session() as _db:
+        from app.models.submission import Submission as _Sub
+        sub = await _db.get(_Sub, submission_id)
+        if sub:
+            sub.status = summary.get("status", "SE")
+            sub.execution_time = summary.get("execution_time")
+            sub.execution_memory = summary.get("execution_memory")
+            sub.judge_log = summary.get("judge_log", "[]")
+            sub.error_message = summary.get("error_message")
+            sub.score = 100 if sub.status == "AC" else 0
+            await _db.commit()
+            # Publish SSE event
+            try:
+                await _sse_mgr.publish(submission_id, "judge_complete", {
+                    "status": sub.status,
+                    "execution_time": sub.execution_time,
+                    "execution_memory": sub.execution_memory,
+                    "score": sub.score,
+                    "error_message": sub.error_message,
+                })
+            except Exception:
+                pass
+
+
 async def create_submission(
     db: AsyncSession,
     user_id: int,
@@ -63,17 +110,9 @@ async def create_submission(
     await db.commit()
     await db.refresh(submission)
 
-    # Send to Celery
-    from celery_app.tasks.judge_tasks import run_judge
-
-    run_judge.delay(
-        submission_id=submission.id,
-        code=code,
-        language=language,
-        test_cases=problem.hidden_cases,
-        time_limit=problem.time_limit,
-        memory_limit=problem.memory_limit,
-    )
+    # Run judge in background thread (MVP: no Celery dependency)
+    import asyncio as _asyncio
+    _asyncio.create_task(_run_judge_async(submission.id, code, language, problem.hidden_cases, problem.time_limit, problem.memory_limit))
 
     # Notify SSE subscribers that the judge has been queued
     try:
