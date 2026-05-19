@@ -37,12 +37,16 @@ class ProblemService:
         for p in problems:
             results.append({
                 "id": p.id,
+                "slug": p.slug,
                 "title": p.title,
                 "difficulty": p.difficulty,
                 "difficulty_score": p.difficulty_score,
                 "tags": [t.tag_name for t in p.tags],
                 "source": p.source,
                 "is_public": p.is_public,
+                "accept_count": getattr(p, "accept_count", 0) or 0,
+                "submit_count": getattr(p, "submit_count", 0) or 0,
+                "upvote_count": getattr(p, "upvote_count", 0) or 0,
                 "version": p.version,
                 "created_at": p.created_at,
             })

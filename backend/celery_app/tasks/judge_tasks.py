@@ -1,11 +1,16 @@
 import json
 import logging
 import os
-import resource
 import shutil
 import subprocess
 import tempfile
 import time
+
+try:
+    import resource
+    _has_resource = True
+except ImportError:
+    _has_resource = False
 
 import httpx
 
@@ -28,7 +33,9 @@ def _docker_available() -> bool:
 
 
 def _set_resource_limits():
-    """Basic resource limits for subprocess judge."""
+    """Basic resource limits for subprocess judge (Unix only)."""
+    if not _has_resource:
+        return
     try:
         resource.setrlimit(resource.RLIMIT_AS, (MAX_MEMORY_BYTES, MAX_MEMORY_BYTES))
     except (ValueError, resource.error):
@@ -61,7 +68,7 @@ def _judge_python_subprocess(code: str, test_cases: list, time_limit_ms: int) ->
                     capture_output=True,
                     text=True,
                     timeout=time_limit_sec,
-                    preexec_fn=_set_resource_limits if os.name != "nt" else None,
+                    **( {"preexec_fn": _set_resource_limits} if os.name != "nt" else {} ),
                 )
 
                 if proc.returncode != 0:
