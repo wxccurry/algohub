@@ -87,20 +87,20 @@ export default function PostsPage() {
               <Card className="hover:border-primary/50 transition-colors">
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
-                    {p.is_pinned && <Badge className="text-xs">📌 精选</Badge>}
+                    {p.is_pinned && <Badge className="text-sm">📌 精选</Badge>}
                     <CardTitle className="text-lg">{p.title}</CardTitle>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1"><Heart className="h-3 w-3" />{p.stars_count}</span>
-                    <span className="flex items-center gap-1"><GitFork className="h-3 w-3" />{p.forks_count}</span>
-                    <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{p.views}</span>
+                  <div className="flex items-center gap-4 text-base text-muted-foreground">
+                    <span className="flex items-center gap-1"><Heart className="h-4 w-4" />{p.stars_count}</span>
+                    <span className="flex items-center gap-1"><GitFork className="h-4 w-4" />{p.forks_count}</span>
+                    <span className="flex items-center gap-1"><Eye className="h-4 w-4" />{p.views}</span>
                     <span>{new Date(p.created_at).toLocaleDateString("zh-CN")}</span>
                   </div>
                 </CardHeader>
-                {p.summary && <CardContent><p className="text-muted-foreground text-sm line-clamp-2">{p.summary}</p></CardContent>}
+                {p.summary && <CardContent><p className="text-muted-foreground text-base line-clamp-2">{p.summary}</p></CardContent>}
                 {p.tags && p.tags.length > 0 && (
                   <CardContent className="pt-0"><div className="flex gap-1 flex-wrap">
-                    {p.tags.map((t) => <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>)}
+                    {p.tags.map((t) => <Badge key={t} variant="secondary" className="text-sm">{t}</Badge>)}
                   </div></CardContent>
                 )}
               </Card>
@@ -112,7 +112,7 @@ export default function PostsPage() {
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-4 mt-8">
           <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>上一页</Button>
-          <span className="text-sm text-muted-foreground">{page} / {totalPages}</span>
+          <span className="text-base text-muted-foreground">{page} / {totalPages}</span>
           <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>下一页</Button>
         </div>
       )}

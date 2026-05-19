@@ -232,12 +232,12 @@ export default function ProblemsPageContent() {
 
       {/* Tag filters */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
-        <span className="text-xs text-muted-foreground">标签:</span>
+        <span className="text-sm text-muted-foreground">标签:</span>
         {ALGORITHM_TAGS.map((tag) => (
           <Badge
             key={tag}
             variant={selectedTag === tag ? "default" : "outline"}
-            className="cursor-pointer text-xs"
+            className="cursor-pointer text-sm"
             onClick={() => {
               setSelectedTag(selectedTag === tag ? "" : tag);
               setPage(1);
@@ -257,12 +257,12 @@ export default function ProblemsPageContent() {
         </div>
       )}
 
-      <div className="text-sm text-muted-foreground mb-2">
+      <div className="text-base text-muted-foreground mb-2">
         共 {totalCount} 题
       </div>
 
       {/* Table Header */}
-      <div className="hidden md:grid grid-cols-[40px_1fr_80px_100px_200px] gap-2 px-3 py-2 text-sm font-medium text-muted-foreground border-b">
+      <div className="hidden md:grid grid-cols-[40px_1fr_80px_100px_200px] gap-2 px-3 py-2 text-base font-medium text-muted-foreground border-b">
         <span>#</span>
         <span>标题</span>
         <span>难度</span>
@@ -279,7 +279,7 @@ export default function ProblemsPageContent() {
             className="grid grid-cols-[40px_1fr_80px_100px] md:grid-cols-[40px_1fr_80px_100px_200px] gap-2 px-3 py-2.5 cursor-pointer hover:bg-muted/50 transition-colors duration-150 items-center"
           >
             {/* Status badge / ID */}
-            <span className="text-xs text-muted-foreground">
+            <span className="text-sm text-muted-foreground">
               {p.status === "solved" ? (
                 <span title="已解决">&#x2705;</span>
               ) : p.status === "attempted" ? (
@@ -290,7 +290,7 @@ export default function ProblemsPageContent() {
             </span>
 
             {/* Title */}
-            <span className="text-sm font-medium truncate hover:text-primary transition-colors">
+            <span className="text-base font-medium truncate hover:text-primary transition-colors">
               {p.title}
             </span>
 
@@ -298,19 +298,19 @@ export default function ProblemsPageContent() {
             <span>
               <Badge
                 variant="outline"
-                className={`text-xs ${DIFFICULTY_COLORS[p.difficulty] || ""}`}
+                className={`text-sm ${DIFFICULTY_COLORS[p.difficulty] || ""}`}
               >
                 {DIFFICULTY_LABELS[p.difficulty] || p.difficulty}
               </Badge>
             </span>
 
             {/* Accept Rate */}
-            <span className="text-xs text-muted-foreground">{acRate(p)}%</span>
+            <span className="text-sm text-muted-foreground">{acRate(p)}%</span>
 
             {/* Tags (hidden on mobile) */}
             <span className="hidden md:flex flex-wrap gap-1">
               {p.tags?.slice(0, 3).map((t) => (
-                <Badge key={t} variant="secondary" className="text-xs">
+                <Badge key={t} variant="secondary" className="text-sm">
                   {t}
                 </Badge>
               ))}
@@ -332,7 +332,7 @@ export default function ProblemsPageContent() {
       <div ref={observerRef} className="h-10" />
 
       {!hasMore && problems.length > 0 && (
-        <p className="text-center text-sm text-muted-foreground py-4">
+        <p className="text-center text-base text-muted-foreground py-4">
           已加载全部题目
         </p>
       )}

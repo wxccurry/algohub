@@ -25,12 +25,12 @@ export default function ProblemHeader({ title, difficulty, difficultyScore, time
     <div className="space-y-3">
       <div className="flex items-center gap-3 flex-wrap">
         <h1 className="text-2xl font-bold">{title}</h1>
-        <Badge className={`text-base px-2.5 py-0.5 ${DIFFICULTY_COLORS[difficulty] || ""}`}>
+        <Badge className={`text-lg px-3 py-1 ${DIFFICULTY_COLORS[difficulty] || ""}`}>
           {difficulty}
         </Badge>
-        {tags?.map((t) => <Badge key={t} variant="secondary" className="text-sm">{t}</Badge>)}
+        {tags?.map((t) => <Badge key={t} variant="secondary" className="text-base">{t}</Badge>)}
       </div>
-      <div className="flex gap-4 text-sm text-muted-foreground">
+      <div className="flex gap-4 text-base text-muted-foreground">
         <span>⏱ 时限: {timeLimit}ms</span>
         <span>📦 内存: {memoryLimit}MB</span>
         <span>🎯 难度分: {difficultyScore}</span>

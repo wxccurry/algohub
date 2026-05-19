@@ -315,13 +315,13 @@ export default function AdminPage() {
                 {overview && STAT_CARDS.map(({ key, label, icon: Icon, color }) => (
                   <Card key={key}>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
-                      <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
+                      <CardTitle className="text-base font-medium text-muted-foreground">{label}</CardTitle>
                       <Icon className={`h-4 w-4 ${color}`} />
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">{overview[key as keyof Overview] || 0}</div>
                       {key === "total_submissions" && (
-                        <p className="text-xs text-muted-foreground mt-1">
+                        <p className="text-sm text-muted-foreground mt-1">
                           通过率: {overview.overall_ac_rate}%
                         </p>
                       )}
@@ -356,7 +356,7 @@ export default function AdminPage() {
                 <CardHeader><CardTitle>题目通过率</CardTitle></CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-base">
                       <thead>
                         <tr className="border-b text-left">
                           <th className="py-2 pr-4">#</th>
@@ -430,7 +430,7 @@ export default function AdminPage() {
             </Select>
           </div>
 
-          <div className="text-sm text-muted-foreground mb-2">共 {total} 题</div>
+          <div className="text-base text-muted-foreground mb-2">共 {total} 题</div>
 
           {/* Table */}
           {loading ? (
@@ -441,7 +441,7 @@ export default function AdminPage() {
             </div>
           ) : (
             <div className="border rounded-lg overflow-hidden">
-              <div className="hidden md:grid grid-cols-[80px_1fr_80px_150px_80px_100px] gap-3 px-4 py-2 bg-muted text-sm font-medium">
+              <div className="hidden md:grid grid-cols-[80px_1fr_80px_150px_80px_100px] gap-3 px-4 py-2 bg-muted text-base font-medium">
                 <span>ID</span><span>标题</span><span>难度</span><span>标签</span><span>状态</span><span>操作</span>
               </div>
               <div className="divide-y">
@@ -449,21 +449,21 @@ export default function AdminPage() {
                   <div className="px-4 py-10 text-center text-muted-foreground">暂无题目</div>
                 ) : (
                   problems.map((p) => (
-                    <div key={p.id} className="grid grid-cols-[80px_1fr_80px] md:grid-cols-[80px_1fr_80px_150px_80px_100px] gap-3 px-4 py-2.5 items-center text-sm hover:bg-muted/30">
+                    <div key={p.id} className="grid grid-cols-[80px_1fr_80px] md:grid-cols-[80px_1fr_80px_150px_80px_100px] gap-3 px-4 py-2.5 items-center text-base hover:bg-muted/30">
                       <span className="text-muted-foreground">{p.id}</span>
                       <span className="font-medium truncate">{p.title}</span>
-                      <Badge className={`text-xs w-fit ${DIFFICULTY_COLORS[p.difficulty] || "bg-gray-100 text-gray-700"}`}>
+                      <Badge className={`text-sm w-fit ${DIFFICULTY_COLORS[p.difficulty] || "bg-gray-100 text-gray-700"}`}>
                         {p.difficulty}
                       </Badge>
                       <span className="hidden md:flex flex-wrap gap-1">
                         {p.tags?.slice(0, 3).map((t: string) => (
-                          <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
+                          <Badge key={t} variant="secondary" className="text-sm">{t}</Badge>
                         ))}
                         {p.tags?.length > 3 && (
-                          <Badge variant="secondary" className="text-xs">+{p.tags.length - 3}</Badge>
+                          <Badge variant="secondary" className="text-sm">+{p.tags.length - 3}</Badge>
                         )}
                       </span>
-                      <span className={`text-xs ${p.is_public ? "text-green-600" : "text-muted-foreground"}`}>
+                      <span className={`text-sm ${p.is_public ? "text-green-600" : "text-muted-foreground"}`}>
                         {p.is_public ? "公开" : "隐藏"}
                       </span>
                       <div className="flex gap-1">
@@ -485,7 +485,7 @@ export default function AdminPage() {
           {total > 20 && (
             <div className="flex justify-center gap-2 mt-4">
               <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>上一页</Button>
-              <span className="text-sm text-muted-foreground self-center">第 {page} 页</span>
+              <span className="text-base text-muted-foreground self-center">第 {page} 页</span>
               <Button variant="outline" size="sm" disabled={page * 20 >= total} onClick={() => setPage((p) => p + 1)}>下一页</Button>
             </div>
           )}
@@ -530,7 +530,7 @@ export default function AdminPage() {
           <DialogHeader>
             <DialogTitle>确认删除</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             确定要删除这道题目吗？此操作不可撤销。
           </p>
           <DialogFooter>

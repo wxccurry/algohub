@@ -78,19 +78,19 @@ export default function ContestDetailPage() {
             <div className="flex-1">
               <h1 className="text-2xl font-bold tracking-tight">{contest.title}</h1>
               <p className="text-muted-foreground mt-2 max-w-2xl">{contest.description || "暂无描述"}</p>
-              <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4"/>{fmt(contest.start_time)} — {fmt(contest.end_time)}</span>
-                <span className="flex items-center gap-1.5"><Badge variant="outline" className="text-xs">{contest.rule_type.toUpperCase()}</Badge></span>
-                <span className="flex items-center gap-1.5"><Users className="h-4 w-4"/>{participantCount} 人报名</span>
+              <div className="flex flex-wrap items-center gap-4 mt-4 text-base text-muted-foreground">
+                <span className="flex items-center gap-1.5"><Calendar className="h-5 w-5"/>{fmt(contest.start_time)} — {fmt(contest.end_time)}</span>
+                <span className="flex items-center gap-1.5"><Badge variant="outline" className="text-sm">{contest.rule_type.toUpperCase()}</Badge></span>
+                <span className="flex items-center gap-1.5"><Users className="h-5 w-5"/>{participantCount} 人报名</span>
               </div>
             </div>
             <div className="flex flex-col items-end gap-2">
               <Badge variant={status === "ongoing" ? "default" : status === "upcoming" ? "secondary" : "outline"} className="text-sm px-4 py-1.5">
-                <Clock className="h-4 w-4 mr-1.5"/>{timeLeft}
+                <Clock className="h-5 w-5 mr-1.5"/>{timeLeft}
               </Badge>
               {status !== "ended" && (
                 <Button onClick={handleRegister} disabled={registered || registering} size="sm" className="mt-1">
-                  {registered ? <><CheckCircle className="h-4 w-4 mr-1"/>已报名</> : <><UserPlus className="h-4 w-4 mr-1"/>报名参赛</>}
+                  {registered ? <><CheckCircle className="h-5 w-5 mr-1"/>已报名</> : <><UserPlus className="h-5 w-5 mr-1"/>报名参赛</>}
                 </Button>
               )}
             </div>
@@ -115,31 +115,31 @@ export default function ContestDetailPage() {
                           className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
                             isLocked ? "cursor-not-allowed opacity-70" : "hover:bg-muted/50 cursor-pointer group"
                           }`}>
-                          <Badge variant="secondary" className="font-mono text-sm w-8 h-7 flex items-center justify-center shrink-0">{p.display_id}</Badge>
-                          <span className={`text-sm flex-1 ${!isLocked && "group-hover:text-primary transition-colors"} font-medium`}>
+                          <Badge variant="secondary" className="font-mono text-base w-8 h-7 flex items-center justify-center shrink-0">{p.display_id}</Badge>
+                          <span className={`text-base flex-1 ${!isLocked && "group-hover:text-primary transition-colors"} font-medium`}>
                             {isLocked ? `题目 ${p.display_id}` : p.title}
                           </span>
-                          <Badge className={`text-xs ${DIFF_COLORS[p.difficulty] || ""}`}>{p.difficulty}</Badge>
-                          <span className="text-xs text-muted-foreground w-14 text-right">{p.points} 分</span>
+                          <Badge className={`text-sm ${DIFF_COLORS[p.difficulty] || ""}`}>{p.difficulty}</Badge>
+                          <span className="text-sm text-muted-foreground w-14 text-right">{p.points} 分</span>
                         </div>
                       );
                     })}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground py-6 text-center">暂未公布题目</p>
+                  <p className="text-base text-muted-foreground py-6 text-center">暂未公布题目</p>
                 )}
                 {status === "upcoming" && problems.length > 0 && (
-                  <p className="text-xs text-muted-foreground mt-3 text-center">🔒 题目将在比赛开始时公布</p>
+                  <p className="text-sm text-muted-foreground mt-3 text-center">🔒 题目将在比赛开始时公布</p>
                 )}
               </CardContent>
             </Card>
 
             {/* Ranking */}
             <Card>
-              <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Trophy className="h-4 w-4 text-amber-500"/>排行榜</CardTitle></CardHeader>
+              <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Trophy className="h-5 w-5 text-amber-500"/>排行榜</CardTitle></CardHeader>
               <CardContent>
                 {ranking.length > 0 ? (
-                  <table className="w-full text-sm">
+                  <table className="w-full text-base">
                     <thead><tr className="border-b text-muted-foreground"><th className="py-2 text-left w-12 font-medium">#</th><th className="py-2 text-left font-medium">选手</th><th className="py-2 text-right w-20 font-medium">得分</th><th className="py-2 text-right w-20 font-medium">罚时</th></tr></thead>
                     <tbody>
                       {ranking.map(r => (
@@ -153,7 +153,7 @@ export default function ContestDetailPage() {
                     </tbody>
                   </table>
                 ) : (
-                  <p className="text-sm text-muted-foreground py-8 text-center">暂无排名 — 比赛开始后更新</p>
+                  <p className="text-base text-muted-foreground py-8 text-center">暂无排名 — 比赛开始后更新</p>
                 )}
               </CardContent>
             </Card>
@@ -162,8 +162,8 @@ export default function ContestDetailPage() {
           {/* Right sidebar — Rules + Stats */}
           <div className="space-y-4">
             <Card>
-              <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Award className="h-4 w-4"/>赛制规则</CardTitle></CardHeader>
-              <CardContent className="text-xs text-muted-foreground space-y-1.5">
+              <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><Award className="h-5 w-5"/>赛制规则</CardTitle></CardHeader>
+              <CardContent className="text-sm text-muted-foreground space-y-1.5">
                 <p><strong>赛制：</strong>{contest.rule_type === "acm" ? "ACM 赛制" : "IOI 赛制"}</p>
                 {contest.rule_type === "acm" ? (
                   <>
@@ -182,8 +182,8 @@ export default function ContestDetailPage() {
             </Card>
 
             <Card>
-              <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Zap className="h-4 w-4"/>参赛须知</CardTitle></CardHeader>
-              <CardContent className="text-xs text-muted-foreground space-y-1.5">
+              <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><Zap className="h-5 w-5"/>参赛须知</CardTitle></CardHeader>
+              <CardContent className="text-sm text-muted-foreground space-y-1.5">
                 <p>• 诚信参赛，禁止作弊和代码抄袭</p>
                 <p>• 比赛结束后可查看他人代码</p>
                 <p>• Rating 积分将在赛后更新</p>
@@ -193,10 +193,10 @@ export default function ContestDetailPage() {
 
             {problems.length > 0 && (
               <Card>
-                <CardHeader className="pb-2"><CardTitle className="text-sm">题目分值</CardTitle></CardHeader>
+                <CardHeader className="pb-2"><CardTitle className="text-base">题目分值</CardTitle></CardHeader>
                 <CardContent className="space-y-1">
                   {problems.map((p: ProblemItem) => (
-                    <div key={p.display_id} className="flex items-center justify-between text-xs">
+                    <div key={p.display_id} className="flex items-center justify-between text-sm">
                       <span className="flex items-center gap-1.5"><Badge variant="secondary" className="font-mono w-6 h-5 flex items-center justify-center text-xs">{p.display_id}</Badge>{p.title.slice(0,8)}</span>
                       <span className="text-muted-foreground">{p.points}分</span>
                     </div>

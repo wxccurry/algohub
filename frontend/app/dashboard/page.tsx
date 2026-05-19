@@ -88,8 +88,8 @@ export default function DashboardPage() {
             <div className="flex items-center gap-3">
               <Send className="h-5 w-5 text-muted-foreground" />
               <div>
-                <div className="text-2xl font-bold">{stats.total}</div>
-                <div className="text-xs text-muted-foreground">总提交</div>
+                <div className="text-3xl font-bold">{stats.total}</div>
+                <div className="text-sm text-muted-foreground">总提交</div>
               </div>
             </div>
           </CardContent>
@@ -99,8 +99,8 @@ export default function DashboardPage() {
             <div className="flex items-center gap-3">
               <CheckCircle className="h-5 w-5 text-green-600" />
               <div>
-                <div className="text-2xl font-bold">{stats.solved}</div>
-                <div className="text-xs text-muted-foreground">已解决</div>
+                <div className="text-3xl font-bold">{stats.solved}</div>
+                <div className="text-sm text-muted-foreground">已解决</div>
               </div>
             </div>
           </CardContent>
@@ -110,8 +110,8 @@ export default function DashboardPage() {
             <div className="flex items-center gap-3">
               <TrendingUp className="h-5 w-5 text-blue-600" />
               <div>
-                <div className="text-2xl font-bold">{acRate}%</div>
-                <div className="text-xs text-muted-foreground">通过率</div>
+                <div className="text-3xl font-bold">{acRate}%</div>
+                <div className="text-sm text-muted-foreground">通过率</div>
               </div>
             </div>
           </CardContent>
@@ -121,8 +121,8 @@ export default function DashboardPage() {
             <div className="flex items-center gap-3">
               <Star className="h-5 w-5 text-yellow-600" />
               <div>
-                <div className="text-2xl font-bold">{stats.rating}</div>
-                <div className="text-xs text-muted-foreground">Rating</div>
+                <div className="text-3xl font-bold">{stats.rating}</div>
+                <div className="text-sm text-muted-foreground">Rating</div>
               </div>
             </div>
           </CardContent>
@@ -132,25 +132,25 @@ export default function DashboardPage() {
       {/* Recent Submissions */}
       <Card className="mb-8">
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-xl flex items-center gap-2">
             <Clock className="h-4 w-4" />最近提交
           </CardTitle>
         </CardHeader>
         <CardContent>
           {submissions.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-6">还没有提交记录</p>
+            <p className="text-base text-muted-foreground text-center py-6">还没有提交记录</p>
           ) : (
             <div className="divide-y">
               {submissions.map((s: any) => (
                 <div key={s.id} className="flex items-center justify-between py-2.5">
                   <div className="flex items-center gap-3">
-                    <Badge className={`text-xs font-mono ${STATUS_COLORS[s.status] || ""}`}>
+                    <Badge className={`text-sm font-mono ${STATUS_COLORS[s.status] || ""}`}>
                       {s.status === "Accepted" ? "AC" : s.status === "Wrong Answer" ? "WA" : s.status === "Time Limit Exceeded" ? "TLE" : s.status === "Runtime Error" ? "RE" : s.status || "?"}
                     </Badge>
-                    <span className="text-sm">题目 #{s.problem_id}</span>
-                    <Badge variant="outline" className="text-xs">{s.language}</Badge>
+                    <span className="text-base">题目 #{s.problem_id}</span>
+                    <Badge variant="outline" className="text-sm">{s.language}</Badge>
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
                     {s.execution_time && <span>{s.execution_time}ms</span>}
                     {s.execution_memory && <span>{(s.execution_memory / 1024).toFixed(1)}MB</span>}
                     <span>{s.created_at ? new Date(s.created_at).toLocaleDateString("zh-CN") : ""}</span>
@@ -173,7 +173,7 @@ export default function DashboardPage() {
       {stats.solved > 0 && (
         <Card className="mb-8">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
+            <CardTitle className="text-xl flex items-center gap-2">
               <BookOpen className="h-4 w-4" />已解决题目
             </CardTitle>
           </CardHeader>
@@ -195,7 +195,7 @@ export default function DashboardPage() {
       {/* My Posts */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-xl flex items-center gap-2">
             <FileText className="h-4 w-4" />我的笔记
           </CardTitle>
         </CardHeader>
@@ -211,9 +211,9 @@ export default function DashboardPage() {
             <div className="divide-y">
               {posts.map((p) => (
                 <Link key={p.id} href={`/posts/${p.id}`} className="flex items-center justify-between py-2.5 hover:bg-muted/50 px-2 rounded transition-colors">
-                  <span className="text-sm">{p.title}</span>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                    <span><Star className="h-3 w-3 inline mr-0.5" />{p.stars_count}</span>
+                  <span className="text-base">{p.title}</span>
+                  <div className="flex items-center gap-3 text-base text-muted-foreground">
+                    <span><Star className="h-4 w-4 inline mr-0.5" />{p.stars_count}</span>
                     <span>{new Date(p.created_at).toLocaleDateString("zh-CN")}</span>
                   </div>
                 </Link>

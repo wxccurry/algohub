@@ -70,7 +70,7 @@ export default function NewPostPage() {
             <div className="space-y-2">
               <Label htmlFor="content">内容 * (支持 Markdown)</Label>
               <Textarea id="content" value={content} onChange={(e) => setContent(e.target.value)}
-                placeholder="使用 Markdown 格式记录笔记…" required rows={15} className="font-mono text-sm" />
+                placeholder="使用 Markdown 格式记录笔记…" required rows={15} className="font-mono text-base" />
             </div>
             <Button type="submit" disabled={loading}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}

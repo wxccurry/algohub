@@ -125,14 +125,14 @@ export default function PostDetailPage() {
       {items.map((c) => (
         <div key={c.id} className="border-l-2 pl-3 py-2">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm font-medium">{usernameMap[c.user_id] || `用户 #${c.user_id}`}</span>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-base font-medium">{usernameMap[c.user_id] || `用户 #${c.user_id}`}</span>
+            <span className="text-sm text-muted-foreground">
               {new Date(c.created_at).toLocaleString("zh-CN")}
             </span>
           </div>
-          <p className="text-sm">{c.content}</p>
+          <p className="text-base">{c.content}</p>
           <button
-            className="text-xs text-muted-foreground hover:text-primary mt-1"
+            className="text-sm text-muted-foreground hover:text-primary mt-1"
             onClick={() => { setReplyTo(c.id); setCommentText(`@#${c.user_id} `); }}
           >
             回复
@@ -150,7 +150,7 @@ export default function PostDetailPage() {
         <h1 className="text-2xl font-bold">{post.title}</h1>
       </div>
 
-      <div className="flex items-center gap-4 mb-4 text-sm text-muted-foreground">
+      <div className="flex items-center gap-4 mb-4 text-base text-muted-foreground">
         {post.tags?.map((t) => <Badge key={t} variant="secondary">{t}</Badge>)}
         <span>👁 {post.views}</span>
         <span>{new Date(post.created_at).toLocaleDateString("zh-CN")}</span>
@@ -185,7 +185,7 @@ export default function PostDetailPage() {
         {user && (
           <div className="space-y-3">
             {replyTo && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-base text-muted-foreground">
                 回复 #{replyTo}
                 <Button variant="ghost" size="sm" onClick={() => { setReplyTo(null); setCommentText(""); }}>取消</Button>
               </div>

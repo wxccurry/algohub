@@ -64,30 +64,30 @@ export default function ContestsPage() {
         <Card className="hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col">
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between gap-2">
-              <CardTitle className="text-lg leading-snug">{c.title}</CardTitle>
+              <CardTitle className="text-xl leading-snug">{c.title}</CardTitle>
               <Badge variant={isOngoing ? "default" : isUpcoming ? "secondary" : "outline"}>
                 {isOngoing ? "进行中" : isUpcoming ? "即将开始" : "已结束"}
               </Badge>
             </div>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col gap-2 text-sm text-muted-foreground">
+          <CardContent className="flex-1 flex flex-col gap-2 text-base text-muted-foreground">
             <div className="flex items-center gap-1.5">
-              <Calendar className="h-3.5 w-3.5 shrink-0" />
+              <Calendar className="h-4 w-4 shrink-0" />
               <span>{formatTime(c.start_time)} - {formatTime(c.end_time)}</span>
             </div>
             {isUpcoming && (
               <div className="flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5 shrink-0" />
+                <Clock className="h-4 w-4 shrink-0" />
                 <Countdown target={startDate} />
               </div>
             )}
             <div className="flex items-center gap-3 mt-1">
-              <Badge variant="outline" className="text-xs">
-                <Trophy className="h-3 w-3 mr-1" />{c.rule_type.toUpperCase()}
+              <Badge variant="outline" className="text-sm">
+                <Trophy className="h-4 w-4 mr-1" />{c.rule_type.toUpperCase()}
               </Badge>
               {(c.participant_count ?? 0) > 0 && (
-                <span className="flex items-center gap-1 text-xs">
-                  <Users className="h-3 w-3" />{c.participant_count}人
+                <span className="flex items-center gap-1 text-sm">
+                  <Users className="h-4 w-4" />{c.participant_count}人
                 </span>
               )}
             </div>
@@ -114,7 +114,7 @@ export default function ContestsPage() {
         <h1 className="text-2xl font-bold tracking-tight">比赛</h1>
         {user?.role === "admin" || user?.role === "author" ? (
           <Button size="sm" onClick={() => router.push("/admin")}>
-            <Plus className="h-4 w-4 mr-1" />创建比赛
+            <Plus className="h-5 w-5 mr-1" />创建比赛
           </Button>
         ) : (
           <Button disabled size="sm" className="text-sm">创建比赛（需管理员）</Button>
@@ -123,7 +123,7 @@ export default function ContestsPage() {
 
       {ongoing.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
             <Clock className="h-5 w-5 text-green-500" /> 进行中
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">{ongoing.map(renderCard)}</div>
@@ -132,7 +132,7 @@ export default function ContestsPage() {
 
       {upcoming.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
             <Calendar className="h-5 w-5 text-blue-500" /> 即将开始
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">{upcoming.map(renderCard)}</div>
@@ -141,7 +141,7 @@ export default function ContestsPage() {
 
       {past.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
             <Trophy className="h-5 w-5 text-amber-500" /> 往期比赛
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">{past.map(renderCard)}</div>
