@@ -8,12 +8,12 @@ logger = logging.getLogger("algohub.error")
 
 async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
     logger.error(
-        "app_error",
+        f"app_error code={exc.code} path={request.url.path}",
         extra={
-            "code": exc.code,
-            "message": exc.message,
-            "path": str(request.url.path),
-            "trace_id": getattr(request.state, "trace_id", None),
+            "err_code": exc.code,
+            "err_message": exc.message,
+            "err_path": str(request.url.path),
+            "err_trace_id": getattr(request.state, "trace_id", None),
         },
     )
     return JSONResponse(

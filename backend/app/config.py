@@ -25,6 +25,13 @@ class Settings(BaseSettings):
 
     BCRYPT_ROUNDS: int = 12
 
+    # AI
+    AI_ENABLED: bool = False
+    DEEPSEEK_API_KEY: str = ""
+    DEEPSEEK_BASE_URL: str = "https://api.deepseek.com/v1"
+    DEEPSEEK_MODEL: str = "deepseek-chat"
+    AI_FALLBACK_PROVIDER: str = ""  # e.g. "qwen" for Alibaba Qwen fallback
+
     model_config = {"env_prefix": "ALGOHUB_", "case_sensitive": True}
 
 

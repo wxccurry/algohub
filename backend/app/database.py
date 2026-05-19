@@ -1,33 +1,10 @@
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession
-from sqlalchemy.orm import DeclarativeBase
-
-from app.config import settings
-
-_connect_args = {}
-if settings.DATABASE_URL.startswith("sqlite"):
-    _connect_args = {"check_same_thread": False}
-
-engine = create_async_engine(
-    settings.DATABASE_URL,
-    connect_args=_connect_args,
-    echo=False,
+"""Compatibility module — re-exports from app.shared.database for backward compatibility."""
+from app.shared.database import (
+    engine,
+    async_session,
+    Base,
+    get_db,
 )
 
-async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-
-
-class Base(DeclarativeBase):
-    pass
-
-
-async def get_db() -> AsyncSession:
-    async with async_session() as session:
-        try:
-            yield session
-        finally:
-            await session.close()
-
-
-async def init_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+# Legacy alias
+init_db = None  # Tables managed by Alembic; no auto-create needed

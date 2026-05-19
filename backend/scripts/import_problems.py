@@ -9,7 +9,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from sqlalchemy import select
 from app.shared.database import async_session
-from app.modules.auth.models import User  # ensure users table is registered
 from app.modules.problem.models import (
     Problem,
     ProblemTag,
@@ -26,6 +25,16 @@ async def import_problems(json_path: str):
     problems = data if isinstance(data, list) else data.get("problems", [])
 
     async with async_session() as db:
+        # Ensure a system author exists
+        from sqlalchemy import select as sa_select
+        from app.modules.auth.models import User
+        result = await db.execute(sa_select(User).where(User.role == "admin").limit(1))
+        admin = result.scalar_one_or_none()
+        if not admin:
+            result = await db.execute(sa_select(User).limit(1))
+            admin = result.scalar_one_or_none()
+        author_id = admin.id if admin else 1
+
         imported = 0
         skipped = 0
 
@@ -57,7 +66,7 @@ async def import_problems(json_path: str):
                 source=item.get("source"),
                 sample_cases=item.get("sample_cases", []),
                 hidden_cases=item.get("hidden_cases", []),
-                author_id=1,  # System admin
+                author_id=author_id,
                 is_public=True,
             )
             db.add(problem)
@@ -79,7 +88,7 @@ async def import_problems(json_path: str):
             for sol in item.get("solutions", []):
                 db.add(ProblemSolution(
                     problem_id=problem.id,
-                    author_id=sol.get("author_id", 1),
+                    author_id=sol.get("author_id", author_id),
                     content=sol["content"],
                     language=sol.get("language"),
                     solution_type="official" if sol.get("is_official") else "user",

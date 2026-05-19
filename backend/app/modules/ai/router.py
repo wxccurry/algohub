@@ -16,8 +16,8 @@ async def _log_ai_usage(user_id: int | None, endpoint: str, tokens_in: int = 0, 
                         error_signature: str | None = None):
     """Lightweight fire-and-forget insert into ai_usage_logs."""
     try:
-        from app.database import async_session
-        async with async_session() as db:
+        from app.shared.database import async_session as _ai_log_session
+        async with _ai_log_session() as db:
             db.add(AIUsageLog(
                 user_id=user_id,
                 endpoint=endpoint,

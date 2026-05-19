@@ -5,6 +5,7 @@ import { Bot, X, Send, Loader2, Sparkles, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import api from "@/lib/api";
+import { getAccessToken } from "@/lib/auth";
 
 type AssistantMode = "silent" | "hinting" | "chatting" | "celebrating";
 
@@ -90,7 +91,7 @@ export default function AIFloatingAssistant({ problemId, problemTitle, waCount =
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
+          "Authorization": `Bearer ${getAccessToken()}`,
         },
         body: JSON.stringify({ problem_id: problemId, messages: chatMessages, current_code: currentCode, language }),
       });
