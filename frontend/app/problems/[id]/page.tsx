@@ -14,6 +14,7 @@ import { getTemplate } from "@/components/editor/CodeTemplate";
 import { getSavedCode, useCodeAutoSave } from "@/hooks/useCodeAutoSave";
 import { useHotkeys } from "@/hooks/useHotkeys";
 import { useSSE } from "@/hooks/useSSE";
+import { AIFloatingAssistant } from "@/components/ai";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -59,6 +60,7 @@ export default function ProblemPage() {
   const [activeTab, setActiveTab] = useState("description");
   const [sseEnabled, setSseEnabled] = useState(false);
   const [currentSubmissionId, setCurrentSubmissionId] = useState<number | null>(null);
+  const [waCount, setWaCount] = useState(0);
 
   // Polling fallback ref to allow cancellation
   const pollAbortRef = useRef(false);
@@ -151,8 +153,14 @@ export default function ProblemPage() {
             if (sub.status !== "Pending" && sub.status !== "Running" && sub.status !== "Compiling") {
               setResult(sub);
               setSubRefreshKey((k) => k + 1);
-              if (sub.status === "AC") toast.success("通过！");
-              else toast.error(`结果: ${sub.status}`);
+              if (sub.status === "AC") {
+                toast.success("通过！");
+                setWaCount(0);
+                (window as any).__aiCelebrate?.();
+              } else {
+                toast.error(`结果: ${sub.status}`);
+                setWaCount(c => c + 1);
+              }
               break;
             }
             setResult((prev) => (prev ? { ...prev, status: sub.status } : null));
@@ -179,8 +187,14 @@ export default function ProblemPage() {
         setResult(data.data);
         setSubRefreshKey((k) => k + 1);
         const status = data.data?.status;
-        if (status === "AC") toast.success("通过！");
-        else toast.error(`结果: ${status}`);
+        if (status === "AC") {
+          toast.success("通过！");
+          setWaCount(0);
+          (window as any).__aiCelebrate?.();
+        } else {
+          toast.error(`结果: ${status}`);
+          setWaCount(c => c + 1);
+        }
         setSseEnabled(false);
         submittingRef.current = false;
         setSubmitting(false);
@@ -295,6 +309,15 @@ export default function ProblemPage() {
       )}
 
       <div className="h-[calc(100vh-3.5rem)] flex flex-col">
+        {/* AI Floating Assistant */}
+        <AIFloatingAssistant
+          problemId={Number(id)}
+          problemTitle={problem?.title}
+          waCount={waCount}
+          currentCode={code}
+          language={language}
+        />
+
         {/* Problem header spans full width */}
         <ProblemHeader
           title={problem.title}
