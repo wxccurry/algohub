@@ -10,6 +10,7 @@ class Problem(Base):
     __tablename__ = "problems"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    slug: Mapped[str | None] = mapped_column(String(200), unique=True, nullable=True)
     title: Mapped[str] = mapped_column(String(150), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     input_format: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -30,6 +31,8 @@ class Problem(Base):
     tags: Mapped[list["ProblemTag"]] = relationship(back_populates="problem", cascade="all, delete-orphan")
     solutions: Mapped[list["ProblemSolution"]] = relationship(back_populates="problem", cascade="all, delete-orphan")
     test_cases: Mapped[list["ProblemTestCase"]] = relationship(back_populates="problem", cascade="all, delete-orphan")
+    hints: Mapped[list["ProblemHint"]] = relationship(back_populates="problem", cascade="all, delete-orphan")
+    company_tags: Mapped[list["CompanyTag"]] = relationship(back_populates="problem", cascade="all, delete-orphan")
 
 
 class ProblemTag(Base):
@@ -43,6 +46,18 @@ class ProblemTag(Base):
     __table_args__ = (UniqueConstraint("problem_id", "tag_name"),)
 
 
+class ProblemHint(Base):
+    __tablename__ = "problem_hints"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    problem_id: Mapped[int] = mapped_column(Integer, ForeignKey("problems.id", ondelete="CASCADE"))
+    sort_order: Mapped[int] = mapped_column(Integer, default=1)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+
+    problem: Mapped["Problem"] = relationship(back_populates="hints")
+    __table_args__ = (UniqueConstraint("problem_id", "sort_order"),)
+
+
 class ProblemSolution(Base):
     __tablename__ = "problem_solutions"
 
@@ -51,6 +66,8 @@ class ProblemSolution(Base):
     author_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
     content: Mapped[str] = mapped_column(Text, nullable=False)
     language: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    solution_type: Mapped[str] = mapped_column(String(20), default="user")
+    is_official: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     problem: Mapped["Problem"] = relationship(back_populates="solutions")
@@ -69,3 +86,15 @@ class ProblemTestCase(Base):
     description: Mapped[str | None] = mapped_column(String(200), nullable=True)
 
     problem: Mapped["Problem"] = relationship(back_populates="test_cases")
+
+
+class CompanyTag(Base):
+    __tablename__ = "company_tags"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    problem_id: Mapped[int] = mapped_column(Integer, ForeignKey("problems.id", ondelete="CASCADE"))
+    company_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    frequency: Mapped[int] = mapped_column(Integer, default=0)
+
+    problem: Mapped["Problem"] = relationship(back_populates="company_tags")
+    __table_args__ = (UniqueConstraint("problem_id", "company_name"),)
