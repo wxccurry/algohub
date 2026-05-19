@@ -9,6 +9,7 @@ from app.config import settings
 from app.api import problems, submissions, judge, posts, admin
 from app.modules.auth.router import router as auth_router
 from app.modules.user.router import router as user_router
+from app.modules.contest.router import router as contest_router
 from app.database import init_db
 from app.middleware.rate_limit import limiter, rate_limit_exceeded_handler
 from app.middleware.request_id import RequestIDMiddleware
@@ -62,6 +63,7 @@ app.include_router(judge.router, prefix="/api", tags=["评测"])
 app.include_router(posts.router, prefix="/api/posts", tags=["社区"])
 app.include_router(admin.router, prefix="/api/admin", tags=["管理"])
 app.include_router(user_router)
+app.include_router(contest_router)
 
 
 @app.exception_handler(Exception)
