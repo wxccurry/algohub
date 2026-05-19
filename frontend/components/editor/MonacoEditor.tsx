@@ -9,6 +9,7 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   height?: string;
+  fontSize?: number;
 }
 
 const LANGUAGE_MAP: Record<string, string> = {
@@ -17,7 +18,7 @@ const LANGUAGE_MAP: Record<string, string> = {
   java: "java",
 };
 
-export default function MonacoEditor({ language, value, onChange, height = "500px" }: Props) {
+export default function MonacoEditor({ language, value, onChange, height = "500px", fontSize = 14 }: Props) {
   const handleChange = useCallback(
     (val: string | undefined) => onChange(val || ""),
     [onChange]
@@ -32,7 +33,7 @@ export default function MonacoEditor({ language, value, onChange, height = "500p
       theme="vs-dark"
       options={{
         minimap: { enabled: false },
-        fontSize: 14,
+        fontSize,
         lineNumbers: "on",
         scrollBeyondLastLine: false,
         automaticLayout: true,

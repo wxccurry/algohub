@@ -1,6 +1,7 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
+import { Group, Panel, Separator } from "react-resizable-panels";
 import api from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
 import MarkdownRenderer from "@/components/markdown/MarkdownRenderer";
@@ -8,23 +9,22 @@ import MonacoEditor from "@/components/editor/MonacoEditor";
 import ProblemHeader from "@/components/editor/ProblemHeader";
 import SubmissionResult from "@/components/editor/SubmissionResult";
 import SubmissionPanel from "@/components/editor/SubmissionPanel";
+import SubmitButton from "@/components/editor/SubmitButton";
 import { getTemplate } from "@/components/editor/CodeTemplate";
 import { getSavedCode, useCodeAutoSave } from "@/hooks/useCodeAutoSave";
+import { useHotkeys } from "@/hooks/useHotkeys";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { Check, Copy, Expand, Loader2, Maximize2, Minus, Plus, Play, Shrink } from "lucide-react";
+import { Check, Copy, Maximize2, Minus, Plus, Shrink } from "lucide-react";
 
 const LANGUAGES = [
   { value: "python", label: "Python" },
   { value: "cpp", label: "C++" },
   { value: "java", label: "Java" },
 ];
-
-const FONT_SIZES = [12, 14, 16, 18, 20];
 
 interface ProblemData {
   id: number; title: string; description: string;
@@ -48,23 +48,26 @@ export default function ProblemPage() {
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState("python");
   const [code, setCode] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<SubResult | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const submittingRef = useRef(false);
   const [subRefreshKey, setSubRefreshKey] = useState(0);
-  const [fullscreen, setFullscreen] = useState(false);
   const [fontSize, setFontSize] = useState(14);
+  const [fullscreen, setFullscreen] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("description");
 
-  // Load template + saved code on language/problem change
+  // Auto-save code changes
+  useCodeAutoSave(id, language, code);
+
+  // Load template + saved code on language or problem change
   useEffect(() => {
     const saved = getSavedCode(id, language);
     setCode(saved || getTemplate(language));
     setResult(null);
   }, [id, language]);
 
-  // Auto-save
-  useCodeAutoSave(id, language, code);
-
+  // Fetch problem data
   const fetchProblem = useCallback(async () => {
     setLoading(true);
     try {
@@ -77,70 +80,87 @@ export default function ProblemPage() {
 
   useEffect(() => { fetchProblem(); }, [fetchProblem]);
 
-  const handleSubmit = async () => {
+  // Submit handler — POST then background-poll for result
+  const handleSubmit = useCallback(async () => {
     if (!user) { toast.error("请先登录"); return; }
     if (!code.trim()) { toast.error("请输入代码"); return; }
+    if (submittingRef.current) return;
 
+    submittingRef.current = true;
     setSubmitting(true);
     setResult({ status: "Pending", execution_time: null, execution_memory: null, score: 0, error_message: null });
+
     try {
       const resp = await api.post(`/problems/${id}/submit`, { language, code });
       const subId = resp.data.data.submission_id;
-      setResult({ status: "Running", execution_time: null, execution_memory: null, score: 0, error_message: null });
 
-      for (let i = 0; i < 30; i++) {
-        await new Promise((r) => setTimeout(r, 1500));
-        try {
-          const subResp = await api.get(`/submissions/${subId}`);
-          const sub = subResp.data.data;
-          if (sub.status !== "Pending" && sub.status !== "Running" && sub.status !== "Compiling") {
-            setResult(sub);
-            setSubRefreshKey((k) => k + 1);
-            if (sub.status === "AC") toast.success("通过！🎉");
-            else toast.error(`结果: ${sub.status}`);
-            break;
-          }
-          setResult({ status: sub.status, execution_time: null, execution_memory: null, score: 0, error_message: null });
-        } catch { break; }
-      }
+      // Background polling — does not block handleSubmit return
+      (async () => {
+        for (let i = 0; i < 30; i++) {
+          await new Promise((r) => setTimeout(r, 1500));
+          try {
+            const subResp = await api.get(`/submissions/${subId}`);
+            const sub = subResp.data.data;
+            if (sub.status !== "Pending" && sub.status !== "Running" && sub.status !== "Compiling") {
+              setResult(sub);
+              setSubRefreshKey((k) => k + 1);
+              if (sub.status === "AC") toast.success("通过！");
+              else toast.error(`结果: ${sub.status}`);
+              break;
+            }
+            setResult((prev) => prev ? { ...prev, status: sub.status } : null);
+          } catch { break; }
+        }
+        submittingRef.current = false;
+        setSubmitting(false);
+      })();
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail || "提交失败";
       toast.error(msg);
-    } finally {
+      submittingRef.current = false;
       setSubmitting(false);
+      setResult(null);
     }
-  };
+  }, [id, language, code, user]);
 
-  const handleLoadSubmission = async (sub: { id: number }) => {
+  // Load submission code into editor
+  const handleLoadSubmission = useCallback(async (sub: { id: number }) => {
     try {
       const resp = await api.get(`/submissions/${sub.id}`);
       setCode(resp.data.data.code);
       setLanguage(resp.data.data.language);
       toast.success("已加载提交代码");
     } catch { toast.error("加载失败"); }
-  };
+  }, []);
 
+  // Copy sample case text
   const copySample = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     setCopied(label);
     setTimeout(() => setCopied(null), 1500);
   };
 
+  // Global keyboard shortcuts
+  useHotkeys([
+    { key: "Enter", ctrl: true, handler: () => handleSubmit(), enabled: !!problem && !submitting },
+    { key: "'", ctrl: true, handler: () => { /* run test — placeholder */ }, enabled: !!problem },
+  ]);
+
   // ── Loading skeleton ──
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-6 h-[calc(100vh-3.5rem)]">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
-          <div className="border rounded-lg p-6 space-y-4">
+      <div className="h-[calc(100vh-3.5rem)] flex flex-col">
+        <Skeleton className="h-16 w-full rounded-none" />
+        <div className="flex-1 flex min-h-0">
+          <div className="flex-1 p-6 space-y-4 overflow-hidden">
             <Skeleton className="h-8 w-48" />
             <Skeleton className="h-4 w-96" />
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-3/4" />
             <Skeleton className="h-32 w-full" />
-            <Skeleton className="h-24 w-full" />
           </div>
-          <div className="border rounded-lg p-6 space-y-4">
+          <div className="flex-1 p-6 space-y-4 overflow-hidden">
             <Skeleton className="h-10 w-32" />
             <Skeleton className="h-[500px] w-full" />
           </div>
@@ -151,9 +171,11 @@ export default function ProblemPage() {
 
   if (!problem) return <div className="text-center py-20 text-muted-foreground">题目不存在</div>;
 
-  const editor = (
+  // ── Editor section (shared between normal and fullscreen views) ──
+  const editorSection = (
     <div className="flex flex-col gap-3 h-full">
-      <div className="flex items-center justify-between flex-wrap gap-2">
+      {/* Toolbar: language selector, font size, fullscreen toggle, submit */}
+      <div className="flex items-center justify-between flex-wrap gap-2 shrink-0">
         <div className="flex items-center gap-2">
           <Select value={language} onValueChange={(v) => setLanguage(v ?? "python")}>
             <SelectTrigger className="w-[120px]">
@@ -164,7 +186,7 @@ export default function ProblemPage() {
             </SelectContent>
           </Select>
 
-          {/* Font size */}
+          {/* Font size controls */}
           <div className="hidden sm:flex items-center gap-1 border rounded px-1">
             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setFontSize(Math.max(12, fontSize - 2))}>
               <Minus className="h-3 w-3" />
@@ -185,17 +207,16 @@ export default function ProblemPage() {
             {fullscreen ? <Shrink className="h-4 w-4 mr-1" /> : <Maximize2 className="h-4 w-4 mr-1" />}
             {fullscreen ? "退出全屏" : "全屏"}
           </Button>
-          <Button onClick={handleSubmit} disabled={submitting}>
-            {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Play className="h-4 w-4 mr-2" />}
-            提交评测
-          </Button>
+          <SubmitButton onSubmit={handleSubmit} disabled={submitting || !code.trim()} />
         </div>
       </div>
 
-      <div className="flex-1 border rounded-lg overflow-hidden">
-        <MonacoEditor language={language} value={code} onChange={setCode} height="100%" />
+      {/* Monaco editor */}
+      <div className="flex-1 min-h-0 border rounded-lg overflow-hidden">
+        <MonacoEditor language={language} value={code} onChange={setCode} height="100%" fontSize={fontSize} />
       </div>
 
+      {/* Submission result */}
       {result && (
         <SubmissionResult
           initialPhase={
@@ -203,7 +224,7 @@ export default function ProblemPage() {
             : result.status === "Running" || result.status === "Compiling" ? "running"
             : "done"
           }
-          status={result.status}
+          status={result.status === "AC" ? "Accepted" : result.status}
           executionTime={result.execution_time ?? undefined}
           executionMemory={result.execution_memory ?? undefined}
         />
@@ -213,87 +234,120 @@ export default function ProblemPage() {
 
   return (
     <>
-      {/* Fullscreen overlay */}
+      {/* Fullscreen editor overlay */}
       {fullscreen && (
         <div className="fixed inset-0 z-50 bg-background p-4">
-          <div className="h-full">{editor}</div>
+          <div className="h-full">{editorSection}</div>
         </div>
       )}
 
-      <div className="container mx-auto px-4 py-6 h-[calc(100vh-3.5rem)]">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
-          {/* Left: Problem */}
-          <ScrollArea className="h-full border rounded-lg p-6">
-            <div className="space-y-4">
-              <ProblemHeader
-                title={problem.title}
-                difficulty={problem.difficulty}
-                difficultyScore={problem.difficulty_score}
-                timeLimit={problem.time_limit}
-                memoryLimit={problem.memory_limit}
-                tags={problem.tags}
-              />
+      <div className="h-[calc(100vh-3.5rem)] flex flex-col">
+        {/* Problem header spans full width */}
+        <ProblemHeader
+          title={problem.title}
+          difficulty={problem.difficulty}
+          difficultyScore={problem.difficulty_score}
+          timeLimit={problem.time_limit}
+          memoryLimit={problem.memory_limit}
+          tags={problem.tags}
+        />
 
-              <MarkdownRenderer content={problem.description} />
+        {/* Split-pane layout */}
+        <div className="flex-1 min-h-0">
+          <Group orientation="horizontal">
+            {/* ── Left Panel: Tabs (Description / Solutions / Submissions / Visualization) ── */}
+            <Panel defaultSize="45" minSize="25">
+              <div className="h-full overflow-hidden">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+                  <TabsList className="w-full shrink-0 rounded-none border-b">
+                    <TabsTrigger value="description">描述</TabsTrigger>
+                    <TabsTrigger value="solutions">题解</TabsTrigger>
+                    <TabsTrigger value="submissions">提交</TabsTrigger>
+                    <TabsTrigger value="visualization">可视化</TabsTrigger>
+                  </TabsList>
 
-              {problem.input_format && (
-                <>
-                  <h3 className="font-semibold">输入格式</h3>
-                  <pre className="bg-muted p-3 rounded text-sm whitespace-pre-wrap">{problem.input_format}</pre>
-                </>
-              )}
-              {problem.output_format && (
-                <>
-                  <h3 className="font-semibold">输出格式</h3>
-                  <pre className="bg-muted p-3 rounded text-sm whitespace-pre-wrap">{problem.output_format}</pre>
-                </>
-              )}
+                  <div className="flex-1 min-h-0 overflow-y-auto p-4">
+                    <TabsContent value="description" className="mt-0 space-y-4">
+                      <MarkdownRenderer content={problem.description} />
 
-              {problem.sample_cases?.length > 0 && (
-                <>
-                  <h3 className="font-semibold">样例</h3>
-                  {problem.sample_cases.map((tc, i) => (
-                    <div key={i} className="grid grid-cols-2 gap-2">
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs text-muted-foreground">输入 #{i + 1}</span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6"
-                            onClick={() => copySample(tc.input, `in-${i}`)}
-                          >
-                            {copied === `in-${i}` ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
-                          </Button>
-                        </div>
-                        <pre className="bg-zinc-900 text-zinc-100 p-2 rounded text-sm whitespace-pre-wrap">{tc.input}</pre>
-                      </div>
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs text-muted-foreground">输出 #{i + 1}</span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6"
-                            onClick={() => copySample(tc.output, `out-${i}`)}
-                          >
-                            {copied === `out-${i}` ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
-                          </Button>
-                        </div>
-                        <pre className="bg-zinc-900 text-zinc-100 p-2 rounded text-sm whitespace-pre-wrap">{tc.output}</pre>
-                      </div>
-                    </div>
-                  ))}
-                </>
-              )}
-            </div>
-          </ScrollArea>
+                      {problem.input_format && (
+                        <>
+                          <h3 className="font-semibold">输入格式</h3>
+                          <pre className="bg-muted p-3 rounded text-sm whitespace-pre-wrap">{problem.input_format}</pre>
+                        </>
+                      )}
+                      {problem.output_format && (
+                        <>
+                          <h3 className="font-semibold">输出格式</h3>
+                          <pre className="bg-muted p-3 rounded text-sm whitespace-pre-wrap">{problem.output_format}</pre>
+                        </>
+                      )}
 
-          {/* Right: Editor + Submissions */}
-          <div className="flex flex-col gap-3 h-full">
-            <div className="flex-1 min-h-0">{editor}</div>
-            <SubmissionPanel problemId={id} refreshKey={subRefreshKey} onSelect={handleLoadSubmission} />
-          </div>
+                      {problem.sample_cases?.length > 0 && (
+                        <>
+                          <h3 className="font-semibold">样例</h3>
+                          {problem.sample_cases.map((tc, i) => (
+                            <div key={i} className="grid grid-cols-2 gap-2">
+                              <div>
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-xs text-muted-foreground">输入 #{i + 1}</span>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-6 w-6"
+                                    onClick={() => copySample(tc.input, `in-${i}`)}
+                                  >
+                                    {copied === `in-${i}` ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
+                                  </Button>
+                                </div>
+                                <pre className="bg-zinc-900 text-zinc-100 p-2 rounded text-sm whitespace-pre-wrap">{tc.input}</pre>
+                              </div>
+                              <div>
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-xs text-muted-foreground">输出 #{i + 1}</span>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-6 w-6"
+                                    onClick={() => copySample(tc.output, `out-${i}`)}
+                                  >
+                                    {copied === `out-${i}` ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
+                                  </Button>
+                                </div>
+                                <pre className="bg-zinc-900 text-zinc-100 p-2 rounded text-sm whitespace-pre-wrap">{tc.output}</pre>
+                              </div>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                    </TabsContent>
+
+                    <TabsContent value="solutions" className="mt-0">
+                      <p className="text-muted-foreground text-sm">暂无题解</p>
+                    </TabsContent>
+
+                    <TabsContent value="submissions" className="mt-0">
+                      <SubmissionPanel problemId={id} refreshKey={subRefreshKey} onSelect={handleLoadSubmission} />
+                    </TabsContent>
+
+                    <TabsContent value="visualization" className="mt-0">
+                      <p className="text-muted-foreground text-sm">可视化演示加载中...</p>
+                    </TabsContent>
+                  </div>
+                </Tabs>
+              </div>
+            </Panel>
+
+            {/* ── Draggable Resize Handle ── */}
+            <Separator className="w-1.5 bg-border hover:bg-primary/50 transition-colors duration-100 cursor-col-resize" />
+
+            {/* ── Right Panel: Code Editor + Submit ── */}
+            <Panel defaultSize="55" minSize="30">
+              <div className="h-full p-3">
+                {editorSection}
+              </div>
+            </Panel>
+          </Group>
         </div>
       </div>
     </>
