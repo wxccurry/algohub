@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, CheckCircle, FileText, Star, TrendingUp, Zap, Clock, Send, XCircle } from "lucide-react";
+import { BookOpen, CheckCircle, FileText, Star, TrendingUp, Zap, Clock, Send, XCircle, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface Post { id: number; title: string; stars_count: number; created_at: string; }
 
@@ -28,6 +29,7 @@ export default function DashboardPage() {
   const [problems, setProblems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ total: 0, ac: 0, solved: 0, streak: 0, rating: 1500 });
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     if (!user) return;
@@ -35,7 +37,7 @@ export default function DashboardPage() {
       try {
         const [subResp, postResp, probResp] = await Promise.all([
           api.get("/user/submissions", { params: { page_size: 50 } }).catch(() => ({ data: { data: { items: [] } } })),
-          api.get("/posts", { params: { author_id: user.id, page_size: 10 } }).catch(() => ({ data: { data: { items: [] } } })),
+          api.get("/posts", { params: { author_id: user.id, post_type: "note", page_size: 10 } }).catch(() => ({ data: { data: { items: [] } } })),
           api.get("/problems", { params: { page_size: 100 } }).catch(() => ({ data: { data: { items: [] } } })),
         ]);
         const subs = subResp.data?.data?.items || [];
@@ -57,7 +59,16 @@ export default function DashboardPage() {
       }
     };
     fetchData();
-  }, [user]);
+  }, [user, refreshKey]);
+
+  const handleDeleteNote = async (postId: number) => {
+    if (!confirm("确定要删除这条笔记吗？此操作不可撤销。")) return;
+    try {
+      await api.delete(`/posts/${postId}`);
+      toast.success("笔记已删除");
+      setRefreshKey(k => k + 1);
+    } catch { toast.error("删除失败"); }
+  };
 
   if (!user) {
     return <div className="text-center py-20 text-muted-foreground">请先登录</div>;
@@ -210,13 +221,22 @@ export default function DashboardPage() {
           ) : (
             <div className="divide-y">
               {posts.map((p) => (
-                <Link key={p.id} href={`/posts/${p.id}`} className="flex items-center justify-between py-2.5 hover:bg-muted/50 px-2 rounded transition-colors">
-                  <span className="text-base">{p.title}</span>
-                  <div className="flex items-center gap-3 text-base text-muted-foreground">
-                    <span><Star className="h-4 w-4 inline mr-0.5" />{p.stars_count}</span>
-                    <span>{new Date(p.created_at).toLocaleDateString("zh-CN")}</span>
-                  </div>
-                </Link>
+                <div key={p.id} className="flex items-center justify-between py-2.5 hover:bg-muted/50 px-2 rounded transition-colors">
+                  <Link href={`/posts/${p.id}`} className="flex-1 flex items-center justify-between">
+                    <span className="text-base">{p.title}</span>
+                    <div className="flex items-center gap-3 text-base text-muted-foreground">
+                      <span><Star className="h-4 w-4 inline mr-0.5" />{p.stars_count}</span>
+                      <span>{new Date(p.created_at).toLocaleDateString("zh-CN")}</span>
+                    </div>
+                  </Link>
+                  <button
+                    onClick={() => handleDeleteNote(p.id)}
+                    className="ml-3 p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                    title="删除笔记"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
               ))}
             </div>
           )}

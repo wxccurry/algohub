@@ -19,6 +19,7 @@ export default function NewPostPage() {
   const [content, setContent] = useState("");
   const [summary, setSummary] = useState("");
   const [tags, setTags] = useState("");
+  const [postType, setPostType] = useState<"community" | "note">("community");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,9 +30,10 @@ export default function NewPostPage() {
       const resp = await api.post("/posts", {
         title, content, summary: summary || null,
         tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
+        post_type: postType,
         is_public: true,
       });
-      toast.success("笔记发布成功！");
+      toast.success(postType === "community" ? "发布成功！" : "笔记已保存！");
       router.push(`/posts/${resp.data.data.id}`);
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail || "发布失败";
@@ -68,13 +70,40 @@ export default function NewPostPage() {
                 placeholder="算法, 动态规划, 蓝桥杯" />
             </div>
             <div className="space-y-2">
+              <Label>发布类型</Label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPostType("community")}
+                  className={`flex-1 px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
+                    postType === "community"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-background text-muted-foreground border-input hover:bg-muted"
+                  }`}
+                >
+                  发布到广场
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPostType("note")}
+                  className={`flex-1 px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
+                    postType === "note"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-background text-muted-foreground border-input hover:bg-muted"
+                  }`}
+                >
+                  保存为笔记
+                </button>
+              </div>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="content">内容 * (支持 Markdown)</Label>
               <Textarea id="content" value={content} onChange={(e) => setContent(e.target.value)}
                 placeholder="使用 Markdown 格式记录笔记…" required rows={15} className="font-mono text-base" />
             </div>
             <Button type="submit" disabled={loading}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-              发布笔记
+              {postType === "community" ? "发布到广场" : "保存笔记"}
             </Button>
           </form>
         </CardContent>

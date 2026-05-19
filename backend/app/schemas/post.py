@@ -8,6 +8,7 @@ class PostCreate(BaseModel):
     content: str
     summary: str | None = None
     tags: list[str] = []
+    post_type: str = "community"  # "community" = 广场, "note" = 笔记
     is_public: bool = True
 
     @field_validator("title")
@@ -24,6 +25,7 @@ class PostUpdate(BaseModel):
     content: str | None = None
     summary: str | None = None
     tags: list[str] | None = None
+    post_type: str | None = None
     is_public: bool | None = None
 
 

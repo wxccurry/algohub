@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { ArrowLeft, GitFork, Heart, Loader2, MessageCircle, Send } from "lucide-react";
+import { ArrowLeft, GitFork, Heart, Loader2, MessageCircle, Send, Trash2 } from "lucide-react";
 
 interface PostData { id: number; author_id: number; title: string; content: string;
   summary: string | null; tags: string[] | null; stars_count: number; forks_count: number;
@@ -95,6 +95,15 @@ export default function PostDetailPage() {
     } catch { toast.error("Fork 失败"); }
   };
 
+  const handleDelete = async () => {
+    if (!confirm("确定要删除这篇文章吗？此操作不可撤销。")) return;
+    try {
+      await api.delete(`/posts/${id}`);
+      toast.success("已删除");
+      router.push("/posts");
+    } catch { toast.error("删除失败"); }
+  };
+
   const handleComment = async () => {
     if (!user) { toast.error("请先登录"); return; }
     if (!commentText.trim()) return;
@@ -169,6 +178,11 @@ export default function PostDetailPage() {
         <Button variant="outline" size="sm" onClick={handleFork}>
           <GitFork className="h-4 w-4 mr-1" />Fork ({post.forks_count})
         </Button>
+        {user && user.id === post.author_id && (
+          <Button variant="outline" size="sm" onClick={handleDelete} className="text-destructive hover:bg-destructive/10 hover:text-destructive">
+            <Trash2 className="h-4 w-4 mr-1" />删除
+          </Button>
+        )}
       </div>
 
       <div className="border rounded-lg p-6 mb-8">

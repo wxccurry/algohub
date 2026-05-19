@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Heart, GitFork, Eye, Search, PenLine, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -18,20 +17,22 @@ interface Post {
   is_pinned: boolean; created_at: string;
 }
 
-export default function PostsPage() {
+export default function NotesPage() {
   const { user } = useAuthStore();
   const [posts, setPosts] = useState<Post[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [sort, setSort] = useState("latest");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const pageSize = 20;
 
-  const fetchPosts = useCallback(async () => {
+  const fetchNotes = useCallback(async () => {
+    if (!user) return;
     setLoading(true);
     try {
-      const params: Record<string, string | number> = { page, page_size: pageSize, sort, post_type: "community" };
+      const params: Record<string, string | number> = {
+        page, page_size: pageSize, author_id: user.id, post_type: "note",
+      };
       if (search) params.search = search;
       const resp = await api.get("/posts", { params });
       setPosts(resp.data.data.items);
@@ -39,48 +40,40 @@ export default function PostsPage() {
     } catch { /* ignore */ } finally {
       setLoading(false);
     }
-  }, [page, pageSize, sort, search]);
+  }, [user, page, pageSize, search]);
+
+  useEffect(() => { fetchNotes(); }, [fetchNotes]);
 
   const handleDelete = async (e: React.MouseEvent, postId: number) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!confirm("确定要删除这篇文章吗？此操作不可撤销。")) return;
+    if (!confirm("确定要删除这条笔记吗？此操作不可撤销。")) return;
     try {
       await api.delete(`/posts/${postId}`);
       toast.success("已删除");
-      fetchPosts();
+      fetchNotes();
     } catch { toast.error("删除失败"); }
   };
 
-  useEffect(() => { fetchPosts(); }, [fetchPosts]);
+  if (!user) {
+    return <div className="text-center py-20 text-muted-foreground">请先登录</div>;
+  }
 
   const totalPages = Math.ceil(total / pageSize);
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">AlgoShare 广场</h1>
-        {user && (
-          <Link href="/posts/new">
-            <Button><PenLine className="h-4 w-4 mr-2" />写笔记</Button>
-          </Link>
-        )}
+        <h1 className="text-3xl font-bold">我的笔记</h1>
+        <Link href="/posts/new">
+          <Button><PenLine className="h-4 w-4 mr-2" />写笔记</Button>
+        </Link>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input className="pl-9" placeholder="搜索笔记..." value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
-        </div>
-        <Select value={sort} onValueChange={(v) => { setSort(v ?? "latest"); setPage(1); }}>
-          <SelectTrigger className="w-[130px]"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="latest">最新</SelectItem>
-            <SelectItem value="hot">最热</SelectItem>
-            <SelectItem value="pinned">精选</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input className="pl-9" placeholder="搜索笔记..." value={search}
+          onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
       </div>
 
       {loading ? (
@@ -91,7 +84,12 @@ export default function PostsPage() {
           ))}
         </div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-20 text-muted-foreground">暂无笔记</div>
+        <div className="text-center py-20 text-muted-foreground">
+          <p className="mb-4">还没有笔记</p>
+          <Link href="/posts/new">
+            <Button variant="outline">写第一篇笔记</Button>
+          </Link>
+        </div>
       ) : (
         <div className="space-y-4">
           {posts.map((p) => (
@@ -108,15 +106,13 @@ export default function PostsPage() {
                     <span className="flex items-center gap-1"><Eye className="h-4 w-4" />{p.views}</span>
                     <span>{new Date(p.created_at).toLocaleDateString("zh-CN")}</span>
                   </div>
-                  {user && user.id === p.author_id && (
-                    <button
-                      onClick={(e) => handleDelete(e, p.id)}
-                      className="absolute top-3 right-3 p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                      title="删除"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  )}
+                  <button
+                    onClick={(e) => handleDelete(e, p.id)}
+                    className="absolute top-3 right-3 p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                    title="删除"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </CardHeader>
                 {p.summary && <CardContent><p className="text-muted-foreground text-base line-clamp-2">{p.summary}</p></CardContent>}
                 {p.tags && p.tags.length > 0 && (

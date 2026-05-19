@@ -20,6 +20,7 @@ const NAV_LINKS = [
   { href: "/problems", label: "题库" },
   { href: "/contests", label: "比赛" },
   { href: "/posts", label: "广场" },
+  { href: "/notes", label: "笔记" },
   { href: "/visualize", label: "可视化" },
 ];
 
@@ -52,18 +53,23 @@ export default function Header() {
         </Link>
 
         {/* Nav */}
-        <nav className="hidden md:flex items-center gap-2">
-          {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href}>
-              <Button
-                variant={pathname.startsWith(link.href) ? "secondary" : "ghost"}
-                size="lg"
-                className={`text-[15px] font-bold px-5 ${pathname.startsWith(link.href) ? "shadow-sm" : ""}`}
+        <nav className="hidden md:flex items-center gap-1.5">
+          {NAV_LINKS.map((link) => {
+            const isActive = pathname.startsWith(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={
+                  isActive
+                    ? "bg-primary text-primary-foreground px-3 py-1.5 rounded-md text-sm font-medium shadow-sm transition-colors"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
+                }
               >
                 {link.label}
-              </Button>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* User / Auth */}

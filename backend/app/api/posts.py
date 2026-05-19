@@ -3,10 +3,10 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.dependencies import get_current_user_from_token, require_login, require_admin
+from app.dependencies import require_login, require_admin
 from app.schemas.post import PostCreate, PostUpdate, CommentCreate
 from app.services import post_service
-from app.utils.response import success
+from app.utils.response import success, error
 
 router = APIRouter()
 
@@ -17,10 +17,12 @@ async def list_posts(
     sort: str = Query("latest"),
     tag: str | None = None, search: str | None = None,
     author_id: int | None = None,
+    post_type: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
     items, total = await post_service.list_posts(
         db, page=page, page_size=page_size, sort=sort, tag=tag, search=search, author_id=author_id,
+        post_type=post_type,
     )
     return success(data={"items": items, "total": total, "page": page, "page_size": page_size})
 
@@ -30,7 +32,7 @@ async def get_post(post_id: int, db: AsyncSession = Depends(get_db)):
     from sqlalchemy import text as sa_text
     r = await db.execute(sa_text(
         "SELECT id, author_id, title, content, summary, tags, stars_count, forks_count, "
-        "views, forked_from, is_public, is_pinned, created_at, updated_at "
+        "views, forked_from, is_public, is_pinned, post_type, created_at, updated_at "
         "FROM posts WHERE id = :pid"
     ), {"pid": post_id})
     row = r.fetchone()
@@ -49,8 +51,9 @@ async def get_post(post_id: int, db: AsyncSession = Depends(get_db)):
         "stars_count": row[6], "forks_count": row[7],
         "views": (row[8] or 0) + 1, "forked_from": row[9],
         "is_public": row[10], "is_pinned": row[11],
-        "created_at": str(row[12]) if row[12] else None,
-        "updated_at": str(row[13]) if row[13] else None,
+        "post_type": row[12] or "community",
+        "created_at": str(row[13]) if row[13] else None,
+        "updated_at": str(row[14]) if row[14] else None,
     })
 
 

@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import SettingsModal from "@/components/settings/SettingsModal";
-import { BookOpen, Edit3, Star, TrendingUp, UserPlus, Zap } from "lucide-react";
+import { BookOpen, Edit3, Star, TrendingUp, UserPlus, Zap, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface Profile {
   id: number; username: string; role: string; created_at: string;
@@ -132,7 +133,7 @@ export default function UserPage() {
       }
       setProfile(profileResp.data.data);
       if (profileResp.data.data?.id) {
-        const pResp = await api.get("/posts", { params: { author_id: profileResp.data.data.id, page_size: 10 } });
+        const pResp = await api.get("/posts", { params: { author_id: profileResp.data.data.id, post_type: "note", page_size: 10 } });
         setPosts(pResp.data.data.items);
       }
     } catch {
@@ -141,6 +142,15 @@ export default function UserPage() {
       setLoading(false);
     }
   }, [username]);
+
+  const handleDeleteNote = async (postId: number) => {
+    if (!confirm("确定要删除这条笔记吗？此操作不可撤销。")) return;
+    try {
+      await api.delete(`/posts/${postId}`);
+      toast.success("笔记已删除");
+      fetchProfile();
+    } catch { toast.error("删除失败"); }
+  };
 
   useEffect(() => { fetchProfile(); }, [fetchProfile]);
 
@@ -248,13 +258,24 @@ export default function UserPage() {
         <div className="space-y-3">
           {posts.map((p) => (
             <Link key={p.id} href={`/posts/${p.id}`}>
-              <Card className="hover:border-primary/50 transition-colors">
+              <Card className="hover:border-primary/50 transition-colors relative">
                 <CardHeader className="py-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-base">{p.title}</CardTitle>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Star className="h-3 w-3" />{p.stars_count}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Star className="h-3 w-3" />{p.stars_count}
+                      </span>
+                      {isMe && (
+                        <button
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDeleteNote(p.id); }}
+                          className="p-1 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                          title="删除笔记"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </CardHeader>
               </Card>

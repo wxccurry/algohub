@@ -14,6 +14,7 @@ async def list_posts(
     tag: str | None = None,
     search: str | None = None,
     author_id: int | None = None,
+    post_type: str | None = None,
 ) -> tuple[list[dict], int]:
     query = select(Post).where(Post.is_public == True)
 
@@ -24,6 +25,8 @@ async def list_posts(
         query = query.where(Post.title.ilike(ilike) | Post.content.ilike(ilike))
     if author_id:
         query = query.where(Post.author_id == author_id)
+    if post_type:
+        query = query.where(Post.post_type == post_type)
 
     if sort == "hot":
         query = query.order_by(Post.stars_count.desc(), Post.created_at.desc())
